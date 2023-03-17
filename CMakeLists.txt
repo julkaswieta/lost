@@ -12,8 +12,15 @@ SET(OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/bin/")
 SET(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${OUTPUT_DIRECTORY})
 
 #### Add External Dependencies ####
+## SFML library
 add_subdirectory("lib/sfml")
 set(SFML_INCS "lib/sfml/include")
+link_directories("${CMAKE_BINARY_DIR}/lib/sfml/lib")
+
+# Box2D library
+add_subdirectory("lib/b2d/Box2D")
+#include_directories("lib/b2d/Box2D/")
+set(B2D_INCS "lib/b2d/Box2D/")
 link_directories("${CMAKE_BINARY_DIR}/lib/sfml/lib")
 
 ### Copy resources
@@ -34,8 +41,8 @@ endfunction()
 #### Lost ####
 file(GLOB_RECURSE SOURCES src/*.cpp src/*.h)
 add_executable(LOST ${SOURCES})
-target_include_directories(LOST PRIVATE ${SFML_INCS})
-target_link_libraries(LOST sfml-graphics)
+target_include_directories(LOST PRIVATE ${SFML_INCS} ${B2D_INCS})
+target_link_libraries(LOST Box2D sfml-graphics)
 copy_sfml_dll(LOST)
 set_target_properties(LOST 
     PROPERTIES VS_DEBUGGER_WORKING_DIRECTORY
