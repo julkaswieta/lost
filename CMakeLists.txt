@@ -23,6 +23,30 @@ add_subdirectory("lib/b2d/Box2D")
 set(B2D_INCS "lib/b2d/Box2D/")
 link_directories("${CMAKE_BINARY_DIR}/lib/sfml/lib")
 
+## Tile loader lib
+file(GLOB_RECURSE SOURCE_FILES lib/lib_tile_level_loader/*.cpp lib/lib_tile_level_loader/*.h)
+add_library(lib_tile_level_loader STATIC ${SOURCE_FILES})
+target_include_directories(lib_tile_level_loader INTERFACE "${CMAKE_SOURCE_DIR}/lib/lib_tile_level_loader/" )
+target_link_libraries(lib_tile_level_loader sfml-graphics)
+
+# Maths lib
+add_library(lib_maths INTERFACE)
+target_sources(lib_maths INTERFACE "${CMAKE_SOURCE_DIR}/lib/lib_maths/maths.h")
+target_include_directories(lib_maths INTERFACE "${CMAKE_SOURCE_DIR}/lib/lib_maths" SYSTEM INTERFACE ${SFML_INCS})
+
+### ECM library
+file(GLOB_RECURSE SOURCE_FILES lib/lib_ecm/*.cpp lib/lib_ecm/*.h)
+add_library(lib_ecm STATIC ${SOURCE_FILES})
+target_include_directories(lib_ecm INTERFACE "${CMAKE_SOURCE_DIR}/lib/lib_ecm" )
+target_link_libraries(lib_ecm lib_maths sfml-graphics)
+
+### Engine library
+file(GLOB_RECURSE RESOURCE_FILES "res/*.*")
+file(GLOB_RECURSE SOURCE_FILES lib/engine/*.cpp lib/engine/*.h)
+add_library(lib_engine STATIC ${SOURCE_FILES} ${RESOURCE_FILES})
+target_include_directories(lib_engine INTERFACE "${CMAKE_SOURCE_DIR}/lib/engine/" PUBLIC SYSTEM ${B2D_INCS} )
+target_link_libraries(lib_engine lib_tile_level_loader lib_maths lib_ecm Box2D sfml-graphics sfml-audio)
+
 ### Copy resources
 add_custom_target(copy_resources ALL COMMAND ${CMAKE_COMMAND} 
   -E copy_directory
