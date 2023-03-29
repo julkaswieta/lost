@@ -64,9 +64,13 @@ endfunction()
 
 #### Lost ####
 file(GLOB_RECURSE SOURCES src/*.cpp src/*.h)
+file(GLOB_RECURSE CMPNTS src/components/*.cpp src/components/*.h)
+file(GLOB_RECURSE SCENES src/scenes/*.cpp src/scenes/*.h)
 add_executable(LOST ${SOURCES})
+source_group("components" FILES ${CMPNTS})
+source_group("resources" FILES ${RESOURCE_FILES})
 target_include_directories(LOST PRIVATE ${SFML_INCS} ${B2D_INCS})
-target_link_libraries(LOST Box2D sfml-graphics)
+target_link_libraries(LOST lib-engine)
 copy_sfml_dll(LOST)
 set_target_properties(LOST 
     PROPERTIES VS_DEBUGGER_WORKING_DIRECTORY
