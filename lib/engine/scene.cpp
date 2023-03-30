@@ -10,9 +10,9 @@ shared_ptr<Entity> Scene::makeEntity() {
 	return std::move(e);
 }
 
-void Scene::Update(const double& dt) { ents.update(dt); }
+void Scene::Update(const double& dt) { ents.Update(dt); }
 
-void Scene::Render() { ents.render(); }
+void Scene::Render() { ents.Render(); }
 
 bool Scene::isLoaded() const {
     {
