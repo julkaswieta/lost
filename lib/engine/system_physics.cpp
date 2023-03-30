@@ -1,4 +1,3 @@
-
 #include "system_physics.h"
 #include "Box2D/Box2D.h"
 
@@ -6,42 +5,48 @@ using namespace std;
 using namespace sf;
 
 namespace Physics {
-static shared_ptr<b2World> world;
-const int32 velocityIterations = 6;
-const int32 positionIterations = 2;
+    static shared_ptr<b2World> world;
+    const int32 velocityIterations = 6;
+    const int32 positionIterations = 2;
 
-void initialise() {
-  b2Vec2 gravity(0.0f, -10.0f);
-  // Construct a world object, which will hold and simulate the rigid
-  // bodies.
-  world.reset(new b2World(gravity));
-}
+    // Construct a world object, which will hold and simulate the rigid bodies
+    void Initialise() {
+        b2Vec2 gravity(0.0f, -10.0f);
+        world.reset(new b2World(gravity));
+    }
 
-void shutdown() { world.reset(); }
+    // Clears and resets the world
+    void Shutdown() { 
+        world.reset(); 
+    }
 
-void update(const double& dt) {
-  world->Step((float)dt, velocityIterations, positionIterations);
-}
+    // Steps all bodies in the world
+    void Update(const double& dt) {
+        world->Step((float)dt, velocityIterations, positionIterations);
+    }
 
-std::shared_ptr<b2World> GetWorld() { return world; }
+    // returns the world object
+    shared_ptr<b2World> getWorld() { return world; }
 
-const Vector2f bv2_to_sv2(const b2Vec2& in, bool scale) {
-  if (scale) {
-    return Vector2f((in.x * physics_scale), (in.y * physics_scale));
-  } else {
-    return Vector2f(in.x, in.y);
-  }
-}
+    // converts a box2d b2Vec2 to sfml Vector2
+    const Vector2f boxVecToSfmlVec(const b2Vec2& in, bool scale) {
+        if (scale)
+            return Vector2f((in.x * PHYSICS_SCALE), (in.y * PHYSICS_SCALE));
+        else
+            return Vector2f(in.x, in.y);
+    }
 
-const b2Vec2 sv2_to_bv2(const Vector2f& in, bool scale) {
-  if (scale) {
-    return b2Vec2((in.x * physics_scale_inv), (in.y * physics_scale_inv));
-  } else {
-    return b2Vec2(in.x, in.y);
-  }
-}
+    // converts an sfml Vector2 to box2d b2Vec2
+    const b2Vec2 sfmlVecToBoxVec(const Vector2f& in, bool scale) {
+        if (scale) 
+            return b2Vec2((in.x * PHYSICS_SCALE_INV), (in.y * PHYSICS_SCALE_INV));
+        else 
+            return b2Vec2(in.x, in.y);
+    }
 
-const Vector2f invert_height(const Vector2f& in) {
-  return Vector2f(in.x, 720 - in.y);
-}
+    // inverts the height in a vector (height increases from bottom of the screen 
+    // towards x-axis in box2d and the other way round in sfml)
+    const Vector2f invertHeight(const Vector2f& in) {
+        return Vector2f(in.x, 720 - in.y);
+    }
 } // namespace Physics

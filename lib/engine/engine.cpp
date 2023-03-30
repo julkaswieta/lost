@@ -27,8 +27,8 @@ void Engine::Start(unsigned int width, unsigned int height,
     RenderWindow rw(VideoMode({ width, height }), gameName);
     Engine::gameName = gameName;
     window = &rw;
-    Renderer::initialise(rw);
-    Physics::initialise();
+    Renderer::Initialise(rw);
+    Physics::Initialise();
     ChangeScene(scn);
 
     while (rw.isOpen()) {
@@ -45,7 +45,7 @@ void Engine::Start(unsigned int width, unsigned int height,
     }
 
     rw.close();
-    Physics::shutdown();
+    Physics::Shutdown();
     // Renderer::shutdown();
 }
 
@@ -79,7 +79,7 @@ void Engine::Update() {
         loadingUpdate(dt, activeScene);
     }
     else if (activeScene != nullptr) {  // else update active scene
-        Physics::update(dt);
+        Physics::Update(dt);
         activeScene->Update(dt);
     }
 }
@@ -93,7 +93,7 @@ void Engine::Render(RenderWindow& window) {
         activeScene->Render();
     }
 
-    Renderer::render();
+    Renderer::Render();
 }
 
 // update for loading screen
