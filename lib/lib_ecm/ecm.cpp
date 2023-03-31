@@ -8,7 +8,6 @@ Entity::Entity(Scene* const s)
     : position({0, 0}), rotation(0), alive(true), visible(true),
       scene(s), forDeletion(false) {}
 
-
 void Entity::Update(double dt) {
     if (!alive) {
         return;
@@ -92,7 +91,7 @@ Component::~Component() {}
 
 // EntityManager
 
-// update all entities in the manager
+// Update all entities in the manager
 void EntityManager::Update(double dt) {
     for (size_t i = 0; i < list.size(); i++) {
         if (list[i]->isForDeletion()) {
@@ -106,7 +105,7 @@ void EntityManager::Update(double dt) {
     }
 }
 
-// render all entities in the manager
+// Render all entities in the manager
 void EntityManager::Render() {
     for (auto& e : list) {
         if (e->visible) {

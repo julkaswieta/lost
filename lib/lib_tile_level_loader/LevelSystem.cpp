@@ -1,8 +1,8 @@
 #include "LevelSystem.h"
 #include <fstream>
 
-using namespace std;
 using namespace sf;
+using namespace std;
 
 unique_ptr<LevelSystem::Tile[]> LevelSystem::tiles;
 size_t LevelSystem::width;

@@ -9,7 +9,7 @@ namespace Renderer {
 
 	void Update(const double&);
 
-	void queue(const sf::Drawable* s);
+	void Queue(const sf::Drawable* s);
 
 	void Render();
 }; // namespace Renderer

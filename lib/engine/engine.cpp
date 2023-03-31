@@ -21,109 +21,6 @@ static float loadingTime;
 float frametimes[256] = {};
 uint8_t frameTimesCounter = 0;
 
-// Initialises the game's engine and all subsystems
-void Engine::Start(unsigned int width, unsigned int height,
-    const std::string& gameName, Scene* scn) {
-    RenderWindow rw(VideoMode({ width, height }), gameName);
-    Engine::gameName = gameName;
-    window = &rw;
-    Renderer::Initialise(rw);
-    Physics::Initialise();
-    ChangeScene(scn);
-
-    while (rw.isOpen()) {
-        handleStandardEvents(rw);
-        rw.clear();
-        Update();
-        Render(rw);
-        rw.display();
-    }
-
-    if (activeScene != nullptr) {
-        activeScene->Unload();
-        activeScene = nullptr;
-    }
-
-    rw.close();
-    Physics::Shutdown();
-    // Renderer::shutdown();
-}
-
-// changes the active scene (unloads previous and loads new)
-void Engine::ChangeScene(Scene* s) {
-    cout << "Eng: changing scene: " << s << endl;
-    auto old = activeScene;
-    activeScene = s;
-
-    if (old != nullptr) {
-        old->Unload(); // todo: Unload Async
-    }
-
-    if (!s->isLoaded()) {
-        cout << "Eng: Entering Loading Screen\n";
-        loadingTime = 0;
-        //_activeScene->LoadAsync();
-        activeScene->Load();
-        currentlyLoading = true;
-    }
-}
-
-// Update for the whole engine - calls all other updates
-void Engine::Update() {
-    static sf::Clock clock;
-    float dt = clock.restart().asSeconds();
-    calculateFps(dt);
-
-    // display loading screen if loading
-    if (currentlyLoading) {
-        loadingUpdate(dt, activeScene);
-    }
-    else if (activeScene != nullptr) {  // else update active scene
-        Physics::Update(dt);
-        activeScene->Update(dt);
-    }
-}
-
-// Render for the whole engine, calls all other enders
-void Engine::Render(RenderWindow& window) {
-    if (currentlyLoading) {   // render loading screen if loading 
-        loadingRender();
-    }
-    else if (activeScene != nullptr) { // else render active scene
-        activeScene->Render();
-    }
-
-    Renderer::Render();
-}
-
-// update for loading screen
-void loadingUpdate(float dt, const Scene* const scn) {
-    //  cout << "Eng: Loading Screen\n";
-    if (scn->isLoaded()) {
-        cout << "Eng: Exiting Loading Screen\n";
-        currentlyLoading = false;
-    }
-    else {
-        loadingSpinner += 220.0f * dt;
-        loadingTime += dt;
-    }
-}
-
-// render for loading screen
-void loadingRender() {
-    // cout << "Eng: Loading Screen Render\n";
-    static CircleShape octagon(80, 8);
-    octagon.setOrigin(Vector2f(80, 80));
-    octagon.setRotation(degrees(loadingSpinner));
-    octagon.setPosition(Vcast<float>(Engine::getWindowSize()) * .5f);
-    octagon.setFillColor(Color(255, 255, 255, min(255.f, 40.f * loadingTime)));
-    static Text t("Loading", *Resources::get<sf::Font>("RobotoMono-Regular.ttf"));
-    t.setFillColor(Color(255, 255, 255, min(255.f, 40.f * loadingTime)));
-    t.setPosition(Vcast<float>(Engine::getWindowSize()) * Vector2f(0.4f, 0.3f));
-    Renderer::queue(&t);
-    Renderer::queue(&octagon);
-}
-
 // Calculates fps and displays in title bar
 void Engine::calculateFps(double dt) {
     frametimes[++frameTimesCounter] = dt;
@@ -153,7 +50,110 @@ void handleStandardEvents(RenderWindow& rw) {
     }
 }
 
+// Update for loading screen
+void loadingUpdate(float dt, const Scene* const scn) {
+    //  cout << "Eng: Loading Screen\n";
+    if (scn->isLoaded()) {
+        cout << "Eng: Exiting Loading Screen\n";
+        currentlyLoading = false;
+    }
+    else {
+        loadingSpinner += 220.0f * dt;
+        loadingTime += dt;
+    }
+}
+
+// Render for loading screen
+void loadingRender() {
+    // cout << "Eng: Loading Screen Render\n";
+    static CircleShape octagon(80, 8);
+    octagon.setOrigin(Vector2f(80, 80));
+    octagon.setRotation(degrees(loadingSpinner));
+    octagon.setPosition(Vcast<float>(Engine::getWindowSize()) * .5f);
+    octagon.setFillColor(Color(255, 255, 255, min(255.f, 40.f * loadingTime)));
+    static Text t("Loading", *Resources::get<sf::Font>("RobotoMono-Regular.ttf"));
+    t.setFillColor(Color(255, 255, 255, min(255.f, 40.f * loadingTime)));
+    t.setPosition(Vcast<float>(Engine::getWindowSize()) * Vector2f(0.4f, 0.3f));
+    Renderer::Queue(&t);
+    Renderer::Queue(&octagon);
+}
+
+// Update for the whole engine - calls all other updates
+void Engine::Update() {
+    static sf::Clock clock;
+    float dt = clock.restart().asSeconds();
+    calculateFps(dt);
+
+    // display loading screen if loading
+    if (currentlyLoading) {
+        loadingUpdate(dt, activeScene);
+    }
+    else if (activeScene != nullptr) {  // else update active scene
+        Physics::Update(dt);
+        activeScene->Update(dt);
+    }
+}
+
+// Render for the whole engine, calls all other enders
+void Engine::Render(RenderWindow& window) {
+    if (currentlyLoading) {   // Render loading screen if loading 
+        loadingRender();
+    }
+    else if (activeScene != nullptr) { // else render active scene
+        activeScene->Render();
+    }
+
+    Renderer::Render();
+}
+
+// Initialises the game's engine and all subsystems
+void Engine::Start(unsigned int width, unsigned int height,
+    const std::string& gameName, Scene* scn) {
+    RenderWindow rw(VideoMode({ width, height }), gameName);
+    Engine::gameName = gameName;
+    window = &rw;
+    Renderer::Initialise(rw);
+    Physics::Initialise();
+    ChangeScene(scn);
+
+    while (rw.isOpen()) {
+        handleStandardEvents(rw);
+        rw.clear();
+        Update();
+        Render(rw);
+        rw.display();
+    }
+
+    if (activeScene != nullptr) {
+        activeScene->Unload();
+        activeScene = nullptr;
+    }
+
+    rw.close();
+    Physics::Shutdown();
+    // Renderer::shutdown();
+}
+
 void Engine::setVsync(bool b) { window->setVerticalSyncEnabled(b); }
+
+// Changes the active scene (unloads previous and loads new)
+void Engine::ChangeScene(Scene* s) {
+    cout << "Eng: changing scene: " << s << endl;
+    auto old = activeScene;
+    activeScene = s;
+
+    if (old != nullptr) {
+        old->Unload(); // todo: Unload Async
+    }
+
+    if (!s->isLoaded()) {
+        cout << "Eng: Entering Loading Screen\n";
+        loadingTime = 0;
+        //_activeScene->LoadAsync();
+        activeScene->Load();
+        currentlyLoading = true;
+    }
+}
 
 sf::Vector2u Engine::getWindowSize() { return window->getSize(); }
 

@@ -1,7 +1,7 @@
 #include "scene.h"
 
-using namespace std;
 using namespace sf;
+using namespace std;
 
 // create and add entity to the scene
 shared_ptr<Entity> Scene::makeEntity() {

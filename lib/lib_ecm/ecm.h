@@ -33,7 +33,8 @@ struct EntityManager {
     std::vector<std::shared_ptr<Entity>> list;
     void Update(double dt);
     void Render();
-    std::vector<std::shared_ptr<Entity>> find(const std::string& tag) const;
+    std::vector<std::shared_ptr<Entity>>
+        find(const std::string& tag) const;
     std::vector<std::shared_ptr<Entity>>
         find(const std::vector<std::string>& tags) const;
 };

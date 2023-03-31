@@ -30,4 +30,4 @@ void Renderer::Render() {
 }
 
 // adds a sprite to be rendered
-void Renderer::queue(const sf::Drawable* s) { sprites.push(s); }
+void Renderer::Queue(const sf::Drawable* s) { sprites.push(s); }
