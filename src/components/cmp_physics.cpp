@@ -6,9 +6,9 @@ using namespace sf;
 
 using namespace Physics;
 
-void PhysicsComponent::update(double dt) {
-  _parent->setPosition(invert_height(bv2_to_sv2(_body->GetPosition())));
-  _parent->setRotation((180 / b2_pi) * _body->GetAngle());
+void PhysicsComponent::Update(double dt) {
+  parent->setPosition(invertHeight(boxVecToSfmlVec(_body->GetPosition())));
+  parent->setRotation((180 / b2_pi) * _body->GetAngle());
 }
 
 PhysicsComponent::PhysicsComponent(Entity* p, bool dyn,
@@ -18,16 +18,16 @@ PhysicsComponent::PhysicsComponent(Entity* p, bool dyn,
   b2BodyDef BodyDef;
   // Is Dynamic(moving), or static(Stationary)
   BodyDef.type = _dynamic ? b2_dynamicBody : b2_staticBody;
-  BodyDef.position = sv2_to_bv2(invert_height(p->getPosition()));
+  BodyDef.position = sfmlVecToBoxVec(invertHeight(p->getPosition()));
 
   // Create the body
-  _body = Physics::GetWorld()->CreateBody(&BodyDef);
+  _body = Physics::getWorld()->CreateBody(&BodyDef);
   _body->SetActive(true);
   {
     // Create the fixture shape
     b2PolygonShape Shape;
     // SetAsBox box takes HALF-Widths!
-    Shape.SetAsBox(sv2_to_bv2(size).x * 0.5f, sv2_to_bv2(size).y * 0.5f);
+    Shape.SetAsBox(sfmlVecToBoxVec(size).x * 0.5f, sfmlVecToBoxVec(size).y * 0.5f);
     b2FixtureDef FixtureDef;
     // Fixture properties
     // FixtureDef.density = _dynamic ? 10.f : 0.f;
@@ -72,27 +72,27 @@ void PhysicsComponent::setFriction(float r) { _fixture->SetFriction(r); }
 void PhysicsComponent::setMass(float m) { _fixture->SetDensity(m); }
 
 void PhysicsComponent::teleport(const sf::Vector2f& v) {
-  _body->SetTransform(sv2_to_bv2(invert_height(v)), 0.0f);
+  _body->SetTransform(sfmlVecToBoxVec(invertHeight(v)), 0.0f);
 }
 
 const sf::Vector2f PhysicsComponent::getVelocity() const {
-  return bv2_to_sv2(_body->GetLinearVelocity(), true);
+  return boxVecToSfmlVec(_body->GetLinearVelocity(), true);
 }
 void PhysicsComponent::setVelocity(const sf::Vector2f& v) {
-  _body->SetLinearVelocity(sv2_to_bv2(v, true));
+  _body->SetLinearVelocity(sfmlVecToBoxVec(v, true));
 }
 
 b2Fixture* const PhysicsComponent::getFixture() const { return _fixture; }
 
 PhysicsComponent::~PhysicsComponent() {
-  auto a = Physics::GetWorld();
+  auto a = Physics::getWorld();
   _body->SetActive(false);
-  Physics::GetWorld()->DestroyBody(_body);
+  Physics::getWorld()->DestroyBody(_body);
   // delete _body;
   _body = nullptr;
 }
 
-void PhysicsComponent::render() {}
+void PhysicsComponent::Render() {}
 
 void PhysicsComponent::impulse(const sf::Vector2f& i) {
   auto a = b2Vec2(i.x, i.y * -1.0f);
@@ -114,7 +114,7 @@ bool PhysicsComponent::isTouching(const PhysicsComponent& pc) const {
 bool PhysicsComponent::isTouching(const PhysicsComponent& pc,
                                   b2Contact const* bc) const {
   const auto _otherFixture = pc.getFixture();
-  const auto& w = *Physics::GetWorld();
+  const auto& w = *Physics::getWorld();
   const auto contactList = w.GetContactList();
   const auto clc = w.GetContactCount();
   for (int32 i = 0; i < clc; i++) {

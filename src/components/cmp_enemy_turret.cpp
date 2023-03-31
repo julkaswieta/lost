@@ -6,7 +6,7 @@
 using namespace std;
 using namespace sf;
 
-void EnemyTurretComponent::update(double dt) {
+void EnemyTurretComponent::Update(double dt) {
   _firetime -= dt;
   if (_firetime <= 0.f) {
     fire();
@@ -15,12 +15,12 @@ void EnemyTurretComponent::update(double dt) {
   static float angle = 0.f;
   angle += 1.f * dt;
 
-  _parent->setRotation(180.f + sin(angle) * 45.f);
+  parent->setRotation(180.f + sin(angle) * 45.f);
 }
 
 void EnemyTurretComponent::fire() const {
-  auto bullet = _parent->scene->makeEntity();
-  bullet->setPosition(_parent->getPosition());
+  auto bullet = parent->scene->makeEntity();
+  bullet->setPosition(parent->getPosition());
   bullet->addComponent<HurtComponent>();
   bullet->addComponent<BulletComponent>();
   auto s = bullet->addComponent<ShapeComponent>();
@@ -31,7 +31,7 @@ void EnemyTurretComponent::fire() const {
   auto p = bullet->addComponent<PhysicsComponent>(true, Vector2f(8.f, 8.f));
   p->setRestitution(.4f);
   p->setFriction(.005f);
-  p->impulse(sf::rotate(Vector2f(0, 15.f), -_parent->getRotation()));
+  p->impulse(sf::rotate(Vector2f(0, 15.f), -parent->getRotation()));
 }
 
 EnemyTurretComponent::EnemyTurretComponent(Entity* p)

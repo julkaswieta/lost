@@ -13,7 +13,7 @@ using namespace sf;
 static shared_ptr<Entity> player;
 void Level2Scene::Load() {
   cout << "Scene 2 Load" << endl;
-  ls::loadLevelFile("res/level_2.txt", 40.0f);
+  ls::LoadLevelFile("res/level_2.txt", 40.0f);
   auto ho = Engine::getWindowSize().y - (ls::getHeight() * 40.f);
   ls::setOffset(Vector2f(0, ho));
 
@@ -79,11 +79,11 @@ void Level2Scene::Load() {
   setLoaded(true);
 }
 
-void Level2Scene::UnLoad() {
-  cout << "Scene 2 UnLoad" << endl;
+void Level2Scene::Unload() {
+  cout << "Scene 2 Unload" << endl;
   player.reset();
   ls::Unload();
-  Scene::UnLoad();
+  Scene::Unload();
 }
 
 void Level2Scene::Update(const double& dt) {
@@ -97,6 +97,6 @@ void Level2Scene::Update(const double& dt) {
 }
 
 void Level2Scene::Render() {
-  ls::Render(Engine::GetWindow());
+  ls::Render(Engine::getWindow());
   Scene::Render();
 }

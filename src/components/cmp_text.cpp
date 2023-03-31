@@ -2,9 +2,9 @@
 #include <system_renderer.h>
 #include <system_resources.h>
 
-void TextComponent::update(double dt) {}
+void TextComponent::Update(double dt) {}
 
-void TextComponent::render() { Renderer::queue(&_text); }
+void TextComponent::Render() { Renderer::Queue(&_text); }
 
 TextComponent::TextComponent(Entity* const p, const std::string& str)
     : Component(p), _string(str) {

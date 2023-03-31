@@ -29,9 +29,9 @@ bool PlayerPhysicsComponent::isGrounded() const {
   return false;
 }
 
-void PlayerPhysicsComponent::update(double dt) {
+void PlayerPhysicsComponent::Update(double dt) {
 
-  const auto pos = _parent->getPosition();
+  const auto pos = parent->getPosition();
 
   //Teleport to start if we fall off map.
   if (pos.y > ls::getHeight() * ls::getTileSize()) {
@@ -79,13 +79,13 @@ void PlayerPhysicsComponent::update(double dt) {
   v.y = copysign(min(abs(v.y), _maxVelocity.y), v.y);
   setVelocity(v);
 
-  PhysicsComponent::update(dt);
+  PhysicsComponent::Update(dt);
 }
 
 PlayerPhysicsComponent::PlayerPhysicsComponent(Entity* p,
                                                const Vector2f& size)
     : PhysicsComponent(p, true, size) {
-  _size = sv2_to_bv2(size, true);
+  _size = sfmlVecToBoxVec(size, true);
   _maxVelocity = Vector2f(200.f, 400.f);
   _groundspeed = 30.f;
   _grounded = false;

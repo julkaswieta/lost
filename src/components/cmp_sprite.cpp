@@ -1,9 +1,7 @@
-
 #include "cmp_sprite.h"
 #include "system_renderer.h"
 
 using namespace std;
-
 
 void SpriteComponent::setTexure(std::shared_ptr<sf::Texture> tex)
 {
@@ -15,19 +13,19 @@ void SpriteComponent::setTexure(std::shared_ptr<sf::Texture> tex)
 SpriteComponent::SpriteComponent(Entity* p)
     : Component(p), _sprite(make_shared<sf::Sprite>()) {}
 
-void SpriteComponent::update(double dt) {
-  _sprite->setPosition(_parent->getPosition());
-  _sprite->setRotation(sf::degrees(_parent->getRotation()));
+void SpriteComponent::Update(double dt) {
+  _sprite->setPosition(parent->getPosition());
+  _sprite->setRotation(sf::degrees(parent->getRotation()));
 }
 
-void SpriteComponent::render() { Renderer::queue(_sprite.get()); }
+void SpriteComponent::Render() { Renderer::Queue(_sprite.get()); }
 
-void ShapeComponent::update(double dt) {
-  _shape->setPosition(_parent->getPosition());
-  _shape->setRotation(sf::degrees(_parent->getRotation()));
+void ShapeComponent::Update(double dt) {
+  _shape->setPosition(parent->getPosition());
+  _shape->setRotation(sf::degrees(parent->getRotation()));
 }
 
-void ShapeComponent::render() { Renderer::queue(_shape.get()); }
+void ShapeComponent::Render() { Renderer::Queue(_shape.get()); }
 
 sf::Shape& ShapeComponent::getShape() const { return *_shape; }
 

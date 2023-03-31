@@ -7,15 +7,18 @@ using namespace sf;
 static queue<const Drawable*> sprites;
 static RenderWindow* rw;
 
-void Renderer::initialise(sf::RenderWindow& r) { rw = &r; }
+// initialises the render window
+void Renderer::Initialise(sf::RenderWindow& r) { rw = &r; }
 
-void Renderer::shutdown() {
+// empties the queue of sprites to be rendered
+void Renderer::Shutdown() {
   while (!sprites.empty())
     sprites.pop();
 }
 
-void Renderer::update(const double&) {}
+void Renderer::Update(const double&) {}
 
+// renders all sprites added to the renderer
 void Renderer::Render() {
   if (rw == nullptr) {
     throw("No render window set! ");
@@ -26,4 +29,5 @@ void Renderer::Render() {
   }
 }
 
-void Renderer::queue(const sf::Drawable* s) { sprites.push(s); }
+// adds a sprite to be rendered
+void Renderer::Queue(const sf::Drawable* s) { sprites.push(s); }

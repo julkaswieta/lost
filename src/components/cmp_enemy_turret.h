@@ -8,8 +8,8 @@ protected:
   float _firetime;
 
 public:
-  void update(double dt) override;
-  void render() override {}
+  void Update(double dt) override;
+  void Render() override {}
   explicit EnemyTurretComponent(Entity* p);
   EnemyTurretComponent() = delete;
 };

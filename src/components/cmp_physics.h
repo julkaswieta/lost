@@ -21,8 +21,8 @@ public:
   void setRestitution(float r);
   void setFriction(float r);
   void setMass(float m);
-  void update(double dt) override;
-  void render() override;
+  void Update(double dt) override;
+  void Render() override;
   void impulse(const sf::Vector2f& i);
   void dampen(const sf::Vector2f& s);
   void setVelocity(const sf::Vector2f& v);

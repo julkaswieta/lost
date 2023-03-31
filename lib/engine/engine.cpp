@@ -1,5 +1,4 @@
 #include "engine.h"
-#include "maths.h"
 #include "system_physics.h"
 #include "system_renderer.h"
 #include "system_resources.h"
@@ -10,186 +9,170 @@
 
 using namespace sf;
 using namespace std;
-Scene* Engine::_activeScene = nullptr;
-std::string Engine::_gameName;
 
-static bool loading = false;
-static float loadingspinner = 0.f;
+Scene* Engine::activeScene = nullptr;
+string Engine::gameName;
+static RenderWindow* window;
+
+static bool currentlyLoading = false;
+static float loadingSpinner = 0.f;
 static float loadingTime;
-static RenderWindow* _window;
-
-void Loading_update(float dt, const Scene* const scn) {
-  //  cout << "Eng: Loading Screen\n";
-  if (scn->isLoaded()) {
-    cout << "Eng: Exiting Loading Screen\n";
-    loading = false;
-  } else {
-    loadingspinner += 220.0f * dt;
-    loadingTime += dt;
-  }
-}
-void Loading_render() {
-  // cout << "Eng: Loading Screen Render\n";
-  static CircleShape octagon(80, 8);
-  octagon.setOrigin(Vector2f(80, 80));
-  octagon.setRotation(degrees(loadingspinner));
-  octagon.setPosition(Vcast<float>(Engine::getWindowSize()) * .5f);
-  octagon.setFillColor(Color(255,255,255,min(255.f,40.f*loadingTime)));
-  static Text t("Loading", *Resources::get<sf::Font>("RobotoMono-Regular.ttf"));
-  t.setFillColor(Color(255,255,255,min(255.f,40.f*loadingTime)));
-  t.setPosition(Vcast<float>(Engine::getWindowSize()) * Vector2f(0.4f,0.3f));
-  Renderer::queue(&t);
-  Renderer::queue(&octagon);
-}
 
 float frametimes[256] = {};
-uint8_t ftc = 0;
+uint8_t frameTimesCounter = 0;
 
-void Engine::Update() {
-  static sf::Clock clock;
-  float dt = clock.restart().asSeconds();
-  {
-    frametimes[++ftc] = dt;
-    static string avg = _gameName + " FPS:";
-    if (ftc % 60 == 0) {
-      double davg = 0;
-      for (const auto t : frametimes) {
-        davg += t;
-      }
-      davg = 1.0 / (davg / 255.0);
-      _window->setTitle(avg + toStrDecPt(2, davg));
-    }
-  }
-
-  if (loading) {
-    Loading_update(dt, _activeScene);
-  } else if (_activeScene != nullptr) {
-    Physics::update(dt);
-    _activeScene->Update(dt);
-  }
-}
-
-void Engine::Render(RenderWindow& window) {
-  if (loading) {
-    Loading_render();
-  } else if (_activeScene != nullptr) {
-    _activeScene->Render();
-  }
-
-  Renderer::Render();
-}
-
-void Engine::Start(unsigned int width, unsigned int height,
-                   const std::string& gameName, Scene* scn) {
-  RenderWindow window(VideoMode(Vector2u(width, height)), gameName);
-  _gameName = gameName;
-  _window = &window;
-  Renderer::initialise(window);
-  Physics::initialise();
-  ChangeScene(scn);
-  while (window.isOpen()) {
+// Handle close window reqests etc.
+void handleStandardEvents(RenderWindow& rw) {
     Event event;
-    while (window.pollEvent(event)) {
-      if (event.type == Event::Closed) {
-        window.close();
-      }
+    while (rw.pollEvent(event)) {
+        if (event.type == Event::Closed) {
+            rw.close();
+        }
     }
     if (Keyboard::isKeyPressed(Keyboard::Escape)) {
-      window.close();
+        rw.close();
+    }
+}
+
+// Initialises the game's engine and all subsystems
+void Engine::Start(unsigned int width, unsigned int height,
+    const std::string& gameName, Scene* scn) {
+    RenderWindow rw(VideoMode({ width, height }), gameName);
+    Engine::gameName = gameName;
+    window = &rw;
+    Renderer::Initialise(rw);
+    Physics::Initialise();
+    ChangeScene(scn);
+
+    while (rw.isOpen()) {
+        handleStandardEvents(rw);
+        rw.clear();
+        Update();
+        Render(rw);
+        rw.display();
     }
 
-    window.clear();
-    Update();
-    Render(window);
-    window.display();
-  }
-  if (_activeScene != nullptr) {
-    _activeScene->UnLoad();
-    _activeScene = nullptr;
-  }
-  window.close();
-  Physics::shutdown();
-  // Render::shutdown();
+    if (activeScene != nullptr) {
+        activeScene->Unload();
+        activeScene = nullptr;
+    }
+
+    rw.close();
+    Physics::Shutdown();
+    // Renderer::shutdown();
 }
 
-std::shared_ptr<Entity> Scene::makeEntity() {
-  auto e = make_shared<Entity>(this);
-  ents.list.push_back(e);
-  return std::move(e);
-}
-
-void Engine::setVsync(bool b) { _window->setVerticalSyncEnabled(b); }
-
+// changes the active scene (unloads previous and loads new)
 void Engine::ChangeScene(Scene* s) {
-  cout << "Eng: changing scene: " << s << endl;
-  auto old = _activeScene;
-  _activeScene = s;
+    cout << "Eng: changing scene: " << s << endl;
+    auto old = activeScene;
+    activeScene = s;
 
-  if (old != nullptr) {
-    old->UnLoad(); // todo: Unload Async
-  }
-
-  if (!s->isLoaded()) {
-    cout << "Eng: Entering Loading Screen\n";
-    loadingTime =0;
-    _activeScene->LoadAsync();
-    //_activeScene->Load();
-    loading = true;
-  }
-}
-
-void Scene::Update(const double& dt) { ents.update(dt); }
-
-void Scene::Render() { ents.render(); }
-
-bool Scene::isLoaded() const {
-  {
-    std::lock_guard<std::mutex> lck(_loaded_mtx);
-    // Are we already loading asynchronously?
-    if (_loaded_future.valid() // yes
-        &&                     // Has it finished?
-        _loaded_future.wait_for(chrono::seconds(0)) ==
-            future_status::ready) {
-      // Yes
-      _loaded_future.get();
-      _loaded = true;
+    if (old != nullptr) {
+        old->Unload(); // todo: Unload Async
     }
-    return _loaded;
-  }
-}
-void Scene::setLoaded(bool b) {
-  {
-    std::lock_guard<std::mutex> lck(_loaded_mtx);
-    _loaded = b;
-  }
-}
 
-void Scene::UnLoad() {
-  ents.list.clear();
-  setLoaded(false);
+    if (!s->isLoaded()) {
+        cout << "Eng: Entering Loading Screen\n";
+        loadingTime = 0;
+        //_activeScene->LoadAsync();
+        activeScene->Load();
+        currentlyLoading = true;
+    }
 }
 
-void Scene::LoadAsync() { _loaded_future = std::async(&Scene::Load, this); }
 
-sf::Vector2u Engine::getWindowSize() { return _window->getSize(); }
+// Update for loading screen
+void loadingUpdate(float dt, const Scene* const scn) {
+    //  cout << "Eng: Loading Screen\n";
+    if (scn->isLoaded()) {
+        cout << "Eng: Exiting Loading Screen\n";
+        currentlyLoading = false;
+    }
+    else {
+        loadingSpinner += 220.0f * dt;
+        loadingTime += dt;
+    }
+}
 
-sf::RenderWindow& Engine::GetWindow() { return *_window; }
+// Render for loading screen
+void loadingRender() {
+    // cout << "Eng: Loading Screen Render\n";
+    static CircleShape octagon(80, 8);
+    octagon.setOrigin(Vector2f(80, 80));
+    octagon.setRotation(degrees(loadingSpinner));
+    octagon.setPosition(Vcast<float>(Engine::getWindowSize()) * .5f);
+    octagon.setFillColor(Color(255, 255, 255, min(255.f, 40.f * loadingTime)));
+    static Text t("Loading", *Resources::get<sf::Font>("RobotoMono-Regular.ttf"));
+    t.setFillColor(Color(255, 255, 255, min(255.f, 40.f * loadingTime)));
+    t.setPosition(Vcast<float>(Engine::getWindowSize()) * Vector2f(0.4f, 0.3f));
+    Renderer::Queue(&t);
+    Renderer::Queue(&octagon);
+}
+
+// Update for the whole engine - calls all other updates
+void Engine::Update() {
+    static sf::Clock clock;
+    float dt = clock.restart().asSeconds();
+    calculateFps(dt);
+
+    // display loading screen if loading
+    if (currentlyLoading) {
+        loadingUpdate(dt, activeScene);
+    }
+    else if (activeScene != nullptr) {  // else update active scene
+        Physics::Update(dt);
+        activeScene->Update(dt);
+    }
+}
+
+// Render for the whole engine, calls all other enders
+void Engine::Render(RenderWindow& window) {
+    if (currentlyLoading) {   // Render loading screen if loading 
+        loadingRender();
+    }
+    else if (activeScene != nullptr) { // else render active scene
+        activeScene->Render();
+    }
+
+    Renderer::Render();
+}
+
+// Calculates fps and displays in title bar
+void Engine::calculateFps(double dt) {
+    frametimes[++frameTimesCounter] = dt;
+    static string fpsMessage = gameName + " FPS:";
+    // every 60 frames, calculate the average fps value
+    if (frameTimesCounter % 60 == 0) {
+        double avgDelta = 0;
+        for (const auto t : frametimes) {
+            avgDelta += t;  // sum delta times
+        }
+        avgDelta = 1.0 / (avgDelta / 255.0);
+
+        window->setTitle(fpsMessage + toStrDecPt(2, avgDelta));
+    }
+}
+
+void Engine::setVsync(bool b) { window->setVerticalSyncEnabled(b); }
+
+sf::Vector2u Engine::getWindowSize() { return window->getSize(); }
+
+sf::RenderWindow& Engine::getWindow() { return *window; }
 
 namespace timing {
-// Return time since Epoc
-long long now() {
-  return std::chrono::high_resolution_clock::now()
-      .time_since_epoch()
-      .count();
-}
-// Return time since last() was last called.
-long long last() {
-  auto n = now();
-  static auto then = now();
-  auto dt = n - then;
-  then = n;
-  return dt;
-}
+    // Return time since Epoc
+    long long now() {
+        return std::chrono::high_resolution_clock::now()
+            .time_since_epoch()
+            .count();
+    }
+    // Return time since last() was last called.
+    long long last() {
+        auto n = now();
+        static auto then = now();
+        auto dt = n - then;
+        then = n;
+        return dt;
+    }
 } // namespace timing
-
-Scene::~Scene() { UnLoad(); }

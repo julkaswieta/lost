@@ -5,7 +5,7 @@
 using namespace sf;
 using namespace std;
 
-void ActorMovementComponent::update(double dt) {}
+void ActorMovementComponent::Update(double dt) {}
 
 ActorMovementComponent::ActorMovementComponent(Entity* p)
     : _speed(100.0f), Component(p) {}
@@ -16,9 +16,9 @@ bool ActorMovementComponent::validMove(const sf::Vector2f& pos) {
 }
 
 void ActorMovementComponent::move(const sf::Vector2f& p) {
-  auto pp = _parent->getPosition() + p;
+  auto pp = parent->getPosition() + p;
   if (validMove(pp)) {
-    _parent->setPosition(pp);
+    parent->setPosition(pp);
   }
 }
 

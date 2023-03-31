@@ -12,7 +12,7 @@ static shared_ptr<Entity> player;
 
 void Level3Scene::Load() {
   cout << "Scene 3 Load" << endl;
-  ls::loadLevelFile("res/level_3.txt", 40.0f);
+  ls::LoadLevelFile("res/level_3.txt", 40.0f);
   auto ho = Engine::getWindowSize().y - (ls::getHeight() * 40.f);
   ls::setOffset(Vector2f(0, ho));
 
@@ -49,11 +49,11 @@ void Level3Scene::Load() {
   setLoaded(true);
 }
 
-void Level3Scene::UnLoad() {
-  cout << "Scene 3 UnLoad" << endl;
+void Level3Scene::Unload() {
+  cout << "Scene 3 Unload" << endl;
   player.reset();
   ls::Unload();
-  Scene::UnLoad();
+  Scene::Unload();
 }
 
 
@@ -90,6 +90,6 @@ void Level3Scene::Update(const double& dt) {
 }
 
 void Level3Scene::Render() {
-  ls::Render(Engine::GetWindow());
+  ls::Render(Engine::getWindow());
   Scene::Render();
 }

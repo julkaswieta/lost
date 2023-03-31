@@ -3,15 +3,15 @@
 using namespace std;
 using namespace sf;
 
-void EnemyAIComponent::update(double dt) {
+void EnemyAIComponent::Update(double dt) {
   auto mov = _direction * (float)(dt * _speed);
   mov.x += _direction.x * 16.f;
-  if (!validMove(_parent->getPosition() + mov)) {
+  if (!validMove(parent->getPosition() + mov)) {
     _direction *= -1.f;
   }
 
   move(_direction * (float)(dt * _speed));
-  ActorMovementComponent::update(dt);
+  ActorMovementComponent::Update(dt);
 }
 
 EnemyAIComponent::EnemyAIComponent(Entity* p) : ActorMovementComponent(p) {

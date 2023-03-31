@@ -8,10 +8,10 @@ protected:
   float _speed;
 
 public:
-  void update(double dt) override;
+  void Update(double dt) override;
   void move(const sf::Vector2f&);
   void move(float x, float y);
-  void render() override {}
+  void Render() override {}
   explicit ActorMovementComponent(Entity* p);
   ActorMovementComponent() = delete;
 };

@@ -8,8 +8,8 @@ protected:
   std::weak_ptr<Entity> _player;
 
 public:
-  void update(double dt) override;
-  void render() override {}
+  void Update(double dt) override;
+  void Render() override {}
   explicit HurtComponent(Entity* p);
   HurtComponent() = delete;
 };
