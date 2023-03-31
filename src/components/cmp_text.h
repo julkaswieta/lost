@@ -16,7 +16,7 @@ public:
   void SetText(const std::string& str);
 
 protected:
-  std::shared_ptr<sf::Font> _font;
-  std::string _string;
-  sf::Text _text;
+  std::shared_ptr<sf::Font> font;
+  std::string string;
+  sf::Text text;
 };

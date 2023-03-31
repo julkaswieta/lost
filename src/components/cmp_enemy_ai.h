@@ -4,7 +4,7 @@
 
 class EnemyAIComponent : public ActorMovementComponent {
 protected:
-  sf::Vector2f _direction;
+  sf::Vector2f direction;
 
 public:
   void Update(double dt) override;

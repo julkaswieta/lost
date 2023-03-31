@@ -9,9 +9,9 @@ using namespace Physics;
 
 bool PlayerPhysicsComponent::isGrounded() const {
   auto touch = getTouching();
-  const auto& pos = _body->GetPosition();
-  const float halfPlrHeigt = _size.y * .5f;
-  const float halfPlrWidth = _size.x * .52f;
+  const auto& pos = body->GetPosition();
+  const float halfPlrHeigt = size.y * .5f;
+  const float halfPlrWidth = size.x * .52f;
   b2WorldManifold manifold;
   for (const auto& contact : touch) {
     contact->GetWorldManifold(&manifold);
@@ -42,11 +42,11 @@ void PlayerPhysicsComponent::Update(double dt) {
       Keyboard::isKeyPressed(Keyboard::Right)) {
     // Moving Either Left or Right
     if (Keyboard::isKeyPressed(Keyboard::Right)) {
-      if (getVelocity().x < _maxVelocity.x)
-        impulse({(float)(dt * _groundspeed), 0});
+      if (getVelocity().x < maxVelocity.x)
+        impulse({(float)(dt * groundspeed), 0});
     } else {
-      if (getVelocity().x > -_maxVelocity.x)
-        impulse({-(float)(dt * _groundspeed), 0});
+      if (getVelocity().x > -maxVelocity.x)
+        impulse({-(float)(dt * groundspeed), 0});
     }
   } else {
     // Dampen X axis movement
@@ -55,8 +55,8 @@ void PlayerPhysicsComponent::Update(double dt) {
 
   // Handle Jump
   if (Keyboard::isKeyPressed(Keyboard::Up)) {
-    _grounded = isGrounded();
-    if (_grounded) {
+    grounded = isGrounded();
+    if (grounded) {
       setVelocity(Vector2f(getVelocity().x, 0.f));
       teleport(Vector2f(pos.x, pos.y - 2.0f));
       impulse(Vector2f(0, -6.f));
@@ -64,9 +64,9 @@ void PlayerPhysicsComponent::Update(double dt) {
   }
 
   //Are we in air?
-  if (!_grounded) {
+  if (!grounded) {
     // Check to see if we have landed yet
-    _grounded = isGrounded();
+    grounded = isGrounded();
     // disable friction while jumping
     setFriction(0.f);
   } else {
@@ -75,22 +75,21 @@ void PlayerPhysicsComponent::Update(double dt) {
 
   // Clamp velocity.
   auto v = getVelocity();
-  v.x = copysign(min(abs(v.x), _maxVelocity.x), v.x);
-  v.y = copysign(min(abs(v.y), _maxVelocity.y), v.y);
+  v.x = copysign(min(abs(v.x), maxVelocity.x), v.x);
+  v.y = copysign(min(abs(v.y), maxVelocity.y), v.y);
   setVelocity(v);
 
   PhysicsComponent::Update(dt);
 }
 
-PlayerPhysicsComponent::PlayerPhysicsComponent(Entity* p,
-                                               const Vector2f& size)
-    : PhysicsComponent(p, true, size) {
-  _size = sfmlVecToBoxVec(size, true);
-  _maxVelocity = Vector2f(200.f, 400.f);
-  _groundspeed = 30.f;
-  _grounded = false;
-  _body->SetSleepingAllowed(false);
-  _body->SetFixedRotation(true);
+PlayerPhysicsComponent::PlayerPhysicsComponent(Entity* p, const Vector2f& s)
+    : PhysicsComponent(p, true, s) {
+  size = sfmlVecToBoxVec(s, true);
+  maxVelocity = Vector2f(200.f, 400.f);
+  groundspeed = 30.f;
+  grounded = false;
+  body->SetSleepingAllowed(false);
+  body->SetFixedRotation(true);
   //Bullet items have higher-res collision detection
-  _body->SetBullet(true);
+  body->SetBullet(true);
 }

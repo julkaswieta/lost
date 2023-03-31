@@ -5,7 +5,7 @@
 class HurtComponent : public Component {
 protected:
   void fire() const;
-  std::weak_ptr<Entity> _player;
+  std::weak_ptr<Entity> player;
 
 public:
   void Update(double dt) override;

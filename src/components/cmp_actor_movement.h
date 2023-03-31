@@ -5,7 +5,7 @@
 class ActorMovementComponent : public Component {
 protected:
   bool validMove(const sf::Vector2f&);
-  float _speed;
+  float speed;
 
 public:
   void Update(double dt) override;

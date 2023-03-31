@@ -4,17 +4,17 @@ using namespace std;
 using namespace sf;
 
 void EnemyAIComponent::Update(double dt) {
-  auto mov = _direction * (float)(dt * _speed);
-  mov.x += _direction.x * 16.f;
+  auto mov = direction * (float)(dt * speed);
+  mov.x += direction.x * 16.f;
   if (!validMove(parent->getPosition() + mov)) {
-    _direction *= -1.f;
+    direction *= -1.f;
   }
 
-  move(_direction * (float)(dt * _speed));
+  move(direction * (float)(dt * speed));
   ActorMovementComponent::Update(dt);
 }
 
 EnemyAIComponent::EnemyAIComponent(Entity* p) : ActorMovementComponent(p) {
-  _direction = Vector2f(1.0f, 0);
-  _speed = 100.0f;
+  direction = Vector2f(1.0f, 0);
+  speed = 100.0f;
 }

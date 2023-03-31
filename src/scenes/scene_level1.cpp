@@ -57,9 +57,8 @@ void Level1Scene::Unload() {
 }
 
 void Level1Scene::Update(const double& dt) {
-
   if (ls::getTileAt(player->getPosition()) == ls::END) {
-    Engine::ChangeScene((Scene*)&level2);
+    Engine::ChangeScene((Scene*)&menu);
   }
   Scene::Update(dt);
 }

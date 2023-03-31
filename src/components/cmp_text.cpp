@@ -4,16 +4,16 @@
 
 void TextComponent::Update(double dt) {}
 
-void TextComponent::Render() { Renderer::Queue(&_text); }
+void TextComponent::Render() { Renderer::Queue(&text); }
 
 TextComponent::TextComponent(Entity* const p, const std::string& str)
-    : Component(p), _string(str) {
-  _text.setString(_string);
-  _font = Resources::get<sf::Font>("RobotoMono-Regular.ttf");
-  _text.setFont(*_font);
+    : Component(p), string(str) {
+  text.setString(string);
+  font = Resources::get<sf::Font>("RobotoMono-Regular.ttf");
+  text.setFont(*font);
 }
 
 void TextComponent::SetText(const std::string& str) {
-  _string = str;
-  _text.setString(_string);
+  string = str;
+  text.setString(string);
 }

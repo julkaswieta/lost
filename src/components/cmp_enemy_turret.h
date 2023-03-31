@@ -5,7 +5,7 @@
 class EnemyTurretComponent : public Component {
 protected:
   void fire() const;
-  float _firetime;
+  float firetime;
 
 public:
   void Update(double dt) override;

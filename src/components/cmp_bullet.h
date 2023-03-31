@@ -4,7 +4,7 @@
 
 class BulletComponent : public Component {
 protected:
-  float _lifetime;
+  float lifetime;
 
 public:
   void Update(double dt) override;

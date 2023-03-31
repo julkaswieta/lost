@@ -6,9 +6,9 @@
 
 class PhysicsComponent : public Component {
 protected:
-  b2Body* _body;
-  const bool _dynamic;
-  b2Fixture* _fixture;
+  b2Body* body;
+  const bool dynamic;
+  b2Fixture* fixture;
 
 public:
   PhysicsComponent(Entity* p, bool dyn, const sf::Vector2f& size);

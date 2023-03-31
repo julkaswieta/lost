@@ -5,31 +5,30 @@ using namespace std;
 
 void SpriteComponent::setTexure(std::shared_ptr<sf::Texture> tex)
 {
-  _texture = tex;
-  _sprite->setTexture(*_texture);
+  texture = tex;
+  sprite->setTexture(*texture);
 }
-
 
 SpriteComponent::SpriteComponent(Entity* p)
-    : Component(p), _sprite(make_shared<sf::Sprite>()) {}
+    : Component(p), sprite(make_shared<sf::Sprite>()) {}
 
 void SpriteComponent::Update(double dt) {
-  _sprite->setPosition(parent->getPosition());
-  _sprite->setRotation(sf::degrees(parent->getRotation()));
+  sprite->setPosition(parent->getPosition());
+  sprite->setRotation(sf::degrees(parent->getRotation()));
 }
 
-void SpriteComponent::Render() { Renderer::Queue(_sprite.get()); }
+void SpriteComponent::Render() { Renderer::Queue(sprite.get()); }
 
 void ShapeComponent::Update(double dt) {
-  _shape->setPosition(parent->getPosition());
-  _shape->setRotation(sf::degrees(parent->getRotation()));
+  shape->setPosition(parent->getPosition());
+  shape->setRotation(sf::degrees(parent->getRotation()));
 }
 
-void ShapeComponent::Render() { Renderer::Queue(_shape.get()); }
+void ShapeComponent::Render() { Renderer::Queue(shape.get()); }
 
-sf::Shape& ShapeComponent::getShape() const { return *_shape; }
+sf::Shape& ShapeComponent::getShape() const { return *shape; }
 
 ShapeComponent::ShapeComponent(Entity* p)
-    : Component(p), _shape(make_shared<sf::CircleShape>()) {}
+    : Component(p), shape(make_shared<sf::CircleShape>()) {}
 
-sf::Sprite& SpriteComponent::getSprite() const { return *_sprite; }
+sf::Sprite& SpriteComponent::getSprite() const { return *sprite; }

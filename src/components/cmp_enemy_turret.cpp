@@ -7,10 +7,10 @@ using namespace std;
 using namespace sf;
 
 void EnemyTurretComponent::Update(double dt) {
-  _firetime -= dt;
-  if (_firetime <= 0.f) {
+  firetime -= dt;
+  if (firetime <= 0.f) {
     fire();
-    _firetime = 1.f;
+    firetime = 1.f;
   }
   static float angle = 0.f;
   angle += 1.f * dt;
@@ -35,4 +35,4 @@ void EnemyTurretComponent::fire() const {
 }
 
 EnemyTurretComponent::EnemyTurretComponent(Entity* p)
-    : Component(p), _firetime(2.f) {}
+    : Component(p), firetime(2.f) {}

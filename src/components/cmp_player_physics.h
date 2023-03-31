@@ -4,10 +4,10 @@
 
 class PlayerPhysicsComponent : public PhysicsComponent {
 protected:
-  b2Vec2 _size;
-  sf::Vector2f _maxVelocity;
-  bool _grounded;
-  float _groundspeed;
+  b2Vec2 size;
+  sf::Vector2f maxVelocity;
+  bool grounded;
+  float groundspeed;
 
   bool isGrounded() const;
 
