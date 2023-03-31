@@ -8,7 +8,6 @@ Entity::Entity(Scene* const s)
     : position({0, 0}), rotation(0), alive(true), visible(true),
       scene(s), forDeletion(false) {}
 
-
 void Entity::Update(double dt) {
     if (!alive) {
         return;

@@ -21,6 +21,22 @@ static float loadingTime;
 float frametimes[256] = {};
 uint8_t frameTimesCounter = 0;
 
+// Calculates fps and displays in title bar
+void Engine::calculateFps(double dt) {
+    frametimes[++frameTimesCounter] = dt;
+    static string fpsMessage = gameName + " FPS:";
+    // every 60 frames, calculate the average fps value
+    if (frameTimesCounter % 60 == 0) {
+        double avgDelta = 0;
+        for (const auto t : frametimes) {
+            avgDelta += t;  // sum delta times
+        }
+        avgDelta = 1.0 / (avgDelta / 255.0);
+
+        window->setTitle(fpsMessage + toStrDecPt(2, avgDelta));
+    }
+}
+
 // Handle close window reqests etc.
 void handleStandardEvents(RenderWindow& rw) {
     Event event;
@@ -33,54 +49,6 @@ void handleStandardEvents(RenderWindow& rw) {
         rw.close();
     }
 }
-
-// Initialises the game's engine and all subsystems
-void Engine::Start(unsigned int width, unsigned int height,
-    const std::string& gameName, Scene* scn) {
-    RenderWindow rw(VideoMode({ width, height }), gameName);
-    Engine::gameName = gameName;
-    window = &rw;
-    Renderer::Initialise(rw);
-    Physics::Initialise();
-    ChangeScene(scn);
-
-    while (rw.isOpen()) {
-        handleStandardEvents(rw);
-        rw.clear();
-        Update();
-        Render(rw);
-        rw.display();
-    }
-
-    if (activeScene != nullptr) {
-        activeScene->Unload();
-        activeScene = nullptr;
-    }
-
-    rw.close();
-    Physics::Shutdown();
-    // Renderer::shutdown();
-}
-
-// changes the active scene (unloads previous and loads new)
-void Engine::ChangeScene(Scene* s) {
-    cout << "Eng: changing scene: " << s << endl;
-    auto old = activeScene;
-    activeScene = s;
-
-    if (old != nullptr) {
-        old->Unload(); // todo: Unload Async
-    }
-
-    if (!s->isLoaded()) {
-        cout << "Eng: Entering Loading Screen\n";
-        loadingTime = 0;
-        //_activeScene->LoadAsync();
-        activeScene->Load();
-        currentlyLoading = true;
-    }
-}
-
 
 // Update for loading screen
 void loadingUpdate(float dt, const Scene* const scn) {
@@ -138,23 +106,54 @@ void Engine::Render(RenderWindow& window) {
     Renderer::Render();
 }
 
-// Calculates fps and displays in title bar
-void Engine::calculateFps(double dt) {
-    frametimes[++frameTimesCounter] = dt;
-    static string fpsMessage = gameName + " FPS:";
-    // every 60 frames, calculate the average fps value
-    if (frameTimesCounter % 60 == 0) {
-        double avgDelta = 0;
-        for (const auto t : frametimes) {
-            avgDelta += t;  // sum delta times
-        }
-        avgDelta = 1.0 / (avgDelta / 255.0);
+// Initialises the game's engine and all subsystems
+void Engine::Start(unsigned int width, unsigned int height,
+    const std::string& gameName, Scene* scn) {
+    RenderWindow rw(VideoMode({ width, height }), gameName);
+    Engine::gameName = gameName;
+    window = &rw;
+    Renderer::Initialise(rw);
+    Physics::Initialise();
+    ChangeScene(scn);
 
-        window->setTitle(fpsMessage + toStrDecPt(2, avgDelta));
+    while (rw.isOpen()) {
+        handleStandardEvents(rw);
+        rw.clear();
+        Update();
+        Render(rw);
+        rw.display();
     }
+
+    if (activeScene != nullptr) {
+        activeScene->Unload();
+        activeScene = nullptr;
+    }
+
+    rw.close();
+    Physics::Shutdown();
+    // Renderer::shutdown();
 }
 
 void Engine::setVsync(bool b) { window->setVerticalSyncEnabled(b); }
+
+// Changes the active scene (unloads previous and loads new)
+void Engine::ChangeScene(Scene* s) {
+    cout << "Eng: changing scene: " << s << endl;
+    auto old = activeScene;
+    activeScene = s;
+
+    if (old != nullptr) {
+        old->Unload(); // todo: Unload Async
+    }
+
+    if (!s->isLoaded()) {
+        cout << "Eng: Entering Loading Screen\n";
+        loadingTime = 0;
+        //_activeScene->LoadAsync();
+        activeScene->Load();
+        currentlyLoading = true;
+    }
+}
 
 sf::Vector2u Engine::getWindowSize() { return window->getSize(); }
 
