@@ -1,7 +1,7 @@
 #pragma once
 
 #include <SFML/Graphics.hpp>
-#include "../lib_maths/maths.h"
+#include <maths.h>
 #include <memory>
 #include <string>
 #include <vector>
@@ -11,9 +11,9 @@
 
 class LevelSystem {
 public:
-    static void LoadLevelFile(const std::string&, float tileSize = 100.0f);
-    static void Unload();
-    static void Render(sf::RenderWindow& window);
+    static void loadLevelFile(const std::string&, float tileSize = 100.0f);
+    static void unload();
+    static void render(sf::RenderWindow& window);
 
     typedef unsigned char Tile;
 
@@ -51,21 +51,20 @@ public:
     static float getTileSize();
 
 protected:
-    static std::unique_ptr<Tile[]> tiles;
-    static size_t width;
-    static size_t height;
-    static sf::Vector2f offset;
+    static std::unique_ptr<Tile[]> _tiles;
+    static size_t _width;
+    static size_t _height;
+    static sf::Vector2f _offset;
 
-    static std::vector<std::unique_ptr<sf::RectangleShape>> sprites;
+    static std::vector<std::unique_ptr<sf::RectangleShape>> _sprites;
 
     static void buildSprites(bool optimise = true);
 
-    static float TILE_SIZE; // for rendering
-    static std::map<Tile, sf::Color> colours;
+    static float _tileSize; // for rendering
+    static std::map<Tile, sf::Color> _colours;
 
 private:
     LevelSystem() = delete;
+
     ~LevelSystem() = delete;
-    
-    static void readInLevelFile(const std::string& path, std::string& buffer);
 };
