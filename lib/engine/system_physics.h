@@ -4,16 +4,16 @@
 #include <SFML/System/Vector2.hpp>
 
 namespace Physics {
-void initialise();
-void shutdown();
-void update(const double&);
+	void Initialise();
+	void Shutdown();
+	void Update(const double&);
 
-std::shared_ptr<b2World> GetWorld();
+	std::shared_ptr<b2World> getWorld();
 
-const float physics_scale = 30.0f;
-const float physics_scale_inv = 1.0f / physics_scale;
+	const float PHYSICS_SCALE = 30.0f;
+	const float PHYSICS_SCALE_INV = 1.0f / PHYSICS_SCALE;
 
-const sf::Vector2f bv2_to_sv2(const b2Vec2& in, bool scale = true);
-const b2Vec2 sv2_to_bv2(const sf::Vector2f& in, bool scale = true);
-const sf::Vector2f invert_height(const sf::Vector2f& in);
+	const sf::Vector2f boxVecToSfmlVec(const b2Vec2& in, bool scale = true);
+	const b2Vec2 sfmlVecToBoxVec(const sf::Vector2f& in, bool scale = true);
+	const sf::Vector2f invertHeight(const sf::Vector2f& in);
 } // namespace Physics

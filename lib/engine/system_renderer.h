@@ -1,16 +1,15 @@
 #pragma once
 
 #include <SFML/Graphics.hpp>
-//#include "cmp_sprite.h"
 
 namespace Renderer {
-void initialise(sf::RenderWindow&);
+	void Initialise(sf::RenderWindow&);
 
-void shutdown();
+	void Shutdown();
 
-void update(const double&);
+	void Update(const double&);
 
-void queue(const sf::Drawable* s);
+	void Queue(const sf::Drawable* s);
 
-void render();
+	void Render();
 }; // namespace Renderer
