@@ -15,14 +15,14 @@ namespace Physics {
         world.reset(new b2World(gravity));
     }
 
-    // Clears and resets the world
-    void Shutdown() { 
-        world.reset(); 
-    }
-
     // Steps all bodies in the world
     void Update(const double& dt) {
         world->Step((float)dt, velocityIterations, positionIterations);
+    }
+
+    // Clears and resets the world
+    void Shutdown() {
+        world.reset();
     }
 
     // returns the world object

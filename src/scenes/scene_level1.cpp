@@ -13,7 +13,7 @@ static shared_ptr<Entity> player;
 
 void Level1Scene::Load() {
   cout << " Scene 1 Load" << endl;
-  ls::loadLevelFile("res/level_1.txt", 40.0f);
+  ls::LoadLevelFile("res/level_1.txt", 40.0f);
 
   auto ho = Engine::getWindowSize().y - (ls::getHeight() * 40.f);
   ls::setOffset(Vector2f(0, ho));
@@ -42,8 +42,8 @@ void Level1Scene::Load() {
     }
   }
 
-  //Simulate long loading times
-  std::this_thread::sleep_for(std::chrono::milliseconds(3000));
+  //Simulate long loading times tp check loading screen works
+  //std::this_thread::sleep_for(std::chrono::milliseconds(3000));
   cout << " Scene 1 Load Done" << endl;
 
   setLoaded(true);
@@ -52,7 +52,7 @@ void Level1Scene::Load() {
 void Level1Scene::Unload() {
   cout << "Scene 1 Unload" << endl;
   player.reset();
-  ls::unload();
+  ls::Unload();
   Scene::Unload();
 }
 
@@ -64,6 +64,6 @@ void Level1Scene::Update(const double& dt) {
 }
 
 void Level1Scene::Render() {
-  ls::render(Engine::getWindow());
+  ls::Render(Engine::getWindow());
   Scene::Render();
 }

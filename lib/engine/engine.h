@@ -20,6 +20,7 @@ private:
     static void Update();
     static void Render(sf::RenderWindow& window);
     static void calculateFps(double dt);
+    static void handleStandardEvents(sf::RenderWindow& rw);
 };
 
 namespace timing {
@@ -28,3 +29,8 @@ namespace timing {
     // Return time since last() was last called.
     long long last();
 } // namespace timing
+
+namespace loading {
+    void loadingUpdate(float dt, const Scene* const scn);
+    void loadingRender();
+}

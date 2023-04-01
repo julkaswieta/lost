@@ -21,6 +21,6 @@ protected:
 	void setLoaded(bool);
 private:
 	mutable bool loaded;
-	mutable std::future<void> loaded_future;
-	mutable std::mutex loaded_mutex;
+	mutable std::future<void> loadedFuture;
+	mutable std::mutex loadedMutex;
 };

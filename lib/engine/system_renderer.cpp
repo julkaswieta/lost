@@ -10,12 +10,6 @@ static RenderWindow* rw;
 // initialises the render window
 void Renderer::Initialise(sf::RenderWindow& r) { rw = &r; }
 
-// empties the queue of sprites to be rendered
-void Renderer::Shutdown() {
-  while (!sprites.empty())
-    sprites.pop();
-}
-
 void Renderer::Update(const double&) {}
 
 // renders all sprites added to the renderer
@@ -31,3 +25,9 @@ void Renderer::Render() {
 
 // adds a sprite to be rendered
 void Renderer::Queue(const sf::Drawable* s) { sprites.push(s); }
+
+// empties the queue of sprites to be rendered
+void Renderer::Shutdown() {
+    while (!sprites.empty())
+        sprites.pop();
+}

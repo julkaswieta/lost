@@ -16,14 +16,14 @@ void Scene::Render() { ents.Render(); }
 
 bool Scene::isLoaded() const {
     {
-        std::lock_guard<std::mutex> lck(loaded_mutex);
+        std::lock_guard<std::mutex> lck(loadedMutex);
         // Are we already loading asynchronously?
-        if (loaded_future.valid() // yes
+        if (loadedFuture.valid() // yes
             &&                     // Has it finished?
-            loaded_future.wait_for(chrono::seconds(0)) ==
+            loadedFuture.wait_for(chrono::seconds(0)) ==
             future_status::ready) {
             // Yes
-            loaded_future.get();
+            loadedFuture.get();
             loaded = true;
         }
         return loaded;
@@ -31,7 +31,7 @@ bool Scene::isLoaded() const {
 }
 void Scene::setLoaded(bool b) {
     {
-        std::lock_guard<std::mutex> lck(loaded_mutex);
+        std::lock_guard<std::mutex> lck(loadedMutex);
         loaded = b;
     }
 }
@@ -41,6 +41,6 @@ void Scene::Unload() {
     setLoaded(false);
 }
 
-void Scene::LoadAsync() { loaded_future = std::async(&Scene::Load, this); }
+void Scene::LoadAsync() { loadedFuture = std::async(&Scene::Load, this); }
 
 Scene::~Scene() { Unload(); }
