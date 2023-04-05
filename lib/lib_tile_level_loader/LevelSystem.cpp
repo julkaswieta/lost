@@ -13,7 +13,7 @@ Vector2f LevelSystem::offset(0.0f, 30.0f);
 vector<unique_ptr<RectangleShape>> LevelSystem::sprites;
 
 map<LevelSystem::Tile, Color> LevelSystem::colours{
-    {WALL, Color::White}, {END, Color::Red}
+    {WALL, Color::White}, {END, Color::Green}, {SPIKE, Color::Red}, {COLLECTIBLE, Color::Yellow}
 };
 
 void LevelSystem::readInLevelFile(const string& path, string& buffer) {

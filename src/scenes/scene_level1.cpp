@@ -13,7 +13,7 @@ static shared_ptr<Entity> player;
 
 void Level1Scene::Load() {
   cout << " Scene 1 Load" << endl;
-  ls::LoadLevelFile("res/levels/level_1.txt", 40.0f);
+  ls::LoadLevelFile("res/levels/test_level.txt", 40.0f);
 
   auto ho = Engine::getWindowSize().y - (ls::getHeight() * 40.f);
   ls::setOffset(Vector2f(0, ho));
@@ -23,11 +23,11 @@ void Level1Scene::Load() {
     player = makeEntity();
     player->setPosition(ls::getTilePosition(ls::findTiles(ls::START)[0]));
     auto s = player->addComponent<ShapeComponent>();
-    s->setShape<sf::RectangleShape>(Vector2f(20.f, 30.f));
+    s->setShape<sf::RectangleShape>(Vector2f(40.f, 60.f));
     s->getShape().setFillColor(Color::Magenta);
-    s->getShape().setOrigin(Vector2f(10.f, 15.f));
+    s->getShape().setOrigin(Vector2f(20.f, 30.f));
 
-    player->addComponent<PlayerPhysicsComponent>(Vector2f(20.f, 30.f));
+    player->addComponent<PlayerPhysicsComponent>(Vector2f(40.f, 60.f));
   }
 
   // Add physics colliders to level tiles.
