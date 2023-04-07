@@ -21,3 +21,7 @@ void TextComponent::SetText(const std::string& str) {
 void TextComponent::SetColor(const sf::Color col) {
     text.setFillColor(col);
 }
+
+sf::Text& TextComponent::getText() {
+    return text;
+}
