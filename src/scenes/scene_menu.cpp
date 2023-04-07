@@ -55,15 +55,25 @@ void MenuScene::moveDown() {
     if (selectedOptionIndex == -1) {
         selectedOptionIndex = 0;
         options[selectedOptionIndex]->getComponents<TextComponent>()[0]->getText().setFillColor(Color::Red);
-        std::this_thread::sleep_for(std::chrono::milliseconds(120));
+        std::this_thread::sleep_for(std::chrono::milliseconds(120)); // these are here so the cursor does not move too fast
     }
     else if (selectedOptionIndex + 1 < OPTIONS_COUNT) {
         options[selectedOptionIndex]->getComponents<TextComponent>()[0]->getText().setFillColor(Color::White);
         selectedOptionIndex++;
         options[selectedOptionIndex]->getComponents<TextComponent>()[0]->getText().setFillColor(Color::Red);
-        std::this_thread::sleep_for(std::chrono::milliseconds(120));
+        std::this_thread::sleep_for(std::chrono::milliseconds(120)); // these are here so the cursor does not move too fast
     }
 }
 
 void MenuScene::executeSelectedOption() {
+    switch (selectedOptionIndex) {
+    case 0:
+        Engine::ChangeScene(&level1);
+        break;
+    case 1:
+        //Engine::ChangeScene(&settings);
+        break;
+    case 2:
+        Engine::getWindow().close();
+    }
 }
