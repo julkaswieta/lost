@@ -122,9 +122,6 @@ void Engine::handleStandardEvents(RenderWindow& rw) {
             rw.close();
         }
     }
-    if (Keyboard::isKeyPressed(Keyboard::Escape)) {
-        rw.close();
-    }
 }
 
 void Engine::setVsync(bool b) { window->setVerticalSyncEnabled(b); }

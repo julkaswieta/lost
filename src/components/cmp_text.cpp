@@ -13,7 +13,11 @@ TextComponent::TextComponent(Entity* const p, const std::string& str)
   text.setFont(*font);
 }
 
-void TextComponent::SetText(const std::string& str) {
+sf::Text& TextComponent::getText() {
+    return text;
+}
+
+void TextComponent::setText(const std::string& str) {
   string = str;
   text.setString(string);
 }
