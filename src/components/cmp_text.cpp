@@ -8,12 +8,16 @@ void TextComponent::Render() { Renderer::Queue(&text); }
 
 TextComponent::TextComponent(Entity* const p, const std::string& str)
     : Component(p), string(str) {
-  text.setString(string);
-  font = Resources::get<sf::Font>("RobotoMono-Regular.ttf");
-  text.setFont(*font);
+    text.setString(string);
+    font = Resources::get<sf::Font>("RobotoMono-Regular.ttf");
+    text.setFont(*font);
 }
 
 void TextComponent::SetText(const std::string& str) {
-  string = str;
-  text.setString(string);
+    string = str;
+    text.setString(string);
+}
+
+void TextComponent::SetColor(const sf::Color col) {
+    text.setFillColor(col);
 }
