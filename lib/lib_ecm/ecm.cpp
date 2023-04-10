@@ -49,9 +49,9 @@ void Entity::setAlive(bool _alive) { Entity::alive = _alive; }
 bool Entity::isForDeletion() const { return forDeletion; }
 
 void Entity::setForDelete() {
-  forDeletion = true;
-  alive = false;
-  visible = false;
+    forDeletion = true;
+    alive = false;
+    visible = false;
 }
 
 bool Entity::isVisible() const { return visible; }

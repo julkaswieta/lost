@@ -4,12 +4,12 @@
 
 class EnemyAIComponent : public ActorMovementComponent {
 protected:
-  sf::Vector2f direction;
+	sf::Vector2f direction;
 
 public:
-  void Update(double dt) override;
+	void Update(double dt) override;
 
-  explicit EnemyAIComponent(Entity* p);
+	explicit EnemyAIComponent(Entity* p);
 
-  EnemyAIComponent() = delete;
+	EnemyAIComponent() = delete;
 };

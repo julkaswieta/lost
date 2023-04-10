@@ -14,13 +14,13 @@ void Renderer::Update(const double&) {}
 
 // renders all sprites added to the renderer
 void Renderer::Render() {
-  if (rw == nullptr) {
-    throw("No render window set! ");
-  }
-  while (!sprites.empty()) {
-    rw->draw(*sprites.front());
-    sprites.pop();
-  }
+    if (rw == nullptr) {
+        throw("No render window set! ");
+    }
+    while (!sprites.empty()) {
+        rw->draw(*sprites.front());
+        sprites.pop();
+    }
 }
 
 // adds a sprite to be rendered

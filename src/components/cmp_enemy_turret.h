@@ -4,12 +4,12 @@
 
 class EnemyTurretComponent : public Component {
 protected:
-  void fire() const;
-  float firetime;
+	void fire() const;
+	float firetime;
 
 public:
-  void Update(double dt) override;
-  void Render() override {}
-  explicit EnemyTurretComponent(Entity* p);
-  EnemyTurretComponent() = delete;
+	void Update(double dt) override;
+	void Render() override {}
+	explicit EnemyTurretComponent(Entity* p);
+	EnemyTurretComponent() = delete;
 };

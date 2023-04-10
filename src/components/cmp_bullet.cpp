@@ -3,10 +3,10 @@ using namespace std;
 using namespace sf;
 
 void BulletComponent::Update(double dt) {
-  lifetime -= dt;
-  if (lifetime <= 0.f) {
-    parent->setForDelete();
-  }
+    lifetime -= dt;
+    if (lifetime <= 0.f) {
+        parent->setForDelete();
+    }
 }
 
 BulletComponent::BulletComponent(Entity* p, float lifetime)
