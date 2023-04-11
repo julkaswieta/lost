@@ -6,7 +6,7 @@ using namespace std;
 
 MenuScene menu;
 Level1Scene level1;
-
+SettingsScene settings;
 
 int main()
 {
