@@ -6,11 +6,12 @@ class PlayerPhysicsComponent : public PhysicsComponent {
 protected:
 	b2Vec2 size;
 	sf::Vector2f maxVelocity;
+	float groundspeed;
+	float timeInAir = 0.f;
 	bool grounded;
 	bool firstJump;
 	bool secondJump;
-	float groundspeed;
-	float timeInAir = 0.f;
+	bool jumpButtonReleased;
 
 	bool isGrounded() const;
 	
