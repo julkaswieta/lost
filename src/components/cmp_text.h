@@ -16,6 +16,7 @@ public:
 	void SetColor(const sf::Color col);
 	sf::Text& getText();
 
+
 protected:
 	std::shared_ptr<sf::Font> font;
 	std::string string;

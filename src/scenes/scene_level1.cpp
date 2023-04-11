@@ -42,7 +42,6 @@ void Level1Scene::Load() {
             e->addComponent<PhysicsComponent>(false, Vector2f(40.f, 40.f));
         }
     }
-
     // Add debug text.
     {
         auto txt = makeEntity();
