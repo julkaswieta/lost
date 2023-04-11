@@ -15,8 +15,7 @@ private:
 	const int TOP_MARGIN = 100;
 
 	std::vector<std::shared_ptr<Entity>> options;
-	int selectedOptionIndex = -1;
-	bool cursorMoved = false;
+	int selectedOptionIndex;
 
 	void moveUp();
 	void moveDown();

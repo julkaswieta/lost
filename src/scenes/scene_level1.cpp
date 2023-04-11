@@ -49,7 +49,6 @@ void Level1Scene::Load() {
         auto t = txt->addComponent<TextComponent>("debug");
         t->SetColor(Color::Black);
     }
-
     //Simulate long loading times tp check loading screen works
     //std::this_thread::sleep_for(std::chrono::milliseconds(3000));
     cout << " Scene 1 Load Done" << endl;
@@ -65,6 +64,9 @@ void Level1Scene::Unload() {
 }
 
 void Level1Scene::Update(const double& dt) {
+    if (Keyboard::isKeyPressed(Keyboard::Escape)) {
+        //Engine::ChangeScene(())
+    }
     if (ls::getTileAt(player->getPosition()) == ls::END) {
         Engine::ChangeScene((Scene*)&menu);
     }
