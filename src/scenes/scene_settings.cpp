@@ -29,7 +29,7 @@ void SettingsScene::Update(const double& dt) {
     if (Keyboard::isKeyPressed(Controls::MenuDown)) {
         moveDown();
     }
-    if (Keyboard::isKeyPressed(Controls::MenuDown)) {
+    if (Keyboard::isKeyPressed(Controls::MenuUp)) {
         moveUp();
     }
     if (Keyboard::isKeyPressed(Controls::MenuSelect)) {
@@ -69,7 +69,7 @@ void SettingsScene::executeSelectedOption() {
         //Engine::ChangeScene(&volume);
         break;
     case 1:
-        //Engine::ChangeScene(&controls);
+        Engine::ChangeScene(&controls);
         break;
     case 2:
         //Engine::ChangeScene(&resolution);
