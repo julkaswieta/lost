@@ -22,16 +22,17 @@ void MenuScene::Load() {
                 options.push_back(menuOption);
         }
     }
+    selectedOptionIndex = -1;
     setLoaded(true);
 }
 
 void MenuScene::Update(const double& dt) {
     // cout << "Menu Update "<<dt<<"\n";
-    if (Keyboard::isKeyPressed(Keyboard::Down) && !cursorMoved) {
+    if (Keyboard::isKeyPressed(Keyboard::Down)) {
         moveDown();
         
     }
-    if (Keyboard::isKeyPressed(Keyboard::Up) && !cursorMoved) {
+    if (Keyboard::isKeyPressed(Keyboard::Up)) {
         moveUp();
         
     }
@@ -52,6 +53,7 @@ void MenuScene::moveUp() {
 }
 
 void MenuScene::moveDown() {
+    // handle initial state when nothing is selected
     if (selectedOptionIndex == -1) {
         selectedOptionIndex = 0;
         options[selectedOptionIndex]->getComponents<TextComponent>()[0]->getText().setFillColor(Color::Red);
