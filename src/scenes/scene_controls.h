@@ -11,6 +11,7 @@ public:
 
 private:
 	const int OPTIONS_COUNT = 8;
+	const int SPACING = 50;
 	const int TOP_MARGIN = 50;
 	const int LEFT_MARGIN = 200;
 
