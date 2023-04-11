@@ -3,12 +3,12 @@
 #include "engine.h"
 #include "SFML/Window/Keyboard.hpp"
 #include "../game.h"
+#include "../controls.h"
 
 using namespace std;
 using namespace sf;
 
 void SettingsScene::Load() {
-	cout << "Settings Load\n";
     {
         string optionsText[5] = { "Settings", "Volume", "Controls", "Resolution", "Exit"};
         for (int i = 0; i < 5; ++i) {
@@ -26,13 +26,13 @@ void SettingsScene::Load() {
 }
 
 void SettingsScene::Update(const double& dt) {
-    if (Keyboard::isKeyPressed(Keyboard::Down)) {
+    if (Keyboard::isKeyPressed(Controls::MenuDown)) {
         moveDown();
     }
-    if (Keyboard::isKeyPressed(Keyboard::Up)) {
+    if (Keyboard::isKeyPressed(Controls::MenuDown)) {
         moveUp();
     }
-    if (Keyboard::isKeyPressed(Keyboard::Enter)) {
+    if (Keyboard::isKeyPressed(Controls::MenuSelect)) {
         executeSelectedOption();
     }
 
@@ -44,7 +44,6 @@ void SettingsScene::moveUp() {
         options[selectedOptionIndex]->getComponents<TextComponent>()[0]->SetColor(Color::White);
         selectedOptionIndex--;
         options[selectedOptionIndex]->getComponents<TextComponent>()[0]->SetColor(Color::Red);
-        cout << (string)options[selectedOptionIndex]->getComponents<TextComponent>()[0]->getText().getString() + "\n";
         std::this_thread::sleep_for(std::chrono::milliseconds(150)); // these are here so the cursor does not move too fast
     }
 }
@@ -54,14 +53,12 @@ void SettingsScene::moveDown() {
     if (selectedOptionIndex == -1) {
         selectedOptionIndex = 0;
         options[selectedOptionIndex]->getComponents<TextComponent>()[0]->SetColor(Color::Red);
-        cout << (string)options[selectedOptionIndex]->getComponents<TextComponent>()[0]->getText().getString() + "\n";
         std::this_thread::sleep_for(std::chrono::milliseconds(150)); // these are here so the cursor does not move too fast
     }
     else if (selectedOptionIndex + 1 < OPTIONS_COUNT) {
         options[selectedOptionIndex]->getComponents<TextComponent>()[0]->SetColor(Color::White);
         selectedOptionIndex++;
         options[selectedOptionIndex]->getComponents<TextComponent>()[0]->SetColor(Color::Red);
-        cout << (string)options[selectedOptionIndex]->getComponents<TextComponent>()[0]->getText().getString() + "\n";
         std::this_thread::sleep_for(std::chrono::milliseconds(150)); // these are here so the cursor does not move too fast
     }
 }

@@ -6,6 +6,7 @@
 #include <LevelSystem.h>
 #include <iostream>
 #include <thread>
+#include "../controls.h"
 
 using namespace std;
 using namespace sf;
@@ -63,7 +64,7 @@ void Level1Scene::Unload() {
 }
 
 void Level1Scene::Update(const double& dt) {
-    if (Keyboard::isKeyPressed(Keyboard::Escape)) {
+    if (Keyboard::isKeyPressed(Controls::Exit)) {
         //Engine::ChangeScene(())
     }
     if (ls::getTileAt(player->getPosition()) == ls::END) {

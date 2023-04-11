@@ -1,4 +1,5 @@
 #pragma once
+#include "SFML/Window/Keyboard.hpp"
 
 #include "scenes/scene_menu.h"
 #include "scenes/scene_level1.h"
