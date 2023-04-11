@@ -2,6 +2,7 @@
 #include "system_physics.h"
 #include <LevelSystem.h>
 #include <SFML/Window/Keyboard.hpp>
+#include "../controls.h"
 
 using namespace std;
 using namespace sf;
@@ -37,23 +38,24 @@ void PlayerPhysicsComponent::Update(double dt) {
         teleport(ls::getTilePosition(ls::findTiles(ls::START)[0]));
     }
 
-    if (Keyboard::isKeyPressed(Keyboard::Left) ||
-        Keyboard::isKeyPressed(Keyboard::Right)) {
+    if (Keyboard::isKeyPressed(Controls::MoveLeft) ||
+        Keyboard::isKeyPressed(Controls::MoveRight)) {
         // Moving Either Left or Right
-        if (Keyboard::isKeyPressed(Keyboard::Right)) {
+        if (Keyboard::isKeyPressed(Controls::MoveRight)) {
             if (getVelocity().x < maxVelocity.x)
             impulse({(float)(dt * groundspeed), 0});
         } else {
             if (getVelocity().x > -maxVelocity.x)
             impulse({-(float)(dt * groundspeed), 0});
         }
+
     } else {
         // Dampen X axis movement
         dampen({0.9f, 1.0f});
     }
 
     // Handle Jump
-    if (Keyboard::isKeyPressed(Keyboard::Up)) {
+    if (Keyboard::isKeyPressed(Controls::Jump)) {
         grounded = isGrounded();
 
         if (grounded) {
