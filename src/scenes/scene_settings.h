@@ -1,17 +1,16 @@
 #pragma once
+#include "scene.h"
 
-#include "engine.h"
-
-class MenuScene : public Scene {
+class SettingsScene : public Scene {
 public:
-	MenuScene() = default;
-	~MenuScene() override = default;
+	SettingsScene() = default;
+	~SettingsScene() override = default;
 	void Load() override;
 	void Unload() override;
 	void Update(const double& dt) override;
 
 private:
-	const int OPTIONS_COUNT = 3;
+	const int OPTIONS_COUNT = 4;
 	const int TOP_MARGIN = 100;
 
 	std::vector<std::shared_ptr<Entity>> options;
