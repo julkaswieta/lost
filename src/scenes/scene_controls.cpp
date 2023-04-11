@@ -31,28 +31,28 @@ Vector2f ControlsScene::positionOptionInWindow(int i) {
     switch (i) {
     // top centered options
     case 0:
-        return Vector2f(Engine::getWindowSize().x * 0.5f, TOP_MARGIN + ((i + 1) * 50));
+        return Vector2f(Engine::getWindowSize().x * 0.5f, TOP_MARGIN + ((i + 1) * SPACING));
     case 1:
-        return Vector2f(Engine::getWindowSize().x * 0.5f - LEFT_MARGIN, TOP_MARGIN + ((i + 1) * 50));
+        return Vector2f(Engine::getWindowSize().x * 0.5f - LEFT_MARGIN, TOP_MARGIN + ((i + 1) * SPACING));
     case 2:
-        return Vector2f(Engine::getWindowSize().x * 0.5f + LEFT_MARGIN, TOP_MARGIN + ((i) * 50));
+        return Vector2f(Engine::getWindowSize().x * 0.5f + LEFT_MARGIN, TOP_MARGIN + ((i) *SPACING));
     // game controls
     case 3:
     case 4:
     case 5:
     case 6:
     case 7:
-        return Vector2f(LEFT_MARGIN, TOP_MARGIN + ((i + 1) * 50));
+        return Vector2f(LEFT_MARGIN, TOP_MARGIN + ((i + 1) * SPACING));
     // menu navigation
     case 8:
     case 9:
     case 10:
     case 11:
-        return Vector2f(Engine::getWindowSize().x - LEFT_MARGIN, TOP_MARGIN + ((i - 4) * 50));
+        return Vector2f(Engine::getWindowSize().x - LEFT_MARGIN, TOP_MARGIN + ((i - 4) * SPACING));
     //bottom centered options
     case 12:
     case 13:
-        return Vector2f(Engine::getWindowSize().x * 0.5f, TOP_MARGIN + ((i - 3) * 50));
+        return Vector2f(Engine::getWindowSize().x * 0.5f, TOP_MARGIN + ((i - 3) * SPACING));
     }
 }
 
