@@ -10,5 +10,5 @@ ControlsScene controls;
 
 int main()
 {
-	Engine::Start(1280, 720, "Lost", &menu);
+	Engine::Start(1280, 720, "Lost", &controls);
 }

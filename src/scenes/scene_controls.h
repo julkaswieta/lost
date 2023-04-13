@@ -10,7 +10,7 @@ public:
 	void Update(const double& dt) override;
 
 private:
-	const int OPTIONS_COUNT = 8;
+	const int ACTIVE_OPTIONS_COUNT = 7;
 	const int SPACING = 50;
 	const int TOP_MARGIN = 50;
 	const int LEFT_MARGIN = 200;
