@@ -43,21 +43,16 @@ void PlayerPhysicsComponent::Update(double dt) {
         // Moving Either Left or Right
         if (Keyboard::isKeyPressed(Controls::MoveRight)) {
             if (getVelocity().x < maxVelocity.x)
-            impulse({(float)(dt * groundspeed), 0});
-        } else {
-            if (getVelocity().x > -maxVelocity.x)
-            impulse({-(float)(dt * groundspeed), 0});
+                impulse({ (float)(dt * groundspeed), 0 });
         }
-
-  if (Keyboard::isKeyPressed(Controls::MoveLeft) ||
-      Keyboard::isKeyPressed(Controls::MoveRight)) {
-    // Moving Either Left or Right
-    if (Keyboard::isKeyPressed(Controls::MoveRight)) {
-      if (getVelocity().x < maxVelocity.x)
-        impulse({(float)(dt * groundspeed), 0});
-    } else {
+        else {
+            if (getVelocity().x > -maxVelocity.x)
+                impulse({ -(float)(dt * groundspeed), 0 });
+        }
+    }
+    else {
         // Dampen X axis movement
-        dampen({0.9f, 1.0f});
+        dampen({ 0.9f, 1.0f });
     }
 
     // Handle Jump
@@ -82,10 +77,11 @@ void PlayerPhysicsComponent::Update(double dt) {
                 secondJump = true;
             }
         }
-    } else {
+    }
+    else {
         jumpButtonReleased = true;
     }
-    
+
     // Check to see if we have landed yet
     grounded = isGrounded();
 
@@ -96,7 +92,8 @@ void PlayerPhysicsComponent::Update(double dt) {
         if (!firstJump && !secondJump && timeInAir > 0.2f) {
             firstJump = true;
         }
-    } else {
+    }
+    else {
         setFriction(0.1f);
         timeInAir = 0.f;
         firstJump = false;
