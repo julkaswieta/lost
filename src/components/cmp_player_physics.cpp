@@ -49,6 +49,12 @@ void PlayerPhysicsComponent::Update(double dt) {
             impulse({-(float)(dt * groundspeed), 0});
         }
 
+  if (Keyboard::isKeyPressed(Controls::MoveLeft) ||
+      Keyboard::isKeyPressed(Controls::MoveRight)) {
+    // Moving Either Left or Right
+    if (Keyboard::isKeyPressed(Controls::MoveRight)) {
+      if (getVelocity().x < maxVelocity.x)
+        impulse({(float)(dt * groundspeed), 0});
     } else {
         // Dampen X axis movement
         dampen({0.9f, 1.0f});
