@@ -118,6 +118,7 @@ PlayerPhysicsComponent::PlayerPhysicsComponent(Entity* p, const Vector2f& s)
     grounded = false;
     firstJump = false;
     secondJump = false;
+    jumpButtonReleased = true;
     body->SetSleepingAllowed(false);
     body->SetFixedRotation(true);
     //Bullet items have higher-res collision detection
