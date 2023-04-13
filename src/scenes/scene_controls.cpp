@@ -3,6 +3,7 @@
 #include "../components/cmp_text.h"
 #include "engine.h"
 #include "../game.h"
+#include "SFML/Window/Event.hpp"
 
 using namespace std;
 using namespace sf;
@@ -19,9 +20,22 @@ void ControlsScene::Load() {
             auto textCmp = menuOption->addComponent<TextComponent>(optionsText[i]);
             textCmp->getText().setOrigin(Vector2(textCmp->getText().getLocalBounds().width * 0.5f, textCmp->getText().getLocalBounds().height * 0.5f));
             textCmp->getText().setPosition(positionOptionInWindow(i));
-            if (i != 0 && i != 3 && (i < 8 || i > 11)) // push only the elements with actions to options (menu navigation currently not remappable)
+            if (i != 0 && i != 3 && (i < 7 || i > 11)) // push only the elements with actions to options (menu navigation currently not remappable)
                 options.push_back(menuOption);
         }
+
+        string remapMessages[2] = { "Press Enter to Remap", "Press selected key to remap this option" };
+        for (int j = 0; j < 2; j++) {
+            auto remapMessage = makeEntity();
+            auto textCmp = remapMessage->addComponent<TextComponent>(remapMessages[j]);
+            remapMessage->setVisible(false);
+            remapMessage->addTag("remap" + to_string(j));
+            textCmp->SetColor(Color::Blue);
+            textCmp->getText().setOrigin(Vector2(textCmp->getText().getLocalBounds().width * 0.5f, textCmp->getText().getLocalBounds().height * 0.5f));
+            textCmp->getText().setPosition(Vector2f(Engine::getWindowSize().x - textCmp->getText().getLocalBounds().width, Engine::getWindowSize().y - textCmp->getText().getLocalBounds().height));
+        }
+        
+
     }
     selectedOptionIndex = -1;
     setLoaded(true);
@@ -82,6 +96,12 @@ void ControlsScene::moveUp() {
         options[selectedOptionIndex]->getComponents<TextComponent>()[0]->SetColor(Color::Red);
         std::this_thread::sleep_for(std::chrono::milliseconds(150)); // these are here so the cursor does not move too fast
     }
+    if (selectedOptionIndex >= 2 && selectedOptionIndex <= 4) {
+        this->ents.find("remap0")[0]->setVisible(true);
+    } else {
+        this->ents.find("remap0")[0]->setVisible(false);
+    }
+    this->ents.find("remap1")[0]->setVisible(false);
 }
 
 void ControlsScene::moveDown() {
@@ -91,26 +111,54 @@ void ControlsScene::moveDown() {
         options[selectedOptionIndex]->getComponents<TextComponent>()[0]->SetColor(Color::Red);
         std::this_thread::sleep_for(std::chrono::milliseconds(150)); // these are here so the cursor does not move too fast
     }
-    else if (selectedOptionIndex + 1 < OPTIONS_COUNT) {
+    else if (selectedOptionIndex + 1 < ACTIVE_OPTIONS_COUNT) {
         options[selectedOptionIndex]->getComponents<TextComponent>()[0]->SetColor(Color::White);
         selectedOptionIndex++;
         options[selectedOptionIndex]->getComponents<TextComponent>()[0]->SetColor(Color::Red);
         std::this_thread::sleep_for(std::chrono::milliseconds(150)); // these are here so the cursor does not move too fast
     }
+    if (selectedOptionIndex >= 2 && selectedOptionIndex <= 4) {
+        this->ents.find("remap0")[0]->setVisible(true);
+    }
+    else {
+        this->ents.find("remap0")[0]->setVisible(false);
+    }
+    this->ents.find("remap1")[0]->setVisible(false);
 }
 
 void ControlsScene::executeSelectedOption() {
     switch (selectedOptionIndex) {
     case 0:
-        //Engine::ChangeScene(&volume);
+        //Keyboard - display keyboard bindings and set keyboard as the play mode
         break;
     case 1:
-        //Engine::ChangeScene(&controls);
+        //Controller - display controller bindings and set controller as play mode
         break;
     case 2:
-        //Engine::ChangeScene(&resolution);
-        break;
+    {
+        // Move left rebind
+        this->ents.find("remap0")[0]->setVisible(false);
+        this->ents.find("remap1")[0]->setVisible(true);
+        RenderWindow& rw = Engine::getWindow();
+        Event event;
+        while (rw.pollEvent(event)) {
+            if (event.type == sf::Event::EventType::KeyPressed) {
+                    Controls::MoveLeft = event.key.code;
+                    break;
+            }
+        }
+    }
+    break;
     case 3:
+        // move right rebind 
+        break;
+    case 4:
+        // jump rebind
+        break;
+    case 5:
+        // restore defaults
+        break;
+    case 6:
         Engine::ChangeScene(&settings);
         break;
     }
