@@ -1,4 +1,5 @@
 #include "scene_level1.h"
+#include "../components/cmp_hurt_player.h"
 #include "../components/cmp_player_physics.h"
 #include "../components/cmp_sprite.h"
 #include "../components/cmp_text.h"
@@ -32,7 +33,7 @@ void Level1Scene::Load() {
         player->addComponent<PlayerPhysicsComponent>(Vector2f(40.f, 60.f));
     }
 
-    // Add physics colliders to level tiles.
+    // Add physics colliders to level tiles
     {
         auto walls = ls::findTiles(ls::WALL);
         for (auto w : walls) {
@@ -43,13 +44,26 @@ void Level1Scene::Load() {
             e->addComponent<PhysicsComponent>(false, Vector2f(40.f, 40.f));
         }
     }
-    // Add debug text.
+
+    // Add hurt components to hazard tiles
+    {
+        auto spikes = ls::findTiles(ls::SPIKE);
+        for (auto s : spikes) {
+            auto h = makeEntity();
+            auto pos = ls::getTilePosition(s) + Vector2f(20.f, 20.f); //offset to center
+            h->setPosition(pos);
+            h->addComponent<HurtComponent>();
+        }
+    }
+
+    // Add debug text
     {
         auto txt = makeEntity();
         auto t = txt->addComponent<TextComponent>("debug");
         t->SetColor(Color::Black);
     }
-    //Simulate long loading times tp check loading screen works
+
+    //Simulate long loading times to check loading screen works
     //std::this_thread::sleep_for(std::chrono::milliseconds(3000));
     cout << " Scene 1 Load Done" << endl;
 
