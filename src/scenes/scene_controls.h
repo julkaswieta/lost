@@ -21,6 +21,7 @@ private:
 	void moveUp();
 	void moveDown();
 	void executeSelectedOption();
+	void updateControlsUI();
 
 	sf::Vector2f positionOptionInWindow(int i);
 };
