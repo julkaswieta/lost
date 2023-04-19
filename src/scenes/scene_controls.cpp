@@ -26,17 +26,18 @@ void ControlsScene::Load() {
                 options.push_back(menuOption);
         }
 
-        string remapMessages[2] = { "Press Enter to remap this control, then press the new key", "Press selected key to remap this option" };
-        for (int j = 0; j < 2; j++) {
+        {
+            string remapText = "Press Enter to remap this control, then press the new key";
+
             auto remapMessage = makeEntity();
-            auto textCmp = remapMessage->addComponent<TextComponent>(remapMessages[j]);
+            auto textCmp = remapMessage->addComponent<TextComponent>(remapText);
             remapMessage->setVisible(false);
-            remapMessage->addTag("remap" + to_string(j));
+            remapMessage->addTag("remap");
             textCmp->SetColor(Color::Blue);
             textCmp->getText().setOrigin(Vector2(textCmp->getText().getLocalBounds().width * 0.5f, textCmp->getText().getLocalBounds().height * 0.5f));
-            textCmp->getText().setPosition(Vector2f(Engine::getWindowSize().x - textCmp->getText().getLocalBounds().width, Engine::getWindowSize().y - textCmp->getText().getLocalBounds().height));
+            textCmp->getText().setPosition(Vector2f(Engine::getWindowSize().x * 0.5f, Engine::getWindowSize().y - textCmp->getText().getLocalBounds().height));
+
         }
-        
 
     }
     selectedOptionIndex = -1;
@@ -105,11 +106,10 @@ void ControlsScene::moveUp() {
         std::this_thread::sleep_for(std::chrono::milliseconds(150)); // these are here so the cursor does not move too fast
     }
     if (selectedOptionIndex >= 2 && selectedOptionIndex <= 4) {
-        this->ents.find("remap0")[0]->setVisible(true);
+        this->ents.find("remap")[0]->setVisible(true);
     } else {
-        this->ents.find("remap0")[0]->setVisible(false);
+        this->ents.find("remap")[0]->setVisible(false);
     }
-    this->ents.find("remap1")[0]->setVisible(false);
 }
 
 void ControlsScene::moveDown() {
@@ -126,12 +126,11 @@ void ControlsScene::moveDown() {
         std::this_thread::sleep_for(std::chrono::milliseconds(150)); // these are here so the cursor does not move too fast
     }
     if (selectedOptionIndex >= 2 && selectedOptionIndex <= 4) {
-        this->ents.find("remap0")[0]->setVisible(true);
+        this->ents.find("remap")[0]->setVisible(true);
     }
     else {
-        this->ents.find("remap0")[0]->setVisible(false);
+        this->ents.find("remap")[0]->setVisible(false);
     }
-    this->ents.find("remap1")[0]->setVisible(false);
 }
 
 void ControlsScene::executeSelectedOption() {
@@ -149,8 +148,6 @@ void ControlsScene::executeSelectedOption() {
             break;
         case 2:
             // Move left rebind
-            this->ents.find("remap0")[0]->setVisible(false);
-            this->ents.find("remap1")[0]->setVisible(true);
             Event event;
             while (rw.pollEvent(event)) {
                 if (event.type == sf::Event::EventType::KeyPressed) {
