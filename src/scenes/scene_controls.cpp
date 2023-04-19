@@ -36,7 +36,6 @@ void ControlsScene::Load() {
             textCmp->SetColor(Color::Blue);
             textCmp->getText().setOrigin(Vector2(textCmp->getText().getLocalBounds().width * 0.5f, textCmp->getText().getLocalBounds().height * 0.5f));
             textCmp->getText().setPosition(Vector2f(Engine::getWindowSize().x * 0.5f, Engine::getWindowSize().y - textCmp->getText().getLocalBounds().height));
-
         }
 
     }
@@ -79,6 +78,7 @@ void ControlsScene::Unload() {
 }
 
 void ControlsScene::Update(const double& dt) {
+    updateControlsUI();
     if (Keyboard::isKeyPressed(Controls::MenuDown)) {
         moveDown();
     }
@@ -88,7 +88,6 @@ void ControlsScene::Update(const double& dt) {
     if (Keyboard::isKeyPressed(Controls::MenuSelect)) {
         executeSelectedOption();
     }
-    updateControlsUI();
     Scene::Update(dt);
 }
 
@@ -135,9 +134,9 @@ void ControlsScene::moveDown() {
 
 void ControlsScene::executeSelectedOption() {
     RenderWindow& rw = Engine::getWindow();
-    bool executing = true;
+    bool optionExecuted = false;
 
-    while (executing)
+    while (!optionExecuted)
     {
         switch (selectedOptionIndex) {
         case 0:
@@ -147,29 +146,65 @@ void ControlsScene::executeSelectedOption() {
             //Controller - display controller bindings and set controller as play mode
             break;
         case 2:
+        {
             // Move left rebind
             Event event;
             while (rw.pollEvent(event)) {
                 if (event.type == sf::Event::EventType::KeyPressed) {
                     if (event.key.code != 58) {
                         Controls::MoveLeft = event.key.code;
-                        executing = false;
+                        optionExecuted = true;
                         break;
                     }
                 }
             }
+        }
+            break;
         case 3:
-            // move right rebind
+        {
+            // Move right rebind
+            Event event;
+            while (rw.pollEvent(event)) {
+                if (event.type == sf::Event::EventType::KeyPressed) {
+                    if (event.key.code != 58) {
+                        Controls::MoveRight = event.key.code;
+                        optionExecuted = true;
+                        break;
+                    }
+                }
+            }
+        }
             break;
         case 4:
-            // jump rebind
+        {
+            // Jump rebind
+            Event event;
+            while (rw.pollEvent(event)) {
+                if (event.type == sf::Event::EventType::KeyPressed) {
+                    if (event.key.code != 58) {
+                        Controls::Jump = event.key.code;
+                        optionExecuted = true;
+                        break;
+                    }
+                }
+            }
+        }
             break;
         case 5:
             // restore defaults
+            restoreDefaults();
+            optionExecuted = true;
             break;
         case 6:
+            optionExecuted = true;
             Engine::ChangeScene(&settings);
             break;
         }
     }
+}
+
+void ControlsScene::restoreDefaults() {
+    Controls::MoveLeft = Keyboard::Left;
+    Controls::MoveRight = Keyboard::Right;
+    Controls::Jump = Keyboard::Up;
 }

@@ -1,5 +1,6 @@
 #pragma once
 #include "scene.h"
+#include "SFML/Graphics/RenderWindow.hpp"
 
 class ControlsScene : public Scene {
 public:
@@ -22,6 +23,7 @@ private:
 	void moveDown();
 	void executeSelectedOption();
 	void updateControlsUI();
+	void restoreDefaults();
 
 	sf::Vector2f positionOptionInWindow(int i);
 };

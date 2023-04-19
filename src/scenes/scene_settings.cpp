@@ -22,7 +22,6 @@ void SettingsScene::Load() {
     }
     selectedOptionIndex = -1;
     setLoaded(true);
-
 }
 
 void SettingsScene::Update(const double& dt) {
