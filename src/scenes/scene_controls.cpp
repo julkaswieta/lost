@@ -199,6 +199,9 @@ void ControlsScene::executeSelectedOption() {
             optionExecuted = true;
             Engine::ChangeScene(&settings);
             break;
+        default:
+            optionExecuted = true;
+            break;
         }
     }
 }
