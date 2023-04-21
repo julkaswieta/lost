@@ -1,24 +1,24 @@
 #pragma once
-
-#include "engine.h"
+#include "scene.h"
 
 class MenuScene : public Scene {
 public:
 	MenuScene() = default;
 	~MenuScene() override = default;
-	void Load() override;
+	virtual void Load() override = 0;
 	void Unload() override;
 	void Update(const double& dt) override;
 
-private:
-	const int OPTIONS_COUNT = 3;
+protected:
+	int ACTIVE_OPTIONS_COUNT;
 	const int TOP_MARGIN = 100;
 
 	std::vector<std::shared_ptr<Entity>> options;
 	int selectedOptionIndex;
 
-	void moveUp();
-	void moveDown();
+	virtual void moveUp();
+	virtual void moveDown();
 
-	void executeSelectedOption();
+	virtual void executeSelectedOption() = 0;
 };
+

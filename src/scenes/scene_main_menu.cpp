@@ -1,43 +1,39 @@
-#include "scene_settings.h"
+#include "scene_main_menu.h"
 #include "../components/cmp_text.h"
-#include "engine.h"
-#include "SFML/Window/Keyboard.hpp"
 #include "../game.h"
+#include <SFML/Window/Keyboard.hpp>
+#include <iostream>
 #include "../controls.h"
 
 using namespace std;
 using namespace sf;
 
-void SettingsScene::Load() {
+void MainMenuScene::Load() {
+    selectedOptionIndex = -1;
     {
-        string optionsText[5] = { "Settings", "Volume", "Controls", "Resolution", "Exit"};
-        for (int i = 0; i < 5; ++i) {
+        string optionsText[4] = { "LOST", "Start Game", "Settings", "Exit" };
+        for (int i = 0; i < 4; ++i) {
             auto menuOption = makeEntity();
             auto textCmp = menuOption->addComponent<TextComponent>(optionsText[i]);
             textCmp->getText().setOrigin(Vector2(textCmp->getText().getLocalBounds().width * 0.5f, textCmp->getText().getLocalBounds().height * 0.5f));
             textCmp->getText().setPosition(Vector2f(Engine::getWindowSize().x * 0.5f, TOP_MARGIN + ((i + 1) * 50)));
-            if (i > 0)
+            if(i > 0)
                 options.push_back(menuOption);
         }
     }
     ACTIVE_OPTIONS_COUNT = options.size();
-    selectedOptionIndex = -1;
     setLoaded(true);
 }
 
-void SettingsScene::executeSelectedOption() {
+void MainMenuScene::executeSelectedOption() {
     switch (selectedOptionIndex) {
     case 0:
-        Engine::ChangeScene(&volume);
+        Engine::ChangeScene(&level1);
         break;
     case 1:
-        Engine::ChangeScene(&controls);
+        Engine::ChangeScene(&settings);
         break;
     case 2:
-        //Engine::ChangeScene(&resolution);
-        break;
-    case 3:
-        Engine::ChangeScene(&menu);
-        break;
+        Engine::getWindow().close();
     }
 }

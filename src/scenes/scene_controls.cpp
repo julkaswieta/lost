@@ -39,6 +39,7 @@ void ControlsScene::Load() {
         }
 
     }
+    ACTIVE_OPTIONS_COUNT = options.size();
     selectedOptionIndex = -1;
     setLoaded(true);
 }
@@ -72,23 +73,9 @@ Vector2f ControlsScene::positionOptionInWindow(int i) {
     }
 }
 
-void ControlsScene::Unload() {
-    options.clear();
-    Scene::Unload();
-}
-
 void ControlsScene::Update(const double& dt) {
     updateControlsUI();
-    if (Keyboard::isKeyPressed(Controls::MenuDown)) {
-        moveDown();
-    }
-    if (Keyboard::isKeyPressed(Controls::MenuUp)) {
-        moveUp();
-    }
-    if (Keyboard::isKeyPressed(Controls::MenuSelect)) {
-        executeSelectedOption();
-    }
-    Scene::Update(dt);
+    MenuScene::Update(dt);
 }
 
 void ControlsScene::updateControlsUI() {
@@ -102,12 +89,7 @@ void ControlsScene::updateControlsUI() {
 }
 
 void ControlsScene::moveUp() {
-    if (selectedOptionIndex - 1 >= 0) {
-        options[selectedOptionIndex]->getComponents<TextComponent>()[0]->SetColor(Color::White);
-        selectedOptionIndex--;
-        options[selectedOptionIndex]->getComponents<TextComponent>()[0]->SetColor(Color::Red);
-        std::this_thread::sleep_for(std::chrono::milliseconds(150)); // these are here so the cursor does not move too fast
-    }
+    MenuScene::moveUp();
     if (selectedOptionIndex >= 2 && selectedOptionIndex <= 4) {
         this->ents.find("remap")[0]->setVisible(true);
     } else {
@@ -116,18 +98,7 @@ void ControlsScene::moveUp() {
 }
 
 void ControlsScene::moveDown() {
-    // handle initial state when nothing is selected
-    if (selectedOptionIndex == -1) {
-        selectedOptionIndex = 0;
-        options[selectedOptionIndex]->getComponents<TextComponent>()[0]->SetColor(Color::Red);
-        std::this_thread::sleep_for(std::chrono::milliseconds(150)); // these are here so the cursor does not move too fast
-    }
-    else if (selectedOptionIndex + 1 < ACTIVE_OPTIONS_COUNT) {
-        options[selectedOptionIndex]->getComponents<TextComponent>()[0]->SetColor(Color::White);
-        selectedOptionIndex++;
-        options[selectedOptionIndex]->getComponents<TextComponent>()[0]->SetColor(Color::Red);
-        std::this_thread::sleep_for(std::chrono::milliseconds(150)); // these are here so the cursor does not move too fast
-    }
+    MenuScene::moveDown();
     if (selectedOptionIndex >= 2 && selectedOptionIndex <= 4) {
         this->ents.find("remap")[0]->setVisible(true);
     }
@@ -145,9 +116,11 @@ void ControlsScene::executeSelectedOption() {
         switch (selectedOptionIndex) {
         case 0:
             //Keyboard - display keyboard bindings and set keyboard as the play mode
+            optionExecuted = true;
             break;
         case 1:
             //Controller - display controller bindings and set controller as play mode
+            optionExecuted = true;
             break;
         case 2:
         {

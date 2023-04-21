@@ -3,7 +3,7 @@
 
 using namespace std;
 
-MenuScene menu;
+MainMenuScene menu;
 Level1Scene level1;
 SettingsScene settings;
 ControlsScene controls;

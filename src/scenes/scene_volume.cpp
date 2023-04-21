@@ -31,30 +31,16 @@ void VolumeScene::Load()
                 options.push_back(menuOption);
         }
     } 
+    ACTIVE_OPTIONS_COUNT = options.size();
     volume = 50;
     volumeChangeActive = false;
     selectedOptionIndex = -1;
     setLoaded(true);
 }
 
-void VolumeScene::Unload()
-{
-    options.clear();
-    Scene::Unload();
-}
-
 void VolumeScene::Update(const double& dt)
 {
     this->ents.find("Volume")[0]->getComponents<TextComponent>()[0]->SetText("Volume: " + to_string(volume));
-    if (Keyboard::isKeyPressed(Controls::MenuDown)) {
-        moveDown();
-    }
-    if (Keyboard::isKeyPressed(Controls::MenuUp)) {
-        moveUp();
-    }
-    if (Keyboard::isKeyPressed(Controls::MenuSelect)) {
-        executeSelectedOption();
-    }
 
     if (volumeChangeActive) {
         if (Keyboard::isKeyPressed(Controls::VolumeUp)) {
@@ -65,7 +51,7 @@ void VolumeScene::Update(const double& dt)
         }
     }
 
-    Scene::Update(dt);
+    MenuScene::Update(dt);
 }
 
 void VolumeScene::moveUp()
@@ -73,12 +59,7 @@ void VolumeScene::moveUp()
     volumeChangeActive = false;
     this->ents.find("Volume")[0]->getComponents<TextComponent>()[0]->SetColor(Color::White);
     this->ents.find("volMessage")[0]->setVisible(false);
-    if (selectedOptionIndex - 1 >= 0) {
-        options[selectedOptionIndex]->getComponents<TextComponent>()[0]->SetColor(Color::White);
-        selectedOptionIndex--;
-        options[selectedOptionIndex]->getComponents<TextComponent>()[0]->SetColor(Color::Red);
-        std::this_thread::sleep_for(std::chrono::milliseconds(150)); // these are here so the cursor does not move too fast
-    }
+    MenuScene::moveUp();
 }
 
 void VolumeScene::moveDown()
@@ -86,18 +67,7 @@ void VolumeScene::moveDown()
     volumeChangeActive = false;
     this->ents.find("volMessage")[0]->setVisible(false);
     this->ents.find("Volume")[0]->getComponents<TextComponent>()[0]->SetColor(Color::White);
-    // handle initial state when nothing is selected
-    if (selectedOptionIndex == -1) {
-        selectedOptionIndex = 0;
-        options[selectedOptionIndex]->getComponents<TextComponent>()[0]->SetColor(Color::Red);
-        std::this_thread::sleep_for(std::chrono::milliseconds(150)); // these are here so the cursor does not move too fast
-    }
-    else if (selectedOptionIndex + 1 < OPTIONS_COUNT) {
-        options[selectedOptionIndex]->getComponents<TextComponent>()[0]->SetColor(Color::White);
-        selectedOptionIndex++;
-        options[selectedOptionIndex]->getComponents<TextComponent>()[0]->SetColor(Color::Red);
-        std::this_thread::sleep_for(std::chrono::milliseconds(150)); // these are here so the cursor does not move too fast
-    }
+    MenuScene::moveDown();
 }
 
 void VolumeScene::volumeUp() {
@@ -127,5 +97,4 @@ void VolumeScene::executeSelectedOption()
         Engine::ChangeScene(&settings);
         break;
     }
-
 }
