@@ -4,3 +4,6 @@
 [submodule "lib/b2d"]
 	path = lib/b2d
 	url = https://github.com/dooglz/Box2D.git
+[submodule "SFML_GamepadSupport"]
+	path = lib/SFML_GamepadSupport
+	url = https://github.com/GuidoBisocoli/SFML_GamepadSupport
