@@ -2,6 +2,7 @@
 #include "system_physics.h"
 #include "system_renderer.h"
 #include "system_resources.h"
+#include "GamepadMgr.h"
 #include <SFML/Graphics.hpp>
 #include <future>
 #include <iostream>
@@ -29,6 +30,7 @@ void Engine::Start(unsigned int width, unsigned int height,
     window = &rw;
     Renderer::Initialise(rw);
     Physics::Initialise();
+    GamepadMgr::Instance().Initialize();
     ChangeScene(scn);
 
     while (rw.isOpen()) {
