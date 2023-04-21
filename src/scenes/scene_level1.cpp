@@ -29,7 +29,7 @@ void Level1Scene::Load() {
         s->setShape<sf::RectangleShape>(Vector2f(40.f, 60.f));
         s->getShape().setFillColor(Color::Magenta);
         s->getShape().setOrigin(Vector2f(20.f, 30.f));
-
+        player->addTag("player");
         player->addComponent<PlayerPhysicsComponent>(Vector2f(40.f, 60.f));
     }
 
