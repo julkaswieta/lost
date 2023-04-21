@@ -1,18 +1,20 @@
-#include "scene_level1.h"
+#include "../game.h"
+#include "../controls.h"
+#include "../components/cmp_enemy_ai.h"
 #include "../components/cmp_hurt_player.h"
 #include "../components/cmp_player_physics.h"
 #include "../components/cmp_sprite.h"
 #include "../components/cmp_text.h"
-#include "../game.h"
+#include "scene_level1.h"
+
 #include <LevelSystem.h>
 #include <iostream>
 #include <thread>
-#include "../controls.h"
 
 using namespace std;
 using namespace sf;
 
-static shared_ptr<Entity> player;
+static shared_ptr<Entity> player, blob;
 
 void Level1Scene::Load() {
     cout << " Scene 1 Load" << endl;
@@ -31,6 +33,20 @@ void Level1Scene::Load() {
         s->getShape().setOrigin(Vector2f(20.f, 30.f));
         player->addTag("player");
         player->addComponent<PlayerPhysicsComponent>(Vector2f(40.f, 60.f));
+    }
+
+    // Create blob
+    {
+        blob = makeEntity();
+        blob->setPosition(ls::getTilePosition(ls::findTiles(ls::ENEMY)[0]));
+        auto s = blob->addComponent<ShapeComponent>();
+        s->setShape<sf::RectangleShape>(Vector2f(60.f, 40.f));
+        s->getShape().setFillColor(Color::Blue);
+        s->getShape().setOrigin(Vector2f(30.f, 20.f));
+        blob->addTag("blob");
+        //blob->addComponent<PhysicsComponent>(true, Vector2f(60.f, 40.f));
+        blob->addComponent<HurtComponent>();
+        auto ai = blob->addComponent<EnemyAIComponent>();
     }
 
     // Add physics colliders to level tiles
