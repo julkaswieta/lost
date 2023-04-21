@@ -1,5 +1,6 @@
 #pragma once
 #include "SFML/Window/Keyboard.hpp"
+#include <string>
 
 class Controls {
 public:
@@ -10,4 +11,9 @@ public:
 	static sf::Keyboard::Key MenuUp;
 	static sf::Keyboard::Key MenuSelect;
 	static sf::Keyboard::Key Exit;
+	static sf::Keyboard::Key VolumeUp;
+	static sf::Keyboard::Key VolumeDown;
+	
+
+	static std::string toString(sf::Keyboard::Key key);
 };

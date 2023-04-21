@@ -7,6 +7,7 @@ MenuScene menu;
 Level1Scene level1;
 SettingsScene settings;
 ControlsScene controls;
+VolumeScene volume;
 
 int main()
 {
