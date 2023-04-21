@@ -147,6 +147,7 @@ void ControlsScene::executeSelectedOption() {
             break;
         case 2:
         {
+            this->ents.find("Move Left")[0]->getComponents<TextComponent>()[0]->SetColor(Color::Blue);
             // Move left rebind
             Event event;
             while (rw.pollEvent(event)) {
@@ -162,6 +163,7 @@ void ControlsScene::executeSelectedOption() {
             break;
         case 3:
         {
+            this->ents.find("Move Right")[0]->getComponents<TextComponent>()[0]->SetColor(Color::Blue);
             // Move right rebind
             Event event;
             while (rw.pollEvent(event)) {
@@ -177,6 +179,7 @@ void ControlsScene::executeSelectedOption() {
             break;
         case 4:
         {
+            this->ents.find("Jump")[0]->getComponents<TextComponent>()[0]->SetColor(Color::Blue);
             // Jump rebind
             Event event;
             while (rw.pollEvent(event)) {
