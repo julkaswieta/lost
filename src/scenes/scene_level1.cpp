@@ -84,6 +84,10 @@ void Level1Scene::Update(const double& dt) {
     if (ls::getTileAt(player->getPosition()) == ls::END) {
         Engine::ChangeScene((Scene*)&menu);
     }
+    else if (!player->isAlive())
+    {
+        Engine::ChangeScene((Scene*)&level1);
+    }
     Scene::Update(dt);
 }
 
