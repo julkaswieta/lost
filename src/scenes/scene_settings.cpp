@@ -65,7 +65,7 @@ void SettingsScene::moveDown() {
 void SettingsScene::executeSelectedOption() {
     switch (selectedOptionIndex) {
     case 0:
-        //Engine::ChangeScene(&volume);
+        Engine::ChangeScene(&volume);
         break;
     case 1:
         Engine::ChangeScene(&controls);
