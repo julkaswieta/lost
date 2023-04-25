@@ -1,29 +1,29 @@
 #include "LevelSystem.h"
 #include <fstream>
+#include <sstream>
 
 using namespace std;
 using namespace sf;
 
 unique_ptr<LevelSystem::Tile[]> LevelSystem::tiles;
-size_t LevelSystem::width;
-size_t LevelSystem::height;
+size_t LevelSystem::width = 32;
+size_t LevelSystem::height = 18;
 
 float LevelSystem::tileSize(100.f);
 Vector2f LevelSystem::offset(0.0f, 30.0f);
 vector<unique_ptr<RectangleShape>> LevelSystem::sprites;
 
 map<LevelSystem::Tile, Color> LevelSystem::colours{
-    {WALL, Color::White}, {END, Color::Green}, {SPIKE, Color::Red}, {COLLECTIBLE, Color::Yellow}
+    {WALL, Color::White}, {END, Color::Green}, {SPIKE_UP, Color::Red}, {STAR, Color::Yellow}
 };
 
 void LevelSystem::readInLevelFile(const string& path, string& buffer) {
     // Load in file to buffer
     ifstream f(path);
     if (f.good()) {
-        f.seekg(0, std::ios::end);
-        buffer.resize(f.tellg());
-        f.seekg(0);
-        f.read(&buffer[0], buffer.size());
+        stringstream ss;
+        ss << f.rdbuf();
+        buffer = ss.str();
         f.close();
     }
     else {
@@ -31,45 +31,32 @@ void LevelSystem::readInLevelFile(const string& path, string& buffer) {
     }
 }
 
-// load the specified level file 
+// Load the specified level file 
 void LevelSystem::LoadLevelFile(const string& path, float tSize) {
-    tileSize = tSize;
-    size_t w = 0, h = 0;
     string buffer;
 
     readInLevelFile(path, buffer);
 
     vector<Tile> temp_tiles;
     int widthCheck = 0;
-    for (int i = 0; i < buffer.size(); ++i) {
-        const char c = buffer[i];
-        if (c == '\0') { break; }
-        if (c == '\n') { // newline
-            if (w == 0) {  // if we haven't written width yet
-                w = i;       // set width
-            }
-            else if (w != (widthCheck - 1)) {
-                throw string("non uniform width:" + to_string(h) + " ") + path;
-            }
-            widthCheck = 0;
-            h++; // increment height
-        }
-        else {
-            temp_tiles.push_back((Tile)c);
-        }
-        ++widthCheck;
+    string token;
+    stringstream ss(buffer);
+
+    while (getline(ss, token, ',')) {
+        cout << token << ",";
+        temp_tiles.push_back((Tile)stoi(token));
     }
 
-    if (temp_tiles.size() != (w * h)) {
+    if (temp_tiles.size() != (width * height)) {
         throw string("Can't parse level file") + path;
     }
-    tiles = std::make_unique<Tile[]>(w * h);
-    width = w; // set static class vars
-    height = h;
+
+    tiles = std::make_unique<Tile[]>(width * height);
     copy(temp_tiles.begin(), temp_tiles.end(), &tiles[0]);
-    cout << "Level " << path << " Loaded. " << w << "x" << h << std::endl;
+    cout << "Level " << path << " Loaded. " << width << "x" << height << std::endl;
     buildSprites();
 }
+
 
 // assign sprites to correct tiles
 void LevelSystem::buildSprites(bool optimise) {

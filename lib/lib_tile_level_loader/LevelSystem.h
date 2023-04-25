@@ -18,14 +18,23 @@ public:
     typedef unsigned char Tile;
 
     enum TILES {
-        EMPTY = ' ',
-        START = 'p',
-        END = 'g',
-        WALL = 'w',
-        ENEMY = 'e',
-        SPIKE = 's',
-        WAYPOINT = '+',
-        COLLECTIBLE = 'c'
+        EMPTY = 0,
+        WALL = 1,
+        START = 2,
+        END = 3,
+        STAR = 4,
+        ENEMY = 5,
+        SPIKE_UP = 6,
+        SPIKE_DOWN = 7,
+        SPIKE_RIGHT = 8,
+        SPIKE_LEFT = 9,
+        SPIKE_BALL = 10,
+        SAWBLADE = 11,
+        EXIT = 101,
+        SETTINGS = 102,
+        LEVEL1 = 103,
+        LEVEL2 = 104,
+        LEVEL3 = 105
     };
 
     static Tile getTile(sf::Vector2ul);
