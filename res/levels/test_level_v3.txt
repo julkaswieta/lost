@@ -1,8 +1,8 @@
 aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa
 aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa
 aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa
-aaaaagggg      ag      gggggggaa
-aa             a              aa
+aaaaaaaaaaaaaaaag     ggggggggaa
+aa   ggggg     a              aa
 aa          e  a  aaa         aa
 aa b       aaa a   ga         aa
 aaaaaa   aaaaa af   a  aa     aa
@@ -11,8 +11,8 @@ aa d       d a a    aff   aa  aa
 aaaaaaafffaaaa a   faaa   ggffaa
 aaggggaaaaa       aaaggaa   aaaa
 aa                            aa
-aad                         c aa
-aaaffaffaffaffaffaaffffffaffafaa
+aah                         c aa
+aaadfaffaffaffaffaaffffffaffafaa
 aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa
 aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa
 aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa
