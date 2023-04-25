@@ -11,5 +11,5 @@ VolumeScene volume;
 
 int main()
 {
-	Engine::Start(1280, 720, "Lost", &menu);
+	Engine::Start(1920, 1080, "Lost", &menu);
 }

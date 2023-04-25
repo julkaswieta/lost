@@ -13,7 +13,13 @@ Vector2f LevelSystem::offset(0.0f, 30.0f);
 vector<unique_ptr<RectangleShape>> LevelSystem::sprites;
 
 map<LevelSystem::Tile, Color> LevelSystem::colours{
-    {WALL, Color::White}, {END, Color::Green}, {SPIKE, Color::Red}, {COLLECTIBLE, Color::Yellow}
+    {WALL, Color::White}, {END, Color::Green}, {STAR, Color::Yellow},
+    {SPIKE_UP, Color::Red}, {SPIKE_DOWN, Color::Red}, {SPIKE_RIGHT, Color::Red}, {SPIKE_LEFT, Color::Red}, 
+    {SPIKE_BALL, Color::Red}, {SAWBLADE, Color::Red}, // Continue here
+
+    // Don't change these
+    {EXIT, Color::Blue}, {SETTINGS, Color::Blue},
+    {LEVEL1, Color::Blue}, {LEVEL2, Color::Blue}, {LEVEL3, Color::Blue}
 };
 
 void LevelSystem::readInLevelFile(const string& path, string& buffer) {
@@ -31,7 +37,7 @@ void LevelSystem::readInLevelFile(const string& path, string& buffer) {
     }
 }
 
-// load the specified level file 
+// Load the specified level file 
 void LevelSystem::LoadLevelFile(const string& path, float tSize) {
     tileSize = tSize;
     size_t w = 0, h = 0;
@@ -44,15 +50,15 @@ void LevelSystem::LoadLevelFile(const string& path, float tSize) {
     for (int i = 0; i < buffer.size(); ++i) {
         const char c = buffer[i];
         if (c == '\0') { break; }
-        if (c == '\n') { // newline
-            if (w == 0) {  // if we haven't written width yet
-                w = i;       // set width
+        if (c == '\n') { // Newline
+            if (w == 0) {  // If we haven't written width yet
+                w = i;       // Set width
             }
             else if (w != (widthCheck - 1)) {
                 throw string("non uniform width:" + to_string(h) + " ") + path;
             }
             widthCheck = 0;
-            h++; // increment height
+            h++; // Increment height
         }
         else {
             temp_tiles.push_back((Tile)c);
@@ -64,14 +70,14 @@ void LevelSystem::LoadLevelFile(const string& path, float tSize) {
         throw string("Can't parse level file") + path;
     }
     tiles = std::make_unique<Tile[]>(w * h);
-    width = w; // set static class vars
+    width = w;
     height = h;
     copy(temp_tiles.begin(), temp_tiles.end(), &tiles[0]);
     cout << "Level " << path << " Loaded. " << w << "x" << h << std::endl;
     buildSprites();
 }
 
-// assign sprites to correct tiles
+// Assign sprites to correct tiles
 void LevelSystem::buildSprites(bool optimise) {
     sprites.clear();
 
@@ -111,18 +117,18 @@ void LevelSystem::buildSprites(bool optimise) {
             if (same) {
                 ++samecount; // Yes, keep going
             }
-            // if not compressible, expand the previous tiles that were compressible together
+            // If not compressible, expand the previous tiles that were compressible together
             else {
                 if (samecount) {
                     last.size.x = (1 + samecount) * tSize.x; // Expand tile
                 }
-                // write tile to list
+                // Write tile to list
                 xAxisOptimisedTiles.push_back(last);
                 samecount = 0;
                 last = tilesProps[i]; // assign new tile to compare against 
             }
         }
-        // catch the last tile
+        // Catch the last tile
         if (samecount) {
             last.size.x = (1 + samecount) * tSize.x;
             xAxisOptimisedTiles.push_back(last);
@@ -136,30 +142,30 @@ void LevelSystem::buildSprites(bool optimise) {
         for (size_t i = 0; i < xAxisOptimisedTiles.size(); ++i) {
             last = xAxisOptimisedTiles[i];
             for (size_t j = i + 1; j < xAxisOptimisedTiles.size(); ++j) {
-                // is the tile below the last tile compressible with last?
+                // Is the tile below the last tile compressible with last?
                 bool same = ((xAxisOptimisedTiles[j].pos.x == last.pos.x) && (xAxisOptimisedTiles[j].size == last.size) &&
                     (xAxisOptimisedTiles[j].pos.y == last.pos.y + (tSize.y * (1 + samecount))) &&
                     (xAxisOptimisedTiles[j].colour == last.colour));
                 if (same) {
                     ++samecount;
-                    // if it is, remove from further consideration 
+                    // If it is, remove from further consideration 
                     xAxisOptimisedTiles.erase(xAxisOptimisedTiles.begin() + j);
                     --j;
                 }
             }
-            // if the next tile is not compressible with last, expand the previous compressible tiles
+            // If the next tile is not compressible with last, expand the previous compressible tiles
             if (samecount) {
                 last.size.y = (1 + samecount) * tSize.y; // Expand tile
             }
-            // write tile to list
+            // Write tile to list
             optimisedTiles.push_back(last);
             samecount = 0;
         }
-        // use the optimised tiles vectos from now on
+        // Use the optimised tiles vectos from now on
         tilesProps.swap(optimisedTiles);
     }
 
-    // assign the sprites, using the props from the optimised vector
+    // Assign the sprites, using the props from the optimised vector
     for (auto& t : tilesProps) {
         auto s = make_unique<sf::RectangleShape>();
         s->setPosition(t.pos);
@@ -173,19 +179,19 @@ void LevelSystem::buildSprites(bool optimise) {
         << " Not Empty, using: " << sprites.size() << " Sprites\n";
 }
 
-// render the whole level 
+// Render the whole level 
 void LevelSystem::Render(RenderWindow& window) {
     for (auto& t : sprites) {
         window.draw(*t);
     }
 }
 
-// get the global position of a tile in a grid
+// Get the global position of a tile in a grid
 sf::Vector2f LevelSystem::getTilePosition(sf::Vector2ul p) {
     return (Vector2f(p.x, p.y) * tileSize) + offset;
 }
 
-// find all tiles of specified type
+// Find all tiles of specified type
 std::vector<sf::Vector2ul> LevelSystem::findTiles(LevelSystem::Tile type) {
     auto v = vector<sf::Vector2ul>();
     for (size_t i = 0; i < width * height; ++i) {

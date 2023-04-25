@@ -19,13 +19,25 @@ public:
 
     enum TILES {
         EMPTY = ' ',
-        START = 'p',
-        END = 'g',
-        WALL = 'w',
+        WALL = 'a',
+        START = 'b',
+        END = 'c',
+        STAR = 'd',
         ENEMY = 'e',
-        SPIKE = 's',
-        WAYPOINT = '+',
-        COLLECTIBLE = 'c'
+        SPIKE_UP = 'f',
+        SPIKE_DOWN = 'g',
+        SPIKE_RIGHT = 'h',
+        SPIKE_LEFT = 'i',
+        SPIKE_BALL = 'j',
+        SAWBLADE = 'k',
+        // Continue here
+
+/*****  Don't change these  *****/
+        EXIT = 'v',
+        SETTINGS = 'w',
+        LEVEL1 = 'x',
+        LEVEL2 = 'y',
+        LEVEL3 = 'z'
     };
 
     static Tile getTile(sf::Vector2ul);
@@ -62,7 +74,7 @@ protected:
 
     static void buildSprites(bool optimise = true);
 
-    static float tileSize; // for rendering
+    static float tileSize;
     static std::map<Tile, sf::Color> colours;
 
 private:
