@@ -12,5 +12,5 @@ ResolutionScene resolution;
 
 int main()
 {
-	Engine::Start(1920, 1080, "Lost", &menu);
+	Engine::Start(1920, 1080, "Lost", &resolution);
 }
