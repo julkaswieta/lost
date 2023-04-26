@@ -13,15 +13,18 @@ private:
 	bool windowModeChangeActive;
 	sf::Vector2f resolution;
 	std::string currentResolutionOption;
+	int resolutionCounter;
 	int currentWindowMode; // 0 for windowed, 1 for fullscreen
 	std::vector<std::shared_ptr<Entity>> resolutions;
 	std::vector<std::shared_ptr<Entity>> windowModes;
 
 	void moveUp() override;
 	void moveDown() override;
-	void nextResolution();
+	void nextResolution(bool moveUp);
+	void nextWindowMode(bool moveUp);
 	sf::Vector2f positionElement(int elemIndex);
 	void executeSelectedOption() override;
 	sf::Vector2f resolutionToVector(std::string resolutionText);
 	void displayCurrentSettings();
+	void resetFormatting();
 };

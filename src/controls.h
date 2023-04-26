@@ -11,8 +11,8 @@ public:
 	static sf::Keyboard::Key MenuUp;
 	static sf::Keyboard::Key MenuSelect;
 	static sf::Keyboard::Key Exit;
-	static sf::Keyboard::Key VolumeUp;
-	static sf::Keyboard::Key VolumeDown;
+	static sf::Keyboard::Key NextOption;
+	static sf::Keyboard::Key PreviousOption;
 	
 
 	static std::string toString(sf::Keyboard::Key key);

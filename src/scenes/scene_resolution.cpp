@@ -3,6 +3,7 @@
 #include "engine.h"
 #include "SFML/Window/Keyboard.hpp"
 #include "../game.h"
+#include "../controls.h"
 
 using namespace std;
 using namespace sf;
@@ -63,6 +64,7 @@ void ResolutionScene::Load() {
 
     ACTIVE_OPTIONS_COUNT = options.size();
     currentResolutionOption = resolutionsText[3];
+    resolutionCounter = 3;
     resolution = resolutionToVector(currentResolutionOption);
     currentWindowMode = 1;
     resolutionChangeActive = false;
@@ -88,32 +90,62 @@ Vector2f ResolutionScene::positionElement(int elemIndex) {
 void ResolutionScene::Update(const double& dt)
 {
     displayCurrentSettings();
+    if (resolutionChangeActive) {
+        if (Keyboard::isKeyPressed(Controls::NextOption)) {
+            nextResolution(true);
+        }
+        if (Keyboard::isKeyPressed(Controls::PreviousOption)) {
+            nextResolution(false);
+        }
+    }
     MenuScene::Update(dt);
 }
 
 void ResolutionScene::moveUp()
 {
+    resetFormatting();
     MenuScene::moveUp();
 }
 
 void ResolutionScene::moveDown()
 {
+    resetFormatting();
     MenuScene::moveDown();
 }
 
-void ResolutionScene::nextResolution()
+void ResolutionScene::nextResolution(bool moveUp)
 {
+    resolutions[resolutionCounter]->setVisible(false);
+    if (moveUp)
+        resolutionCounter++;
+    else
+        resolutionCounter--;
+    if (resolutionCounter >= resolutions.size()) {
+        resolutionCounter = 0;
+    }
+    else if (resolutionCounter < 0) {
+        resolutionCounter = resolutions.size() - 1;
+    }
+    currentResolutionOption = resolutions[resolutionCounter]->getComponents<TextComponent>()[0]->getText().getString();
+    std::this_thread::sleep_for(std::chrono::milliseconds(150));
     
 }
+
 
 void ResolutionScene::executeSelectedOption()
 {
     switch (selectedOptionIndex) {
     case 0:
         // change resolution
+        resolutionChangeActive = true;
+        ents.find(currentResolutionOption)[0]->getComponents<TextComponent>()[0]->SetColor(Color::Blue);
+        ents.find("changeMessage")[0]->setVisible(true);
         break;
     case 1:
         // change window mode
+        windowModeChangeActive = true;
+        ents.find("window" + to_string(currentWindowMode))[0]->getComponents<TextComponent>()[0]->SetColor(Color::Blue);
+        ents.find("changeMessage")[0]->setVisible(true);
         break;
     case 2:
         Engine::ChangeScene(&settings);
@@ -134,10 +166,21 @@ sf::Vector2f ResolutionScene::resolutionToVector(std::string resolutionText) {
     return sf::Vector2f(splitResolution[0], splitResolution[1]);
 }
 
-void ResolutionScene::displayCurrentSettings()
+inline void ResolutionScene::displayCurrentSettings()
 {
+    if(resolutionChangeActive)
+        ents.find(currentResolutionOption)[0]->getComponents<TextComponent>()[0]->SetColor(Color::Blue);
     ents.find(currentResolutionOption)[0]->setVisible(true);
     ents.find("window" + to_string(currentWindowMode))[0]->setVisible(true);
+}
+
+void ResolutionScene::resetFormatting()
+{
+    resolutionChangeActive = false;
+    ents.find(currentResolutionOption)[0]->getComponents<TextComponent>()[0]->SetColor(Color::White);
+    windowModeChangeActive = false;
+    ents.find("window" + to_string(currentWindowMode))[0]->getComponents<TextComponent>()[0]->SetColor(Color::White);
+    ents.find("changeMessage")[0]->setVisible(false);
 }
 
 

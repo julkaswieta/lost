@@ -43,10 +43,10 @@ void VolumeScene::Update(const double& dt)
     this->ents.find("Volume")[0]->getComponents<TextComponent>()[0]->SetText("Volume: " + to_string(volume));
 
     if (volumeChangeActive) {
-        if (Keyboard::isKeyPressed(Controls::VolumeUp)) {
+        if (Keyboard::isKeyPressed(Controls::NextOption)) {
             volumeUp();
         }
-        if (Keyboard::isKeyPressed(Controls::VolumeDown)) {
+        if (Keyboard::isKeyPressed(Controls::PreviousOption)) {
             volumeDown();
         }
     }
@@ -56,17 +56,13 @@ void VolumeScene::Update(const double& dt)
 
 void VolumeScene::moveUp()
 {
-    volumeChangeActive = false;
-    this->ents.find("Volume")[0]->getComponents<TextComponent>()[0]->SetColor(Color::White);
-    this->ents.find("volMessage")[0]->setVisible(false);
+    resetFormatting();
     MenuScene::moveUp();
 }
 
 void VolumeScene::moveDown()
 {
-    volumeChangeActive = false;
-    this->ents.find("volMessage")[0]->setVisible(false);
-    this->ents.find("Volume")[0]->getComponents<TextComponent>()[0]->SetColor(Color::White);
+    resetFormatting();
     MenuScene::moveDown();
 }
 
@@ -82,6 +78,13 @@ void VolumeScene::volumeDown() {
         volume--;
         std::this_thread::sleep_for(std::chrono::milliseconds(100));
     }
+}
+
+void VolumeScene::resetFormatting()
+{
+    volumeChangeActive = false;
+    this->ents.find("Volume")[0]->getComponents<TextComponent>()[0]->SetColor(Color::White);
+    this->ents.find("volMessage")[0]->setVisible(false);
 }
 
 void VolumeScene::executeSelectedOption()

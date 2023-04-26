@@ -16,6 +16,6 @@ private:
 	void moveDown() override;
 	void volumeUp();
 	void volumeDown();
-
+	void resetFormatting();
 	void executeSelectedOption() override ;
 };
