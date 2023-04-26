@@ -38,31 +38,6 @@ PhysicsComponent::PhysicsComponent(Entity* p, bool dyn, const Vector2f& size)
         //_fixture->SetRestitution(.9)
         FixtureDef.restitution = .2;
     }
-
-    // An ideal pod/capsule shape should be used for the player,
-    // this isn't built into B2d, but we can combine two shapes to do so.
-    // This would allow the player to go up steps
-    /*
-    BodyDef.bullet = true;
-    b2PolygonShape shape1;
-    shape1.SetAsBox(sv2_to_bv2(size).x * 0.5f, sv2_to_bv2(size).y * 0.5f);
-    {
-        b2PolygonShape poly;
-        poly.SetAsBox(0.45f, 1.4f);
-        b2FixtureDef FixtureDefPoly;
-
-        FixtureDefPoly.shape = &poly;
-        body->CreateFixture(&FixtureDefPoly);
-    }
-    {
-        b2CircleShape circle;
-        circle.m_radius = 0.45f;
-        circle.m_p.Set(0, -1.4f);
-        b2FixtureDef FixtureDefCircle;
-        FixtureDefCircle.shape = &circle;
-        body->CreateFixture(&FixtureDefCircle);
-    }
-    */
 }
 
 void PhysicsComponent::setFriction(float r) { fixture->SetFriction(r); }

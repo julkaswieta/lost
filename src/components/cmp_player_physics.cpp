@@ -62,7 +62,7 @@ void PlayerPhysicsComponent::Update(double dt) {
         if (grounded) {
             setVelocity(Vector2f(getVelocity().x, 0.f));
             teleport(Vector2f(pos.x, pos.y - 2.0f));
-            impulse(Vector2f(0, -16.f));
+            impulse(Vector2f(0, -12.f));
             timeInAir = 0.f; // Reset the time in air when the player jumps off the ground
             cout << "Jumped once!\n";
             jumpButtonReleased = false;
@@ -71,7 +71,7 @@ void PlayerPhysicsComponent::Update(double dt) {
             if (firstJump && !secondJump && jumpButtonReleased) {
 
                 setVelocity(Vector2f(getVelocity().x, 0.f));
-                impulse(Vector2f(0, -16.f));
+                impulse(Vector2f(0, -12.f));
                 cout << "Jumped twice!\n";
                 firstJump = false;
                 secondJump = true;
@@ -87,6 +87,7 @@ void PlayerPhysicsComponent::Update(double dt) {
 
     // In the Update function, increment the timeInAir if the player is in the air
     if (!grounded) {
+        groundspeed = 20.f;
         setFriction(0.f);
         timeInAir += dt;
         if (!firstJump && !secondJump && timeInAir > 0.2f) {
@@ -94,7 +95,8 @@ void PlayerPhysicsComponent::Update(double dt) {
         }
     }
     else {
-        setFriction(0.1f);
+        groundspeed = 30.f;
+        setFriction(0.2f);
         timeInAir = 0.f;
         firstJump = false;
         secondJump = false;

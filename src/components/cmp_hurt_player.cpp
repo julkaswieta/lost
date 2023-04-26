@@ -6,7 +6,7 @@ using namespace sf;
 
 void HurtComponent::Update(double dt) {
     if (auto pl = player.lock()) {
-        if (length(pl->getPosition() - parent->getPosition()) < 25.0) {
+        if (length(pl->getPosition() - parent->getPosition()) < 55.0) {
             pl->setForDelete();
             parent->setForDelete();
         }

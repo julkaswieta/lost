@@ -24,7 +24,7 @@ uint8_t frameTimesCounter = 0;
 // Initialises the game's engine and all subsystems
 void Engine::Start(unsigned int width, unsigned int height,
     const std::string& gameName, Scene* scn) {
-    RenderWindow rw(VideoMode({ width, height }), gameName);
+    RenderWindow rw(VideoMode({ width, height }), gameName, sf::Style::Fullscreen);
     Engine::gameName = gameName;
     window = &rw;
     Renderer::Initialise(rw);
