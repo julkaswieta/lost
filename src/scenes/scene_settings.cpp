@@ -34,7 +34,7 @@ void SettingsScene::executeSelectedOption() {
         Engine::ChangeScene(&controls);
         break;
     case 2:
-        //Engine::ChangeScene(&resolution);
+        Engine::ChangeScene(&resolution);
         break;
     case 3:
         Engine::ChangeScene(&menu);

@@ -8,6 +8,7 @@ Level1Scene level1;
 SettingsScene settings;
 ControlsScene controls;
 VolumeScene volume;
+ResolutionScene resolution;
 
 int main()
 {
