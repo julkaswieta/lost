@@ -10,7 +10,7 @@ using namespace sf;
 
 void SettingsScene::Load() {
     {
-        string optionsText[5] = { "Settings", "Volume", "Controls", "Resolution", "Exit"};
+        string optionsText[5] = { "Settings", "Volume", "Controls", "Resolution", "Exit" };
         for (int i = 0; i < 5; ++i) {
             auto menuOption = makeEntity();
             auto textCmp = menuOption->addComponent<TextComponent>(optionsText[i]);
@@ -20,46 +20,9 @@ void SettingsScene::Load() {
                 options.push_back(menuOption);
         }
     }
+    ACTIVE_OPTIONS_COUNT = options.size();
     selectedOptionIndex = -1;
     setLoaded(true);
-}
-
-void SettingsScene::Update(const double& dt) {
-    if (Keyboard::isKeyPressed(Controls::MenuDown)) {
-        moveDown();
-    }
-    if (Keyboard::isKeyPressed(Controls::MenuUp)) {
-        moveUp();
-    }
-    if (Keyboard::isKeyPressed(Controls::MenuSelect)) {
-        executeSelectedOption();
-    }
-
-    Scene::Update(dt);
-}
-
-void SettingsScene::moveUp() {
-    if (selectedOptionIndex - 1 >= 0) {
-        options[selectedOptionIndex]->getComponents<TextComponent>()[0]->SetColor(Color::White);
-        selectedOptionIndex--;
-        options[selectedOptionIndex]->getComponents<TextComponent>()[0]->SetColor(Color::Red);
-        std::this_thread::sleep_for(std::chrono::milliseconds(150)); // these are here so the cursor does not move too fast
-    }
-}
-
-void SettingsScene::moveDown() {
-    // handle initial state when nothing is selected
-    if (selectedOptionIndex == -1) {
-        selectedOptionIndex = 0;
-        options[selectedOptionIndex]->getComponents<TextComponent>()[0]->SetColor(Color::Red);
-        std::this_thread::sleep_for(std::chrono::milliseconds(150)); // these are here so the cursor does not move too fast
-    }
-    else if (selectedOptionIndex + 1 < OPTIONS_COUNT) {
-        options[selectedOptionIndex]->getComponents<TextComponent>()[0]->SetColor(Color::White);
-        selectedOptionIndex++;
-        options[selectedOptionIndex]->getComponents<TextComponent>()[0]->SetColor(Color::Red);
-        std::this_thread::sleep_for(std::chrono::milliseconds(150)); // these are here so the cursor does not move too fast
-    }
 }
 
 void SettingsScene::executeSelectedOption() {
@@ -77,9 +40,4 @@ void SettingsScene::executeSelectedOption() {
         Engine::ChangeScene(&menu);
         break;
     }
-}
-
-void SettingsScene::Unload() {
-    options.clear();
-    Scene::Unload();
 }
