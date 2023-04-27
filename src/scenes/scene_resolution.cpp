@@ -42,8 +42,8 @@ void ResolutionScene::loadOptions() {
 }
 
 void ResolutionScene::loadResolutions() {
-    string resolutionsText[6] = { "640 x 360", "1280 x 720", "1600 x 900", "1920 x 1080", "2048 x 1152", "2560 x 1440" };
-    for (int i = 0; i < 6; ++i) {
+    string resolutionsText[5] = { "1280 x 720", "1600 x 900", "1920 x 1080", "2048 x 1152", "2560 x 1440" };
+    for (int i = 0; i < 5; ++i) {
         auto resolutionOption = makeEntity();
         auto textCmp = resolutionOption->addComponent<TextComponent>(resolutionsText[i]);
         textCmp->getText().setOrigin(Vector2(textCmp->getText().getLocalBounds().width * 0.5f, textCmp->getText().getLocalBounds().height * 0.5f));
@@ -54,9 +54,11 @@ void ResolutionScene::loadResolutions() {
         resolutions.push_back(resolutionOption);
     }
 
-    currentResolutionOption = resolutionsText[3];
-    resolutionCounter = 3;
-    resolution = resolutionToVector(currentResolutionOption);
+    if (resolution.x == 0 && resolution.y == 0) {
+        resolutionCounter = 2;
+        currentResolutionOption = resolutionsText[2];
+        resolution = resolutionToVector(currentResolutionOption);
+    }
     resolutionChangeActive = false;
 }
 
@@ -73,7 +75,8 @@ void ResolutionScene::loadWindowModes() {
         windowModes.push_back(windowMode);
     }
     
-    currentWindowMode = 0;
+    if(currentWindowMode == -1)
+        currentWindowMode = 0;
     windowModeChangeActive = false;
 }
 
@@ -144,8 +147,18 @@ void ResolutionScene::resetFormatting() {
 }
 
 void ResolutionScene::changeSettings() {
-    if (resolutionChangeActive || windowModeChangeActive)
+    if (resolutionChangeActive || windowModeChangeActive) {
         Engine::getWindow().create(VideoMode({ resolution.x, resolution.y }), Engine::gameName, (currentWindowMode == 0) ? Style::Fullscreen : Style::Default);
+        updateElementsPosition();
+    }
+}
+
+void ResolutionScene::updateElementsPosition() {
+    float windowWidth = Engine::getWindowSize().x;
+    for (auto ent : this->ents.list) {
+        auto textCmp = ent->getComponents<TextComponent>()[0];
+        textCmp->getText().setPosition({ windowWidth * 0.5f, textCmp->getText().getPosition().y });
+    }
 }
 
 void ResolutionScene::nextResolution(bool moveUp)

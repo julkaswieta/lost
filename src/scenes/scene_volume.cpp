@@ -32,7 +32,8 @@ void VolumeScene::Load()
         }
     } 
     ACTIVE_OPTIONS_COUNT = options.size();
-    volume = 50;
+    if(volume == 0)
+        volume = 50;
     volumeChangeActive = false;
     selectedOptionIndex = -1;
     setLoaded(true);

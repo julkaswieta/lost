@@ -16,7 +16,7 @@ private:
 	sf::Vector2u resolution;
 	std::string currentResolutionOption;
 	int resolutionCounter;
-	int currentWindowMode; // 0 for fullscreen, 1 for windowed
+	int currentWindowMode = -1; // 0 for fullscreen, 1 for windowed
 
 	std::vector<std::shared_ptr<Entity>> resolutions;
 	std::vector<std::shared_ptr<Entity>> windowModes;
@@ -36,4 +36,5 @@ private:
 	void loadResolutions();
 	void loadWindowModes();
 	void changeSettings();
+	void updateElementsPosition();
 };
