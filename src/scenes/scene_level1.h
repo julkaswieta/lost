@@ -11,4 +11,14 @@ public:
   void Update(const double& dt) override;
 
   void Render() override;
+
+private:
+	std::vector<std::shared_ptr<Entity>> menuOptions;
+	int selectedOptionIndex;
+
+	void moveUp();
+	void moveDown();
+	void executeSelectedOption();
+	void displayMenu();
+	void hideMenu();
 };

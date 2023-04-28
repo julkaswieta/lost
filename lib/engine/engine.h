@@ -14,6 +14,7 @@ public:
     static sf::Vector2u getWindowSize();
     static void setVsync(bool b);
     static std::string gameName;
+    static bool paused;
 
 private:
     static Scene* activeScene;

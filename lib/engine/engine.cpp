@@ -18,6 +18,8 @@ static bool currentlyLoading = false;
 static float loadingSpinner = 0.f;
 static float loadingTime;
 
+bool Engine::paused = false;
+
 float frametimes[256] = {};
 uint8_t frameTimesCounter = 0;
 
