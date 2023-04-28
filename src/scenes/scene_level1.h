@@ -16,6 +16,7 @@ private:
 	std::vector<std::shared_ptr<Entity>> menuOptions;
 	int selectedOptionIndex;
 
+	void loadPauseMenu();
 	void moveUp();
 	void moveDown();
 	void executeSelectedOption();

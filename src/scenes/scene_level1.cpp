@@ -85,42 +85,42 @@ void Level1Scene::Load() {
         t->SetColor(Color::Black);
     }
 
-    // paused section
-    {
-        auto background = makeEntity();
-        auto shapeCmp = background->addComponent<ShapeComponent>();
-        shapeCmp->setShape<sf::RectangleShape>(Vector2f(500.f, 500.f));
-        shapeCmp->getShape().setFillColor(Color::Black);
-        shapeCmp->getShape().setOutlineThickness(10.f);
-        shapeCmp->getShape().setOutlineThickness(10.f);
-        shapeCmp->getShape().setOutlineColor(Color::White);
-        shapeCmp->getShape().setOrigin(Vector2(shapeCmp->getShape().getLocalBounds().width * 0.5f, shapeCmp->getShape().getLocalBounds().height * 0.5f));
-        background->setPosition(Vector2f(Engine::getWindowSize().x * 0.5f, Engine::getWindowSize().y * 0.5f));
-        background->addTag("background");
-        background->setVisible(false);
-
-        string optionsText[4] = { "Game Paused", "Resume", "Save", "Exit to Main Menu" };
-        for (int i = 0; i < 4; ++i) {
-            auto menuOption = makeEntity();
-            auto textCmp = menuOption->addComponent<TextComponent>(optionsText[i]);
-            textCmp->getText().setOrigin(Vector2f(textCmp->getText().getLocalBounds().width * 0.5f, textCmp->getText().getLocalBounds().height * 0.5f));
-            textCmp->getText().setPosition(Vector2f(Engine::getWindowSize().x * 0.5f, 400 + ((i + 1) * 50)));
-            menuOption->addTag("menu");
-            menuOption->setVisible(false);
-            menuOption->setAlive(false);
-            if (i > 0)
-                menuOptions.push_back(menuOption);
-        }
-        selectedOptionIndex = -1;
-        Engine::paused = false;
-    }
-
+    loadPauseMenu();
 
     //Simulate long loading times to check loading screen works
     //std::this_thread::sleep_for(std::chrono::milliseconds(3000));
     cout << " Scene 1 Load Done" << endl;
 
     setLoaded(true);
+}
+
+void Level1Scene::loadPauseMenu() {
+    auto background = makeEntity();
+    auto shapeCmp = background->addComponent<ShapeComponent>();
+    shapeCmp->setShape<sf::RectangleShape>(Vector2f(500.f, 500.f));
+    shapeCmp->getShape().setFillColor(Color::Black);
+    shapeCmp->getShape().setOutlineThickness(10.f);
+    shapeCmp->getShape().setOutlineThickness(10.f);
+    shapeCmp->getShape().setOutlineColor(Color::White);
+    shapeCmp->getShape().setOrigin(Vector2(shapeCmp->getShape().getLocalBounds().width * 0.5f, shapeCmp->getShape().getLocalBounds().height * 0.5f));
+    background->setPosition(Vector2f(Engine::getWindowSize().x * 0.5f, Engine::getWindowSize().y * 0.5f));
+    background->addTag("background");
+    background->setVisible(false);
+
+    string optionsText[4] = { "Game Paused", "Resume", "Save", "Exit to Main Menu" };
+    for (int i = 0; i < 4; ++i) {
+        auto menuOption = makeEntity();
+        auto textCmp = menuOption->addComponent<TextComponent>(optionsText[i]);
+        textCmp->getText().setOrigin(Vector2f(textCmp->getText().getLocalBounds().width * 0.5f, textCmp->getText().getLocalBounds().height * 0.5f));
+        textCmp->getText().setPosition(Vector2f(Engine::getWindowSize().x * 0.5f, 400 + ((i + 1) * 50)));
+        menuOption->addTag("menu");
+        menuOption->setVisible(false);
+        menuOption->setAlive(false);
+        if (i > 0)
+            menuOptions.push_back(menuOption);
+    }
+    selectedOptionIndex = -1;
+    Engine::paused = false;
 }
 
 void Level1Scene::Unload() {
@@ -145,6 +145,7 @@ void Level1Scene::Update(const double& dt) {
             displayMenu();
         }
     }
+    // pause menu update
     else {
         if (Keyboard::isKeyPressed(Controls::MenuDown)) {
             moveDown();
