@@ -16,4 +16,6 @@ public:
 	
 
 	static std::string toString(sf::Keyboard::Key key);
+	static std::string saveMappings();
+	static void loadMappings(std::string mappingsFromFile);
 };
