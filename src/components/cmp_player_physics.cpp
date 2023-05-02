@@ -33,30 +33,34 @@ bool PlayerPhysicsComponent::isGrounded() const {
 void PlayerPhysicsComponent::Update(double dt) {
     const auto pos = parent->getPosition();
 
+    int GamepadAxis = GamepadMgr::Instance().GamepadOne()->getAxisPosition(Gamepad::GAMEPAD_AXIS::leftStick_X);
+
     //Teleport to start if we fall off map.
     if (pos.y > ls::getHeight() * ls::getTileSize()) {
         teleport(ls::getTilePosition(ls::findTiles(ls::START)[0]));
     }
 
-    if (Keyboard::isKeyPressed(Controls::MoveLeft) ||
-        Keyboard::isKeyPressed(Controls::MoveRight)) {
-        // Moving Either Left or Right
-        if (Keyboard::isKeyPressed(Controls::MoveRight)) {
+        // Player Right Movement
+        // cout << GamepadMgr::Instance().GamepadOne()->getAxisPosition(Gamepad::GAMEPAD_AXIS::leftStick_X);
+
+        if (Keyboard::isKeyPressed(Controls::MoveRight) || GamepadAxis > 50 ){
             if (getVelocity().x < maxVelocity.x)
                 impulse({ (float)(dt * groundspeed), 0 });
         }
-        else {
-            if (getVelocity().x > -maxVelocity.x)
+        // Player Left Movement
+        else if (Keyboard::isKeyPressed(Controls::MoveLeft) || GamepadAxis < -50) {
+           if (getVelocity().x > -maxVelocity.x)
                 impulse({ -(float)(dt * groundspeed), 0 });
         }
-    }
+    
     else {
         // Dampen X axis movement
         dampen({ 0.9f, 1.0f });
     }
 
+
     // Handle Jump
-    if (Keyboard::isKeyPressed(Controls::Jump)) {
+    if (Keyboard::isKeyPressed(Controls::Jump) || GamepadMgr::Instance().GamepadOne()->isButtonPressed(Gamepad::GAMEPAD_BUTTON::btn_a))  {
         grounded = isGrounded();
 
         if (grounded) {
