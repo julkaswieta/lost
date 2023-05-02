@@ -1,5 +1,7 @@
 #include "controls.h"
 #include "SFML/System/String.hpp"
+#include "GamepadMgr.h"
+#include "Gamepad.h"
 
 using namespace sf;
 
@@ -12,6 +14,9 @@ Keyboard::Key Controls::MenuSelect = Keyboard::Enter;
 Keyboard::Key Controls::Exit = Keyboard::Escape;
 Keyboard::Key Controls::VolumeUp = Keyboard::Right;
 Keyboard::Key Controls::VolumeDown = Keyboard::Left;
+
+
+
 
 std::string Controls::toString(Keyboard::Key key) {
 	return Keyboard::getDescription(Keyboard::delocalize(key)).toAnsiString();
