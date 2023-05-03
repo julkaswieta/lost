@@ -18,6 +18,9 @@ Keyboard::Key Controls::PreviousOption = Keyboard::Left;
 
 
 
+
+
+
 std::string Controls::toString(Keyboard::Key key) {
 	return Keyboard::getDescription(Keyboard::delocalize(key)).toAnsiString();
 }

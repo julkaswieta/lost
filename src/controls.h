@@ -16,6 +16,5 @@ public:
 	static sf::Keyboard::Key NextOption;
 	static sf::Keyboard::Key PreviousOption;
 
-
 	static std::string toString(sf::Keyboard::Key key);
 };
