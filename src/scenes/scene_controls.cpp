@@ -40,7 +40,6 @@ void ControlsScene::Load() {
         }
 
     }
-    ACTIVE_OPTIONS_COUNT = options.size();
     selectedOptionIndex = -1;
     setLoaded(true);
 }

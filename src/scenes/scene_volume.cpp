@@ -30,8 +30,7 @@ void VolumeScene::Load()
             if (i == 1 || i == 3)
                 options.push_back(menuOption);
         }
-    } 
-    ACTIVE_OPTIONS_COUNT = options.size();
+    }
     if(volume == 0)
         volume = 50;
     volumeChangeActive = false;

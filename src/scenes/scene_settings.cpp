@@ -21,7 +21,6 @@ void SettingsScene::Load() {
                 options.push_back(menuOption);
         }
     }
-    ACTIVE_OPTIONS_COUNT = options.size();
     selectedOptionIndex = -1;
     setLoaded(true);
 }

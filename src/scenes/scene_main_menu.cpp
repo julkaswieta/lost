@@ -21,7 +21,6 @@ void MainMenuScene::Load() {
                 options.push_back(menuOption);
         }
     }
-    ACTIVE_OPTIONS_COUNT = options.size();
     setLoaded(true);
 }
 

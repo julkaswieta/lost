@@ -38,7 +38,6 @@ void ResolutionScene::loadOptions() {
         if (i > 0 && i < 4)
             options.push_back(menuOption);
     }
-    ACTIVE_OPTIONS_COUNT = options.size();
     selectedOptionIndex = -1;
 }
 
