@@ -108,7 +108,7 @@ void Level1Scene::loadPauseMenu() {
     background->addTag("background");
     background->setVisible(false);
 
-    string optionsText[4] = { "Game Paused", "Resume", "Save", "Exit to Main Menu" };
+    string optionsText[4] = { "Game Paused", "Resume", "Restart Level", "Exit to Main Menu" };
     for (int i = 0; i < 4; ++i) {
         auto menuOption = makeEntity();
         auto textCmp = menuOption->addComponent<TextComponent>(optionsText[i]);
@@ -216,7 +216,7 @@ void Level1Scene::executeSelectedOption() {
         hideMenu();
         break;
     case 1:
-        //save
+        Engine::ChangeScene((Scene*)&level1);
         break;
     case 2:
         Engine::ChangeScene(&menu);
