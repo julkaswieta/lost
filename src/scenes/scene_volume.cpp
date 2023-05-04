@@ -31,15 +31,14 @@ void VolumeScene::Load()
                 options.push_back(menuOption);
         }
     }
-    if(volume == 0)
-        volume = 50;
+    localVolume = SaveSystem::getVolume();
     selectedOptionIndex = -1;
     setLoaded(true);
 }
 
 void VolumeScene::Update(const double& dt)
 {
-    this->ents.find("Volume")[0]->getComponents<TextComponent>()[0]->SetText("Volume: " + to_string(volume));
+    this->ents.find("Volume")[0]->getComponents<TextComponent>()[0]->SetText("Volume: " + to_string(localVolume));
 
     if (volumeChangeActive) {
         if (Keyboard::isKeyPressed(Controls::NextOption)) {
@@ -66,15 +65,15 @@ void VolumeScene::moveDown()
 }
 
 void VolumeScene::volumeUp() {
-    if (volume < 100) {
-        volume++;
+    if (localVolume < 100) {
+        localVolume++;
         std::this_thread::sleep_for(std::chrono::milliseconds(100));
     }
 }
 
 void VolumeScene::volumeDown() {
-    if (volume > 0) {
-        volume--;
+    if (localVolume > 0) {
+        localVolume--;
         std::this_thread::sleep_for(std::chrono::milliseconds(100));
     }
 }
@@ -96,7 +95,7 @@ void VolumeScene::executeSelectedOption()
         this->ents.find("volMessage")[0]->setVisible(true);
         break;
     case 1:
-        SaveSystem::updateVolume(volume);
+        SaveSystem::updateVolume(localVolume);
         SaveSystem::saveSettings();
         Engine::ChangeScene(&settings);
         break;

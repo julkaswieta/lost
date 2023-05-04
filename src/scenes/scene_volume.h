@@ -10,7 +10,7 @@ public:
 
 private:
 	bool volumeChangeActive = false;
-	int volume = 50;
+	int localVolume = 50;
 
 	void moveUp() override;
 	void moveDown() override;

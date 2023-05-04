@@ -6,6 +6,7 @@
 #include <future>
 #include <iostream>
 #include <stdexcept>
+#include "../src/save_system.h"
 
 using namespace sf;
 using namespace std;
@@ -24,9 +25,11 @@ float frametimes[256] = {};
 uint8_t frameTimesCounter = 0;
 
 // Initialises the game's engine and all subsystems
-void Engine::Start(unsigned int width, unsigned int height,
-    const std::string& gameName, Scene* scn) {
-    RenderWindow rw(VideoMode({ width, height }), gameName, sf::Style::Fullscreen);
+void Engine::Start(const std::string& gameName, Scene* scn) {
+    SaveSystem::loadSettings();
+    Vector2u targetResolution = SaveSystem::getResolution();
+    int targetWindowMode = SaveSystem::getWindowMode();
+    RenderWindow rw(VideoMode({ targetResolution.x, targetResolution.y}), gameName, (targetWindowMode == 0) ? Style::Fullscreen : Style::Default);
     Engine::gameName = gameName;
     window = &rw;
     Renderer::Initialise(rw);

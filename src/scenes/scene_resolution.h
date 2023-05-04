@@ -9,12 +9,13 @@ public:
 	void Update(const double& dt) override;
 	void Unload() override;
 
+	static sf::Vector2u getResolution(int index);
+
 private:
 	bool resolutionChangeActive = false;
 	bool windowModeChangeActive = false;
 
 	sf::Vector2u resolution = sf::Vector2u(0,0);
-	std::string currentResolutionOption = "";
 	int resolutionCounter = -1;
 	int currentWindowMode = -1; // 0 for fullscreen, 1 for windowed
 
@@ -29,7 +30,7 @@ private:
 
 	// helper functions
 	sf::Vector2f positionElement(int elemIndex);
-	sf::Vector2u resolutionToVector(std::string resolutionText);
+	static sf::Vector2u resolutionToVector(std::string resolutionText);
 	void displayCurrentSettings();
 	void resetFormatting();
 	void loadOptions();

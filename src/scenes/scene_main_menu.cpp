@@ -10,7 +10,6 @@ using namespace std;
 using namespace sf;
 
 void MainMenuScene::Load() {
-    SaveSystem::loadSettings();
     {
         string optionsText[4] = { "LOST", "Start Game", "Settings", "Exit" };
         for (int i = 0; i < 4; ++i) {

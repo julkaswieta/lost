@@ -20,9 +20,6 @@ string Controls::toString(Keyboard::Key key) {
 
 string Controls::saveMappings()
 {
-	auto f = (Keyboard::Scancode)71;
-	MoveLeft = Keyboard::localize(Keyboard::Scan::D);
-	
 	return to_string((int)Keyboard::delocalize(MoveLeft)) + "\n"
 		+ to_string((int)Keyboard::delocalize(MoveRight)) + "\n"
 		+ to_string((int)Keyboard::delocalize(Jump));
