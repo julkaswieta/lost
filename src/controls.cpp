@@ -16,3 +16,14 @@ Keyboard::Key Controls::PreviousOption = Keyboard::Left;
 std::string Controls::toString(Keyboard::Key key) {
 	return Keyboard::getDescription(Keyboard::delocalize(key)).toAnsiString();
 }
+
+std::string Controls::saveMappings()
+{
+	return toString(MoveLeft) + "\n"
+		+ toString(MoveRight) + "\n"
+		+ toString(Jump);
+}
+
+void Controls::loadMappings(std::string mappingsFromFile)
+{
+}

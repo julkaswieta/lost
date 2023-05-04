@@ -4,7 +4,7 @@
 #include "SFML/Window/Keyboard.hpp"
 #include "../controls.h"
 #include "../game.h"
-
+#include "../save_system.h"
 
 using namespace std;
 using namespace sf;
@@ -98,6 +98,8 @@ void VolumeScene::executeSelectedOption()
         this->ents.find("volMessage")[0]->setVisible(true);
         break;
     case 1:
+        SaveSystem::updateVolume(volume);
+        SaveSystem::saveSettings();
         Engine::ChangeScene(&settings);
         break;
     }

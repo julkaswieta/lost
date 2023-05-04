@@ -10,6 +10,10 @@ public:
 	static void saveGame();
 	static void loadGame();
 
+	static void updateVolume(int newVolume);
+	static void updateResolution(std::string newResolution);
+	static void updateWindowMode(int newWindowMode);
+
 private:
 	static const std::string settingsFilePath;
 	static const std::string gameSettingsFilePath;
@@ -17,13 +21,8 @@ private:
 	static int Volume;
 	static std::string Resolution;
 	static int WindowMode;
-	// TODO: add mappings
 
 	static std::vector<std::time_t> LevelBestTimes;
 	static int LastLevelCompleted;
 	static int DeathCounter;
-
-	static void createAndOpenSettingsFile();
-	static void createAndOpenGameFile();
-	static void loadDefaultSettings();
 };

@@ -5,6 +5,7 @@
 #include "../game.h"
 #include "SFML/Window/Event.hpp"
 #include "system_renderer.h"
+#include "../save_system.h"
 
 using namespace std;
 using namespace sf;
@@ -177,6 +178,7 @@ void ControlsScene::executeSelectedOption() {
             break;
         case 6:
             optionExecuted = true;
+            SaveSystem::saveSettings();
             Engine::ChangeScene(&settings);
             break;
         default:

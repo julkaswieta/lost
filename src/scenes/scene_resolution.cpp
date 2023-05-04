@@ -5,6 +5,7 @@
 #include "../game.h"
 #include "../controls.h"
 #include "SFML/Window/VideoMode.hpp"
+#include "../save_system.h"
 
 using namespace std;
 using namespace sf;
@@ -214,6 +215,9 @@ void ResolutionScene::executeSelectedOption()
         ents.find("changeMessage")[0]->setVisible(true);
         break;
     case 2:
+        SaveSystem::updateResolution(currentResolutionOption);
+        SaveSystem::updateWindowMode(currentWindowMode);
+        SaveSystem::saveSettings();
         Engine::ChangeScene(&settings);
         break;
     }

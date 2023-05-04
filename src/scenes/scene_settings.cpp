@@ -24,7 +24,6 @@ void SettingsScene::Load() {
     ACTIVE_OPTIONS_COUNT = options.size();
     selectedOptionIndex = -1;
     setLoaded(true);
-    SaveSystem::saveSettings();
 }
 
 void SettingsScene::executeSelectedOption() {
