@@ -6,6 +6,8 @@
 using namespace std;
 using namespace sf;
 
+std::vector<std::shared_ptr<Entity>> MenuScene::options;
+
 void MenuScene::Unload()
 {
     options.clear();

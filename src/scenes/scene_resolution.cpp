@@ -10,6 +10,9 @@
 using namespace std;
 using namespace sf;
 
+std::vector<std::shared_ptr<Entity>> ResolutionScene::resolutions;
+std::vector<std::shared_ptr<Entity>> ResolutionScene::windowModes;
+
 void ResolutionScene::Load() {
     
     loadOptions();
@@ -59,7 +62,6 @@ void ResolutionScene::loadResolutions() {
         currentResolutionOption = resolutionsText[2];
         resolution = resolutionToVector(currentResolutionOption);
     }
-    resolutionChangeActive = false;
 }
 
 void ResolutionScene::loadWindowModes() {
@@ -77,7 +79,6 @@ void ResolutionScene::loadWindowModes() {
     
     if(currentWindowMode == -1)
         currentWindowMode = 0;
-    windowModeChangeActive = false;
 }
 
 Vector2f ResolutionScene::positionElement(int elemIndex) {

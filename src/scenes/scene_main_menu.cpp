@@ -9,7 +9,6 @@ using namespace std;
 using namespace sf;
 
 void MainMenuScene::Load() {
-    selectedOptionIndex = -1;
     {
         string optionsText[4] = { "LOST", "Start Game", "Settings", "Exit" };
         for (int i = 0; i < 4; ++i) {
@@ -21,6 +20,7 @@ void MainMenuScene::Load() {
                 options.push_back(menuOption);
         }
     }
+    selectedOptionIndex = -1;
     setLoaded(true);
 }
 

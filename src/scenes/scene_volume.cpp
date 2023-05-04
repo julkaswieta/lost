@@ -33,7 +33,6 @@ void VolumeScene::Load()
     }
     if(volume == 0)
         volume = 50;
-    volumeChangeActive = false;
     selectedOptionIndex = -1;
     setLoaded(true);
 }

@@ -13,6 +13,7 @@ using namespace std;
 using namespace sf;
 
 static shared_ptr<Entity> player;
+std::vector<std::shared_ptr<Entity>> Level1Scene::menuOptions;
 
 void Level1Scene::Load() {
     cout << " Scene 1 Load" << endl;
