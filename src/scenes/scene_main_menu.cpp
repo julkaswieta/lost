@@ -4,11 +4,13 @@
 #include <SFML/Window/Keyboard.hpp>
 #include <iostream>
 #include "../controls.h"
+#include "../save_system.h"
 
 using namespace std;
 using namespace sf;
 
 void MainMenuScene::Load() {
+    SaveSystem::loadSettings();
     {
         string optionsText[4] = { "LOST", "Start Game", "Settings", "Exit" };
         for (int i = 0; i < 4; ++i) {

@@ -14,7 +14,6 @@ int SaveSystem::WindowMode = 1;
 void SaveSystem::saveSettings() {
 	ofstream settingsSave;
 	settingsSave.open(settingsFilePath);
-	// fill the file
 	settingsSave << to_string(Volume) << "\n";
 	settingsSave << Resolution << "\n";
 	settingsSave << WindowMode << "\n";
@@ -23,7 +22,26 @@ void SaveSystem::saveSettings() {
 }
 
 void SaveSystem::loadSettings() {
+	vector<string> saveContents;
+	string saveLine;
+	ifstream settingsSave(settingsFilePath);
+	while (getline(settingsSave, saveLine)) {
+		saveContents.push_back(saveLine);
+	}
+	settingsSave.close();
 
+	if (saveContents.size() == 6)
+	{
+		Volume = stoi(saveContents[0]);
+		Resolution = saveContents[1];
+		WindowMode = stoi(saveContents[2]);
+
+		auto start = saveContents.begin() + 3;
+		auto end = saveContents.end();
+		vector<string> mappings(3);
+		copy(start, end, mappings.begin());
+		Controls::loadMappings(mappings);
+	}
 }
 
 void SaveSystem::saveGame() {
