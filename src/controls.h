@@ -1,8 +1,17 @@
+/**
+* controls.h: header file for Controls class
+* 
+* Author: Julia Swietochowska
+* Last modified: 04/05/2023
+*/
+
 #pragma once
+
 #include "SFML/Window/Keyboard.hpp"
 #include <string>
 #include <vector>
 
+/// A class for storingand managing control mappings
 class Controls {
 public:
 	static sf::Keyboard::Key MoveLeft;

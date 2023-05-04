@@ -1,3 +1,9 @@
+/**
+* scene_resolution.cpp: implementation for ResolutionScene class
+*
+* Author: Julia Swietochowska
+* Last modified: 04/05/2023
+*/
 #include "scene_resolution.h"
 #include "../components/cmp_text.h"
 #include "engine.h"

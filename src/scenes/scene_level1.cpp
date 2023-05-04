@@ -1,3 +1,10 @@
+/**
+* scene_level1.cpp: implementation for Level1Scene class
+*
+* Author: Dillon Aitken
+* Pause Menu: Julia Swietochowska
+* Last modified: 04/05/2023
+*/
 #include "scene_level1.h"
 #include "../components/cmp_hurt_player.h"
 #include "../components/cmp_player_physics.h"

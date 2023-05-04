@@ -1,6 +1,14 @@
+/**
+* scene_controls.h: header file for ControlsScene class
+*
+* Author: Julia Swietochowska
+* Last modified: 04/05/2023
+*/
 #pragma once
 #include "scene_menu.h"
 
+/// A scene for controls settings
+/// Allows remapping certain controls and displays all navigation controls
 class ControlsScene : public MenuScene {
 public:
 	ControlsScene() = default;

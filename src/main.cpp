@@ -1,3 +1,9 @@
+/**
+* main.cpp: game starting point
+*
+* Author: "Lost" devs
+* Last modified: 04/05/2023
+*/
 #include "engine.h"
 #include "game.h"
 

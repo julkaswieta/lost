@@ -1,3 +1,9 @@
+/**
+* scene_main_menu.cpp: implementation for MainMenuScene class
+*
+* Author: Julia Swietochowska
+* Last modified: 04/05/2023
+*/
 #include "scene_main_menu.h"
 #include "../components/cmp_text.h"
 #include "../game.h"

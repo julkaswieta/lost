@@ -1,3 +1,7 @@
+/**
+* An extension to SFML providing additional operations on vectors
+* and introducing additional 2D vector sub-type (Vector2ul)
+*/
 #pragma once
 
 #include <SFML/System.hpp>

@@ -1,6 +1,14 @@
+/**
+* scene_resolution.h: header file for ResolutionScene class
+*
+* Author: Julia Swietochowska
+* Last modified: 04/05/2023
+*/
 #pragma once
 #include "scene_menu.h"
 
+/// Scene for resolution settings 
+/// Allows changing resolution and window mode
 class ResolutionScene : public MenuScene {
 public:
 	ResolutionScene() = default;

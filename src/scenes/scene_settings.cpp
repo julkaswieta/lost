@@ -1,3 +1,9 @@
+/**
+* scene_settings.cpp: implementation for SettingsScene class
+*
+* Author: Julia Swietochowska
+* Last modified: 04/05/2023
+*/
 #include "scene_settings.h"
 #include "../components/cmp_text.h"
 #include "engine.h"

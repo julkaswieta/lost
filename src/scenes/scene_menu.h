@@ -1,6 +1,13 @@
+/**
+* scene_menu.h: header file for MenuScene class
+*
+* Author: Julia Swietochowska
+* Last modified: 04/05/2023
+*/
 #pragma once
 #include "scene.h"
 
+/// An abstract class providing a template for menu scenes
 class MenuScene : public Scene {
 public:
 	MenuScene() = default;

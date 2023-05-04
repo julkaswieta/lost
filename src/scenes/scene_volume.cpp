@@ -1,3 +1,9 @@
+/**
+* scene_volume.cpp: implementation for VolumeScene class
+*
+* Author: Julia Swietochowska
+* Last modified: 04/05/2023
+*/
 #include "scene_volume.h"
 #include "../components/cmp_text.h"
 #include <engine.h>

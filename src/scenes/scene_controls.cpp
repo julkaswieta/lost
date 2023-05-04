@@ -1,3 +1,9 @@
+/**
+* scene_controls.cpp: implementation for ControlsScene class
+*
+* Author: Julia Swietochowska
+* Last modified: 04/05/2023
+*/
 #include "scene_controls.h"
 #include "../controls.h"
 #include "../components/cmp_text.h"

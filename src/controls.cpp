@@ -1,3 +1,9 @@
+/**
+* controls.cpp: implementation for Controls class
+*
+* Author: Julia Swietochowska
+* Last modified: 04/05/2023
+*/
 #include "controls.h"
 #include "SFML/System/String.hpp"
 

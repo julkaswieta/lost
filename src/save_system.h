@@ -1,9 +1,18 @@
+/**
+* save_system.h: header file for Controls class
+*
+* Author: Julia Swietochowska
+* Last modified: 04/05/2023
+*/
 #pragma once
+
 #include <string>
 #include <ctime>
 #include <vector>
 #include "SFML/System/Vector2.hpp"
 
+/// A class for storing settings and game progress
+/// Provides loading and saving functionality 
 class SaveSystem {
 public:
 	static void saveSettings();

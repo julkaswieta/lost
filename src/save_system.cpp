@@ -1,3 +1,9 @@
+/**
+* save_system.cpp: implementation for SaveSystem class
+*
+* Author: Julia Swietochowska
+* Last modified: 04/05/2023
+*/
 #include "save_system.h"
 #include <fstream>
 #include "controls.h"
@@ -6,10 +12,11 @@
 using namespace std;
 using namespace sf;
 
+// save files paths
 const string SaveSystem::settingsFilePath = "settings_save.txt";
 const string SaveSystem::gameSettingsFilePath = "game_save.txt";
 
-// default settings
+// default settings - get loaded if no settings save file exists 
 int SaveSystem::Volume = 50;
 int SaveSystem::ResolutionIndex = 2;
 Vector2u SaveSystem::Resolution = { 1920, 1080 };
@@ -57,6 +64,7 @@ void SaveSystem::loadGame() {
 
 }
 
+// getters and setters
 void SaveSystem::updateVolume(int newVolume) { Volume = newVolume; }
 
 void SaveSystem::updateResolutionIndex(int newResolutionIndex) { ResolutionIndex = newResolutionIndex; }

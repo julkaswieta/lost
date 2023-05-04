@@ -1,3 +1,9 @@
+/**
+* scene_menu.cpp: implementation for MenuScene class
+*
+* Author: Julia Swietochowska
+* Last modified: 04/05/2023
+*/
 #include "scene_menu.h"
 #include "SFML/Window/Keyboard.hpp"
 #include "../controls.h"
