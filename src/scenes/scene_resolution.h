@@ -9,17 +9,18 @@ public:
 	void Update(const double& dt) override;
 	void Unload() override;
 
-private:
-	bool resolutionChangeActive;
-	bool windowModeChangeActive;
+	static sf::Vector2u getResolution(int index);
 
-	sf::Vector2u resolution;
-	std::string currentResolutionOption;
-	int resolutionCounter;
+private:
+	bool resolutionChangeActive = false;
+	bool windowModeChangeActive = false;
+
+	sf::Vector2u resolution = sf::Vector2u(0,0);
+	int resolutionCounter = -1;
 	int currentWindowMode = -1; // 0 for fullscreen, 1 for windowed
 
-	std::vector<std::shared_ptr<Entity>> resolutions;
-	std::vector<std::shared_ptr<Entity>> windowModes;
+	static std::vector<std::shared_ptr<Entity>> resolutions;
+	static std::vector<std::shared_ptr<Entity>> windowModes;
 
 	void moveUp() override;
 	void moveDown() override;
@@ -29,7 +30,7 @@ private:
 
 	// helper functions
 	sf::Vector2f positionElement(int elemIndex);
-	sf::Vector2u resolutionToVector(std::string resolutionText);
+	static sf::Vector2u resolutionToVector(std::string resolutionText);
 	void displayCurrentSettings();
 	void resetFormatting();
 	void loadOptions();

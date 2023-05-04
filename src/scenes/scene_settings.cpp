@@ -4,6 +4,7 @@
 #include "SFML/Window/Keyboard.hpp"
 #include "../game.h"
 #include "../controls.h"
+#include "../save_system.h"
 
 using namespace std;
 using namespace sf;
@@ -20,7 +21,6 @@ void SettingsScene::Load() {
                 options.push_back(menuOption);
         }
     }
-    ACTIVE_OPTIONS_COUNT = options.size();
     selectedOptionIndex = -1;
     setLoaded(true);
 }

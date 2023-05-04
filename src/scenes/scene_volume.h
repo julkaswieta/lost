@@ -9,8 +9,8 @@ public:
 	void Update(const double& dt) override;
 
 private:
-	bool volumeChangeActive;
-	int volume;
+	bool volumeChangeActive = false;
+	int localVolume = 50;
 
 	void moveUp() override;
 	void moveDown() override;

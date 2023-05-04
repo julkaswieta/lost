@@ -4,12 +4,12 @@
 #include <SFML/Window/Keyboard.hpp>
 #include <iostream>
 #include "../controls.h"
+#include "../save_system.h"
 
 using namespace std;
 using namespace sf;
 
 void MainMenuScene::Load() {
-    selectedOptionIndex = -1;
     {
         string optionsText[4] = { "LOST", "Start Game", "Settings", "Exit" };
         for (int i = 0; i < 4; ++i) {
@@ -21,7 +21,7 @@ void MainMenuScene::Load() {
                 options.push_back(menuOption);
         }
     }
-    ACTIVE_OPTIONS_COUNT = options.size();
+    selectedOptionIndex = -1;
     setLoaded(true);
 }
 

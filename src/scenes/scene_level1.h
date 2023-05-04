@@ -13,8 +13,8 @@ public:
   void Render() override;
 
 private:
-	std::vector<std::shared_ptr<Entity>> menuOptions;
-	int selectedOptionIndex;
+	static std::vector<std::shared_ptr<Entity>> menuOptions;
+	int selectedOptionIndex = -1;
 
 	void loadPauseMenu();
 	void moveUp();

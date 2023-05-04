@@ -5,9 +5,15 @@
 #include "../game.h"
 #include "../controls.h"
 #include "SFML/Window/VideoMode.hpp"
+#include "../save_system.h"
 
 using namespace std;
 using namespace sf;
+
+std::vector<std::shared_ptr<Entity>> ResolutionScene::resolutions;
+std::vector<std::shared_ptr<Entity>> ResolutionScene::windowModes;
+
+static const string resolutionsText[5] = { "1280 x 720", "1600 x 900", "1920 x 1080", "2048 x 1152", "2560 x 1440" };
 
 void ResolutionScene::Load() {
     
@@ -37,29 +43,20 @@ void ResolutionScene::loadOptions() {
         if (i > 0 && i < 4)
             options.push_back(menuOption);
     }
-    ACTIVE_OPTIONS_COUNT = options.size();
     selectedOptionIndex = -1;
 }
 
 void ResolutionScene::loadResolutions() {
-    string resolutionsText[5] = { "1280 x 720", "1600 x 900", "1920 x 1080", "2048 x 1152", "2560 x 1440" };
     for (int i = 0; i < 5; ++i) {
         auto resolutionOption = makeEntity();
         auto textCmp = resolutionOption->addComponent<TextComponent>(resolutionsText[i]);
         textCmp->getText().setOrigin(Vector2(textCmp->getText().getLocalBounds().width * 0.5f, textCmp->getText().getLocalBounds().height * 0.5f));
-        resolutionOption->addTag(resolutionsText[i]);
+        resolutionOption->addTag("resolution" + to_string(i));
         textCmp->getText().setPosition(Vector2f(Engine::getWindowSize().x * 0.5f, 250));
-        //textCmp->SetColor(Color::Red);
         resolutionOption->setVisible(false);
         resolutions.push_back(resolutionOption);
     }
-
-    if (resolution.x == 0 && resolution.y == 0) {
-        resolutionCounter = 2;
-        currentResolutionOption = resolutionsText[2];
-        resolution = resolutionToVector(currentResolutionOption);
-    }
-    resolutionChangeActive = false;
+        resolutionCounter = SaveSystem::getResolutionIndex();
 }
 
 void ResolutionScene::loadWindowModes() {
@@ -70,14 +67,11 @@ void ResolutionScene::loadWindowModes() {
         textCmp->getText().setOrigin(Vector2(textCmp->getText().getLocalBounds().width * 0.5f, textCmp->getText().getLocalBounds().height * 0.5f));
         windowMode->addTag("window" + to_string(i));
         textCmp->getText().setPosition(Vector2f(Engine::getWindowSize().x * 0.5f, 350));
-        //textCmp->SetColor(Color::Red);
         windowMode->setVisible(false);
         windowModes.push_back(windowMode);
     }
     
-    if(currentWindowMode == -1)
-        currentWindowMode = 0;
-    windowModeChangeActive = false;
+    currentWindowMode = SaveSystem::getWindowMode();
 }
 
 Vector2f ResolutionScene::positionElement(int elemIndex) {
@@ -119,10 +113,10 @@ void ResolutionScene::Update(const double& dt) {
 
 inline void ResolutionScene::displayCurrentSettings() {
     if (resolutionChangeActive)
-        ents.find(currentResolutionOption)[0]->getComponents<TextComponent>()[0]->SetColor(Color::Blue);
+        ents.find("resolution" + to_string(resolutionCounter))[0]->getComponents<TextComponent>()[0]->SetColor(Color::Blue);
     if (windowModeChangeActive)
         windowModes[currentWindowMode]->getComponents<TextComponent>()[0]->SetColor(Color::Blue);
-    ents.find(currentResolutionOption)[0]->setVisible(true);
+    ents.find("resolution" + to_string(resolutionCounter))[0]->setVisible(true);
     ents.find("window" + to_string(currentWindowMode))[0]->setVisible(true);
 }
 
@@ -140,7 +134,7 @@ void ResolutionScene::moveDown() {
 
 void ResolutionScene::resetFormatting() {
     resolutionChangeActive = false;
-    ents.find(currentResolutionOption)[0]->getComponents<TextComponent>()[0]->SetColor(Color::White);
+    ents.find("resolution" + to_string(resolutionCounter))[0]->getComponents<TextComponent>()[0]->SetColor(Color::White);
     windowModeChangeActive = false;
     ents.find("window" + to_string(currentWindowMode))[0]->getComponents<TextComponent>()[0]->SetColor(Color::White);
     ents.find("changeMessage")[0]->setVisible(false);
@@ -148,7 +142,12 @@ void ResolutionScene::resetFormatting() {
 
 void ResolutionScene::changeSettings() {
     if (resolutionChangeActive || windowModeChangeActive) {
+        Vector2u resolution = resolutionToVector(ents.find("resolution" + to_string(resolutionCounter))[0]->getComponents<TextComponent>()[0]->getText().getString());
         Engine::getWindow().create(VideoMode({ resolution.x, resolution.y }), Engine::gameName, (currentWindowMode == 0) ? Style::Fullscreen : Style::Default);
+        SaveSystem::updateResolutionIndex(resolutionCounter);
+        SaveSystem::updateResolution(resolution);
+        SaveSystem::updateWindowMode(currentWindowMode);
+        SaveSystem::saveSettings();
         updateElementsPosition();
     }
 }
@@ -175,8 +174,6 @@ void ResolutionScene::nextResolution(bool moveUp)
     else if (resolutionCounter >= resolutions.size()) 
         resolutionCounter = 0;
     
-    currentResolutionOption = resolutions[resolutionCounter]->getComponents<TextComponent>()[0]->getText().getString();
-    resolution = resolutionToVector(currentResolutionOption);
     std::this_thread::sleep_for(std::chrono::milliseconds(150));
     
 }
@@ -204,7 +201,7 @@ void ResolutionScene::executeSelectedOption()
     case 0:
         // change resolution
         resolutionChangeActive = true;
-        ents.find(currentResolutionOption)[0]->getComponents<TextComponent>()[0]->SetColor(Color::Blue);
+        ents.find("resolution" + to_string(resolutionCounter))[0]->getComponents<TextComponent>()[0]->SetColor(Color::Blue);
         ents.find("changeMessage")[0]->setVisible(true);
         break;
     case 1:
@@ -236,4 +233,9 @@ void ResolutionScene::Unload() {
     resolutions.clear();
     windowModes.clear();
     MenuScene::Unload();
+}
+
+sf::Vector2u ResolutionScene::getResolution(int index)
+{
+    return resolutionToVector(resolutionsText[index]);
 }

@@ -1,6 +1,7 @@
 #pragma once
 #include "SFML/Window/Keyboard.hpp"
 #include <string>
+#include <vector>
 
 class Controls {
 public:
@@ -16,4 +17,6 @@ public:
 	
 
 	static std::string toString(sf::Keyboard::Key key);
+	static std::string saveMappings();
+	static void loadMappings(std::vector<std::string> &mappingsFromFile);
 };

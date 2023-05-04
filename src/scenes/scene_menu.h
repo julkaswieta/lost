@@ -10,11 +10,10 @@ public:
 	void Update(const double& dt) override;
 
 protected:
-	int ACTIVE_OPTIONS_COUNT;
 	const int TOP_MARGIN = 100;
 
-	std::vector<std::shared_ptr<Entity>> options;
-	int selectedOptionIndex;
+	static std::vector<std::shared_ptr<Entity>> options;
+	int selectedOptionIndex = -1;
 
 	virtual void moveUp();
 	virtual void moveDown();
