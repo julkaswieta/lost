@@ -14,14 +14,18 @@ using namespace sf;
 
 // save files paths
 const string SaveSystem::settingsFilePath = "settings_save.txt";
-const string SaveSystem::gameSettingsFilePath = "game_save.txt";
+const string SaveSystem::gameSaveFilePath = "game_save.txt";
 
 // default settings - get loaded if no settings save file exists 
 int SaveSystem::Volume = 50;
 int SaveSystem::ResolutionIndex = 2;
 Vector2u SaveSystem::Resolution = { 1920, 1080 };
 int SaveSystem::WindowMode = 0;
+int SaveSystem::DeathCounter = 0;
+int SaveSystem::LastLevelCompleted = 0;
+vector<time_t> SaveSystem::LevelBestTimes = {time(NULL), (time_t)(-1)}; //test times
 
+// Saves each settings on a separate line in a txt file
 void SaveSystem::saveSettings() {
 	ofstream settingsSave;
 	settingsSave.open(settingsFilePath);
@@ -30,8 +34,10 @@ void SaveSystem::saveSettings() {
 	settingsSave << WindowMode << "\n";
 	settingsSave << Controls::saveMappings();
 	settingsSave.close();
+	cout << "Settings saved\n";
 }
 
+// Loads and processes settings from a txt file
 void SaveSystem::loadSettings() {
 	vector<string> saveContents;
 	string saveLine;
@@ -41,6 +47,7 @@ void SaveSystem::loadSettings() {
 	}
 	settingsSave.close();
 
+	// process content loaded from save file
 	if (saveContents.size() == 6)
 	{
 		Volume = stoi(saveContents[0]);
@@ -54,14 +61,38 @@ void SaveSystem::loadSettings() {
 		Controls::loadMappings(mappings);
 		Resolution = ResolutionScene::getResolution(ResolutionIndex);
 	}
+	cout << "Settings loaded\n";
 }
 
+// saves the game status to a txt file
 void SaveSystem::saveGame() {
-
+	ofstream gameSave;
+	gameSave.open(gameSaveFilePath);
+	gameSave << LastLevelCompleted << "\n";
+	gameSave << DeathCounter << "\n";
+	saveLevelTimes(gameSave);
+	gameSave.close();
+	cout << "game saved\n";
 }
 
-void SaveSystem::loadGame() {
+// formats and outputs level times to game save file
+inline void SaveSystem::saveLevelTimes(ofstream& gameSave) {
+	for (int i = 0; i < LevelBestTimes.size(); ++i) {
+		gameSave << to_string(i) << "," << to_string(LevelBestTimes[i]) << "\n";
+	}
+}
 
+// loads and processes game status from a file
+void SaveSystem::loadGame() {
+	vector<string> saveContents;
+	string saveLine;
+	ifstream gameSave(gameSaveFilePath);
+	while (getline(gameSave, saveLine)) {
+		saveContents.push_back(saveLine);
+	}
+	gameSave.close();
+
+	cout << "game loaded\n";
 }
 
 // getters and setters

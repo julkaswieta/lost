@@ -15,6 +15,7 @@
 #include <iostream>
 #include <thread>
 #include "../controls.h"
+#include "../save_system.h"
 
 using namespace std;
 using namespace sf;
@@ -142,6 +143,7 @@ void Level1Scene::Unload() {
 void Level1Scene::Update(const double& dt) {
     if (!Engine::paused) {
         if (ls::getTileAt(player->getPosition()) == ls::END) {
+            SaveSystem::saveGame();
             Engine::ChangeScene((Scene*)&menu);
         }
         else if (!player->isAlive())

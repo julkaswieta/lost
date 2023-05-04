@@ -9,6 +9,7 @@
 #include <string>
 #include <ctime>
 #include <vector>
+#include <fstream>
 #include "SFML/System/Vector2.hpp"
 
 /// A class for storing settings and game progress
@@ -32,14 +33,16 @@ public:
 
 private:
 	static const std::string settingsFilePath;
-	static const std::string gameSettingsFilePath;
+	static const std::string gameSaveFilePath;
 
 	static int Volume;
 	static int ResolutionIndex;
 	static sf::Vector2u Resolution;
 	static int WindowMode;
 
-	static std::vector<std::time_t> LevelBestTimes;
 	static int LastLevelCompleted;
 	static int DeathCounter;
+	static std::vector<std::time_t> LevelBestTimes;
+
+	static void saveLevelTimes(std::ofstream& gameSave);
 };
