@@ -31,6 +31,14 @@ public:
 	static sf::Vector2u getResolution();
 	static int getWindowMode();
 
+	static void setDeathCounter(int newDeathCount);
+	static void setLastLevelCompleted(int levelNumber);
+	static void addNewLevelTime(int levelNumber, float newTime);
+
+	static int getDeathCount();
+	static int getLastLevelCompleted();
+	static const std::vector<float> &getLevelBestTimes();
+
 private:
 	static const std::string settingsFilePath;
 	static const std::string gameSaveFilePath;
@@ -42,7 +50,7 @@ private:
 
 	static int LastLevelCompleted;
 	static int DeathCounter;
-	static std::vector<std::time_t> LevelBestTimes;
+	static std::vector<float> LevelBestTimes;
 
 	static void saveLevelTimes(std::ofstream& gameSave);
 };

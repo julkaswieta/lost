@@ -23,7 +23,7 @@ Vector2u SaveSystem::Resolution = { 1920, 1080 };
 int SaveSystem::WindowMode = 0;
 int SaveSystem::DeathCounter = 0;
 int SaveSystem::LastLevelCompleted = 0;
-vector<time_t> SaveSystem::LevelBestTimes = {time(NULL), (time_t)(-1)}; //test times
+vector<float> SaveSystem::LevelBestTimes = { 5.6f, 829203.4434f }; //test times
 
 // Saves each settings on a separate line in a txt file
 void SaveSystem::saveSettings() {
@@ -77,9 +77,10 @@ void SaveSystem::saveGame() {
 
 // formats and outputs level times to game save file
 inline void SaveSystem::saveLevelTimes(ofstream& gameSave) {
-	for (int i = 0; i < LevelBestTimes.size(); ++i) {
+	for (int i = 0; i < LevelBestTimes.size() - 1; ++i) {
 		gameSave << to_string(LevelBestTimes[i]) << "\n";
 	}
+	gameSave << to_string(LevelBestTimes[LevelBestTimes.size() - 1]);
 }
 
 // loads and processes game status from a file
@@ -98,14 +99,14 @@ void SaveSystem::loadGame() {
 		DeathCounter = stoi(saveContents[1]);
 		for (int i = 2; i < saveContents.size(); ++i) {
 			// process times saved
-			
+			LevelBestTimes[i - 2] = stof(saveContents[i]);
 		}
 	}
 
 	cout << "game loaded\n";
 }
 
-// getters and setters
+// getters and setterscfor settings
 void SaveSystem::updateVolume(int newVolume) { Volume = newVolume; }
 
 void SaveSystem::updateResolutionIndex(int newResolutionIndex) { ResolutionIndex = newResolutionIndex; }
@@ -121,3 +122,17 @@ int SaveSystem::getResolutionIndex() { return ResolutionIndex; }
 Vector2u SaveSystem::getResolution() { return Resolution; }
 
 int SaveSystem::getWindowMode() { return WindowMode; }
+
+// getters and setters for game save
+void SaveSystem::setDeathCounter(int newDeathCount) { DeathCounter = newDeathCount; }
+
+void SaveSystem::setLastLevelCompleted(int levelNumber) { LastLevelCompleted = levelNumber; }
+
+void SaveSystem::addNewLevelTime(int levelNumber, float newTime) { LevelBestTimes[levelNumber - 1] = newTime; }
+
+int SaveSystem::getDeathCount() { return DeathCounter; }
+
+int SaveSystem::getLastLevelCompleted() { return LastLevelCompleted; }
+
+const std::vector<float> &SaveSystem::getLevelBestTimes() { return LevelBestTimes; }
+

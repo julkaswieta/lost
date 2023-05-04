@@ -143,6 +143,8 @@ void Level1Scene::Unload() {
 void Level1Scene::Update(const double& dt) {
     if (!Engine::paused) {
         if (ls::getTileAt(player->getPosition()) == ls::END) {
+            SaveSystem::setLastLevelCompleted(1);
+            SaveSystem::setDeathCounter(10);
             SaveSystem::saveGame();
             Engine::ChangeScene((Scene*)&menu);
         }
