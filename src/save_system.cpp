@@ -78,7 +78,7 @@ void SaveSystem::saveGame() {
 // formats and outputs level times to game save file
 inline void SaveSystem::saveLevelTimes(ofstream& gameSave) {
 	for (int i = 0; i < LevelBestTimes.size(); ++i) {
-		gameSave << to_string(i) << "," << to_string(LevelBestTimes[i]) << "\n";
+		gameSave << to_string(LevelBestTimes[i]) << "\n";
 	}
 }
 
@@ -91,6 +91,16 @@ void SaveSystem::loadGame() {
 		saveContents.push_back(saveLine);
 	}
 	gameSave.close();
+
+	//process save contents
+	if (saveContents.size() >= 2) {
+		LastLevelCompleted = stoi(saveContents[0]);
+		DeathCounter = stoi(saveContents[1]);
+		for (int i = 2; i < saveContents.size(); ++i) {
+			// process times saved
+			
+		}
+	}
 
 	cout << "game loaded\n";
 }

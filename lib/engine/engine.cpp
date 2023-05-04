@@ -28,6 +28,7 @@ uint8_t frameTimesCounter = 0;
 // Initialises the game's engine and all subsystems
 void Engine::Start(const std::string& gameName, Scene* scn) {
     SaveSystem::loadSettings();
+    SaveSystem::loadGame();
     Vector2u targetResolution = SaveSystem::getResolution();
     int targetWindowMode = SaveSystem::getWindowMode();
     RenderWindow rw(VideoMode({ targetResolution.x, targetResolution.y}), gameName, (targetWindowMode == 0) ? Style::Fullscreen : Style::Default);
