@@ -1,3 +1,5 @@
+// this line will need to be here for the final release build in order to diable the console window in the background
+//#pragma comment(linker, "/SUBSYSTEM:windows /ENTRY:mainCRTStartup") 
 /**
 * main.cpp: game starting point
 *
