@@ -27,6 +27,7 @@ uint8_t frameTimesCounter = 0;
 
 // Initialises the game's engine and all subsystems
 void Engine::Start(const std::string& gameName, Scene* scn) {
+    SaveSystem::initialiseSaveSystem();
     SaveSystem::loadSettings();
     SaveSystem::loadGame();
     Vector2u targetResolution = SaveSystem::getResolution();

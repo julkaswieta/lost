@@ -6,6 +6,8 @@
 */
 #include "save_system.h"
 #include <fstream>
+#include <filesystem>
+#include <ShlObj.h>
 #include "controls.h"
 #include "scenes/scene_resolution.h"
 
@@ -13,8 +15,9 @@ using namespace std;
 using namespace sf;
 
 // save files paths
-const string SaveSystem::settingsFilePath = "settings_save.txt";
-const string SaveSystem::gameSaveFilePath = "game_save.txt";
+std::filesystem::path SaveSystem::settingsFilePath;
+std::filesystem::path SaveSystem::gameSaveFilePath;
+PWSTR path_temp;
 
 // default settings - get loaded if no settings save file exists 
 int SaveSystem::Volume = 50;
@@ -24,6 +27,28 @@ int SaveSystem::WindowMode = 0;
 int SaveSystem::DeathCounter = 0;
 int SaveSystem::LastLevelCompleted = 0;
 vector<float> SaveSystem::LevelBestTimes = { 5.6f, 829203.4434f }; //test times
+
+void SaveSystem::initialiseSaveSystem() {
+	auto folderPath = SHGetKnownFolderPath(FOLDERID_RoamingAppData, 0, nullptr, &path_temp);
+	if (folderPath != S_OK) {
+		CoTaskMemFree(path_temp);
+		cout << "Save system initialisation failed";
+	}
+	else {
+		
+		settingsFilePath = path_temp;
+		gameSaveFilePath = path_temp;
+		CoTaskMemFree(path_temp);
+		settingsFilePath.append("Lost");
+		gameSaveFilePath.append("Lost");
+		if (CreateDirectory(settingsFilePath.string().c_str(), NULL) || ERROR_ALREADY_EXISTS == GetLastError()) {
+			settingsFilePath.append("settings_save.txt");
+			gameSaveFilePath.append("game_save.txt");
+			cout << settingsFilePath << "\n";
+		}
+
+	}
+}
 
 // Saves each settings on a separate line in a txt file
 void SaveSystem::saveSettings() {
@@ -35,6 +60,8 @@ void SaveSystem::saveSettings() {
 	settingsSave << Controls::saveMappings();
 	settingsSave.close();
 	cout << "Settings saved\n";
+	cout << settingsFilePath << "\n";
+	
 }
 
 // Loads and processes settings from a txt file
@@ -135,4 +162,3 @@ int SaveSystem::getDeathCount() { return DeathCounter; }
 int SaveSystem::getLastLevelCompleted() { return LastLevelCompleted; }
 
 const std::vector<float> &SaveSystem::getLevelBestTimes() { return LevelBestTimes; }
-

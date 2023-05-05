@@ -16,6 +16,7 @@
 /// Provides loading and saving functionality 
 class SaveSystem {
 public:
+	static void initialiseSaveSystem();
 	static void saveSettings();
 	static void loadSettings();
 	static void saveGame();
@@ -40,8 +41,8 @@ public:
 	static const std::vector<float> &getLevelBestTimes();
 
 private:
-	static const std::string settingsFilePath;
-	static const std::string gameSaveFilePath;
+	static std::filesystem::path settingsFilePath;
+	static std::filesystem::path gameSaveFilePath;
 
 	static int Volume;
 	static int ResolutionIndex;
