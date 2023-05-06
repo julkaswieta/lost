@@ -149,9 +149,12 @@ void ResolutionScene::resetFormatting() {
 void ResolutionScene::changeSettings() {
     if (resolutionChangeActive || windowModeChangeActive) {
         View view = Engine::getWindow().getView();
-        Vector2u resolution = resolutionToVector(ents.find("resolution" + to_string(resolutionCounter))[0]->getComponents<TextComponent>()[0]->getText().getString());
-        Engine::getWindow().create(VideoMode({ resolution.x, resolution.y }), Engine::gameName, (currentWindowMode == 0) ? Style::Fullscreen : Style::Default);
+        Vector2u resolution = resolutionToVector(ents.find("resolution" 
+            + to_string(resolutionCounter))[0]->getComponents<TextComponent>()[0]->getText().getString());
+        Engine::getWindow().create(VideoMode({ resolution.x, resolution.y }), Engine::gameName,
+            (currentWindowMode == 0) ? Style::Fullscreen : Style::Default);
         Engine::getWindow().setView(view);
+        
         SaveSystem::updateResolutionIndex(resolutionCounter);
         SaveSystem::updateResolution(resolution);
         SaveSystem::updateWindowMode(currentWindowMode);
