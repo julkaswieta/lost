@@ -16,6 +16,7 @@
 #include <thread>
 #include "../controls.h"
 #include "../save_system.h"
+#include <system_resources.h>
 
 using namespace std;
 using namespace sf;
@@ -29,6 +30,30 @@ void Level1Scene::Load() {
 
     auto ho = Engine::getWindowSize().y - (ls::getHeight() * 60.f);
     ls::setOffset(Vector2f(0, ho));
+
+    // Add components and sprites to star tiles
+    {
+        auto stars = ls::findTiles(ls::STAR);
+        for (auto s : stars) {
+            auto pos = ls::getTilePosition(s);
+            pos += Vector2f(30.f, 30.f); //offset to center
+            auto e = makeEntity();
+            e->addTag("star");
+            e->setPosition(pos);
+            auto sc = e->addComponent<SpriteComponent>();
+            sc->setTexure(Resources::get<sf::Texture>("Star.png"));
+        }
+    }
+
+    // Add components and sprites to goal tile
+    {
+        auto goal = ls::findTiles(ls::END)[0];
+        auto g = makeEntity();
+        g->addTag("goal");
+        g->setPosition(ls::getTilePosition(goal) + Vector2f(30.f, 30.f));
+        auto sc = g->addComponent<SpriteComponent>();
+        sc->setTexure(Resources::get<sf::Texture>("Goal.png"));
+    }
 
     // Create player
     {
@@ -56,34 +81,66 @@ void Level1Scene::Load() {
         }
     }
 
-    // Add hurt components to hazard tiles
+    // Add hurt components and sprites to hazard tiles
     {
-        vector<sf::Vector2ul> hazards;
-
-        for (auto su : ls::findTiles(ls::SPIKE_UP))
-        hazards.push_back(su);
-        
-        for (auto sd : ls::findTiles(ls::SPIKE_DOWN))
-        hazards.push_back(sd);
-        
-        for (auto sr : ls::findTiles(ls::SPIKE_RIGHT))
-        hazards.push_back(sr);
-        
-        for (auto sl : ls::findTiles(ls::SPIKE_LEFT))
-        hazards.push_back(sl);
-        
-        for (auto sl : ls::findTiles(ls::SPIKE_BALL))
-        hazards.push_back(sl);
-        
-        for (auto sl : ls::findTiles(ls::SAWBLADE))
-        hazards.push_back(sl);
-
-        for (auto s : hazards) {
+        for (auto su : ls::findTiles(ls::SPIKE_UP)){
             auto h = makeEntity();
-            auto pos = ls::getTilePosition(s) + Vector2f(30.f, 30.f); // Offset to center
+            auto pos = ls::getTilePosition(su) + Vector2f(30.f, 30.f);
             h->addTag("hazard");
             h->setPosition(pos);
-            h->addComponent<HurtComponent>();
+            h->addComponent<HurtComponent>(55.f);
+            auto sc = h->addComponent<SpriteComponent>();
+            sc->setTexure(Resources::get<sf::Texture>("SpikeUp.png"));
+        }
+
+        for (auto sd : ls::findTiles(ls::SPIKE_DOWN)) {
+            auto h = makeEntity();
+            auto pos = ls::getTilePosition(sd) + Vector2f(30.f, 30.f);
+            h->addTag("hazard");
+            h->setPosition(pos);
+            h->addComponent<HurtComponent>(55.f);
+            auto sc = h->addComponent<SpriteComponent>();
+            sc->setTexure(Resources::get<sf::Texture>("SpikeDown.png"));
+        }
+
+        for (auto sr : ls::findTiles(ls::SPIKE_RIGHT)) {
+            auto h = makeEntity();
+            auto pos = ls::getTilePosition(sr) + Vector2f(30.f, 30.f);
+            h->addTag("hazard");
+            h->setPosition(pos);
+            h->addComponent<HurtComponent>(55.f);
+            auto sc = h->addComponent<SpriteComponent>();
+            sc->setTexure(Resources::get<sf::Texture>("SpikeRight.png"));
+        }
+
+        for (auto sl : ls::findTiles(ls::SPIKE_LEFT)) {
+            auto h = makeEntity();
+            auto pos = ls::getTilePosition(sl) + Vector2f(30.f, 30.f);
+            h->addTag("hazard");
+            h->setPosition(pos);
+            h->addComponent<HurtComponent>(55.f);
+            auto sc = h->addComponent<SpriteComponent>();
+            sc->setTexure(Resources::get<sf::Texture>("SpikeLeft.png"));
+        }
+
+        for (auto sball : ls::findTiles(ls::SPIKE_BALL)) {
+            auto h = makeEntity();
+            auto pos = ls::getTilePosition(sball) + Vector2f(30.f, 30.f);
+            h->addTag("hazard");
+            h->setPosition(pos);
+            h->addComponent<HurtComponent>(55.f);
+            auto sc = h->addComponent<SpriteComponent>();
+            sc->setTexure(Resources::get<sf::Texture>("SpikeBase.png"));
+        }
+
+        for (auto sblade : ls::findTiles(ls::SAWBLADE)) {
+            auto h = makeEntity();
+            auto pos = ls::getTilePosition(sblade) + Vector2f(30.f, 30.f);
+            h->addTag("hazard");
+            h->setPosition(pos);
+            h->addComponent<HurtComponent>(55.f);
+            auto sc = h->addComponent<SpriteComponent>();
+            sc->setTexure(Resources::get<sf::Texture>("SpikeBase.png"));
         }
     }
 

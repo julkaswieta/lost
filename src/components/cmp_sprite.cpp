@@ -12,7 +12,7 @@ SpriteComponent::SpriteComponent(Entity* p)
     : Component(p), sprite(make_shared<sf::Sprite>()) {}
 
 void SpriteComponent::Update(double dt) {
-    sprite->setPosition(parent->getPosition());
+    sprite->setPosition(parent->getPosition() - sf::Vector2f(30.f, 30.f));
     sprite->setRotation(sf::degrees(parent->getRotation()));
 }
 
