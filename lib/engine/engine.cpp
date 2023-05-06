@@ -35,6 +35,10 @@ void Engine::Start(const std::string& gameName, Scene* scn) {
     RenderWindow rw(VideoMode({ targetResolution.x, targetResolution.y}), gameName, (targetWindowMode == 0) ? Style::Fullscreen : Style::Default);
     Engine::gameName = gameName;
     window = &rw;
+
+    View view(FloatRect(Vector2f(0.f, 0.f), Vector2f(1920.f, 1080.f)));
+    rw.setView(view);
+
     Renderer::Initialise(rw);
     Physics::Initialise();
     GamepadMgr::Instance().Initialize();
