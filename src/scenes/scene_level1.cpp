@@ -35,11 +35,11 @@ void Level1Scene::Load() {
         player = makeEntity();
         player->setPosition(ls::getTilePosition(ls::findTiles(ls::START)[0]));
         auto s = player->addComponent<ShapeComponent>();
-        s->setShape<sf::RectangleShape>(Vector2f(40.f, 60.f));
+        s->setShape<sf::RectangleShape>(Vector2f(50.f, 60.f));
         s->getShape().setFillColor(Color::Magenta);
-        s->getShape().setOrigin(Vector2f(20.f, 30.f));
+        s->getShape().setOrigin(Vector2f(25.f, 30.f));
         player->addTag("player");
-        player->addComponent<PlayerPhysicsComponent>(Vector2f(40.f, 60.f));
+        player->addComponent<PlayerPhysicsComponent>(Vector2f(50.f, 60.f));
     }
 
     // Add physics colliders to level tiles
