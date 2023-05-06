@@ -21,6 +21,7 @@ public:
 	static void loadSettings();
 	static void saveGame();
 	static void loadGame();
+	static void resetData();
 
 	static void updateVolume(int newVolume);
 	static void updateResolutionIndex(int newResolutionIndex);

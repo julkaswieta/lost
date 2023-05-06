@@ -133,6 +133,10 @@ void SaveSystem::loadGame() {
 	cout << "game loaded\n";
 }
 
+void SaveSystem::resetData() {
+	remove(gameSaveFilePath);
+}
+
 // getters and setterscfor settings
 void SaveSystem::updateVolume(int newVolume) { Volume = newVolume; }
 
