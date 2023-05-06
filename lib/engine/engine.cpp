@@ -37,6 +37,7 @@ void Engine::Start(const std::string& gameName, Scene* scn) {
     window = &rw;
 
     View view(FloatRect(Vector2f(0.f, 0.f), Vector2f(1920.f, 1080.f)));
+    view.setCenter(Vector2f(targetResolution.x / 2.f, targetResolution.y / 2.f));
     rw.setView(view);
 
     Renderer::Initialise(rw);

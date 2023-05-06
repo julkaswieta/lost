@@ -153,6 +153,7 @@ void ResolutionScene::changeSettings() {
             + to_string(resolutionCounter))[0]->getComponents<TextComponent>()[0]->getText().getString());
         Engine::getWindow().create(VideoMode({ resolution.x, resolution.y }), Engine::gameName,
             (currentWindowMode == 0) ? Style::Fullscreen : Style::Default);
+        view.setCenter(Vector2f(resolution.x / 2.f, resolution.y / 2.f));
         Engine::getWindow().setView(view);
         
         SaveSystem::updateResolutionIndex(resolutionCounter);
