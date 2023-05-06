@@ -4,12 +4,12 @@
 
 class HurtComponent : public Component {
 protected:
-	void fire() const;
 	std::weak_ptr<Entity> player;
+	float size;
 
 public:
 	void Update(double dt) override;
 	void Render() override {}
-	explicit HurtComponent(Entity* p);
+	explicit HurtComponent(Entity* p, float s);
 	HurtComponent() = delete;
 };
