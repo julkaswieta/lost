@@ -13,16 +13,15 @@
 class Level1Scene : public Scene {
 public:
   void Load() override;
-
   void Unload() override;
-
   void Update(const double& dt) override;
-
   void Render() override;
+  void AddCollected(std::string tag);
 
 private:
 	static std::vector<std::shared_ptr<Entity>> menuOptions;
 	int selectedOptionIndex = -1;
+	std::vector<std::string> collected;
 
 	void loadPauseMenu();
 	void moveUp();

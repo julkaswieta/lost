@@ -36,10 +36,12 @@ public:
 	static void setDeathCounter(int newDeathCount);
 	static void setLastLevelCompleted(int levelNumber);
 	static void addNewLevelTime(int levelNumber, float newTime);
+	static void addCollected(std::vector<std::string> collected);
 
 	static int getDeathCount();
 	static int getLastLevelCompleted();
 	static const std::vector<float> &getLevelBestTimes();
+	static std::vector<std::string> getCollected();
 
 private:
 	static std::filesystem::path settingsFilePath;
@@ -53,6 +55,7 @@ private:
 	static int LastLevelCompleted;
 	static int DeathCounter;
 	static std::vector<float> LevelBestTimes;
+	static std::vector<std::string> Collected;
 
 	static void saveLevelTimes(std::ofstream& gameSave);
 };

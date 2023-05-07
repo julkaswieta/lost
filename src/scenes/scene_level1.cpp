@@ -17,12 +17,13 @@
 #include "../controls.h"
 #include "../save_system.h"
 #include <system_resources.h>
+#include "../components/cmp_collectible.h"
 
 using namespace std;
 using namespace sf;
 
 static shared_ptr<Entity> player;
-std::vector<std::shared_ptr<Entity>> Level1Scene::menuOptions;
+vector<shared_ptr<Entity>> Level1Scene::menuOptions;
 
 void Level1Scene::Load() {
     cout << " Scene 1 Load" << endl;
@@ -30,30 +31,6 @@ void Level1Scene::Load() {
 
     auto ho = Engine::getWindowSize().y - (ls::getHeight() * 60.f);
     ls::setOffset(Vector2f(0, ho));
-
-    // Add components and sprites to star tiles
-    {
-        auto stars = ls::findTiles(ls::STAR);
-        for (auto s : stars) {
-            auto pos = ls::getTilePosition(s);
-            pos += Vector2f(30.f, 30.f); //offset to center
-            auto e = makeEntity();
-            e->addTag("star");
-            e->setPosition(pos);
-            auto sc = e->addComponent<SpriteComponent>();
-            sc->setTexure(Resources::get<sf::Texture>("Star.png"));
-        }
-    }
-
-    // Add components and sprites to goal tile
-    {
-        auto goal = ls::findTiles(ls::END)[0];
-        auto g = makeEntity();
-        g->addTag("goal");
-        g->setPosition(ls::getTilePosition(goal) + Vector2f(30.f, 30.f));
-        auto sc = g->addComponent<SpriteComponent>();
-        sc->setTexure(Resources::get<sf::Texture>("Goal.png"));
-    }
 
     // Create player
     {
@@ -67,6 +44,41 @@ void Level1Scene::Load() {
         player->addComponent<PlayerPhysicsComponent>(Vector2f(50.f, 60.f));
     }
 
+    // Add components and sprites to star tiles
+    {
+        collected.clear();
+
+        for (string s : SaveSystem::getCollected())// for each string in SaveSystem::Collected
+            if (s.rfind("Level1_", 0) == 0) // if string starts with "Level1"
+                collected.push_back(s); // add string to collected
+
+        auto stars = ls::findTiles(ls::STAR);
+        for (int i = 0; i < 3; i++) {
+            cout << "Checking for Level1_" << i + 1 << endl;
+            if (find(collected.begin(), collected.end(), "Level1_" + to_string(i + 1)) != collected.end()) {
+                cout << "Star " << i + 1 << " collected" << endl;
+            } else {
+                cout << "Star " << i + 1 << " not collected. Adding to level..." << endl;
+                auto s = makeEntity();
+                s->addTag("Level1_" + to_string(i + 1));
+                s->setPosition(ls::getTilePosition(stars[i]) + Vector2f(30.f, 30.f));
+                s->addComponent<CollectibleComponent>(55.f);
+                auto sc = s->addComponent<SpriteComponent>();
+                sc->setTexure(Resources::get<sf::Texture>("Star.png"));
+			}
+        }
+    }
+
+    // Add components and sprites to goal tile
+    {
+        auto goal = ls::findTiles(ls::END)[0];
+        auto g = makeEntity();
+        g->addTag("goal");
+        g->setPosition(ls::getTilePosition(goal) + Vector2f(30.f, 30.f));
+        auto sc = g->addComponent<SpriteComponent>();
+        sc->setTexure(Resources::get<sf::Texture>("Goal.png"));
+    }
+
     // Add physics colliders to level tiles
     {
         auto walls = ls::findTiles(ls::WALL);
@@ -75,7 +87,6 @@ void Level1Scene::Load() {
             pos += Vector2f(30.f, 30.f); //offset to center
             auto e = makeEntity();
             e->addTag("wall");
-
             e->setPosition(pos);
             e->addComponent<PhysicsComponent>(false, Vector2f(60.f, 60.f));
         }
@@ -147,6 +158,7 @@ void Level1Scene::Load() {
     // Add debug text
     {
         auto txt = makeEntity();
+        txt->addTag("debug");
         auto t = txt->addComponent<TextComponent>("debug");
         t->SetColor(Color::Black);
     }
@@ -154,10 +166,16 @@ void Level1Scene::Load() {
     loadPauseMenu();
 
     //Simulate long loading times to check loading screen works
-    //std::this_thread::sleep_for(std::chrono::milliseconds(3000));
+    //this_thread::sleep_for(chrono::milliseconds(3000));
     cout << " Scene 1 Load Done" << endl;
 
     setLoaded(true);
+}
+
+void Level1Scene::AddCollected(string tag) {
+    cout << "Adding " << tag << " to collected" << endl;
+    collected.push_back(tag);
+    cout << "Collected: " << collected << endl;
 }
 
 void Level1Scene::loadPauseMenu() {
@@ -200,6 +218,7 @@ void Level1Scene::Unload() {
 void Level1Scene::Update(const double& dt) {
     if (!Engine::paused) {
         if (ls::getTileAt(player->getPosition()) == ls::END) {
+            SaveSystem::addCollected(collected);
             SaveSystem::setLastLevelCompleted(1);
             SaveSystem::setDeathCounter(10);
             SaveSystem::saveGame();
@@ -260,7 +279,7 @@ void Level1Scene::moveUp() {
         menuOptions[selectedOptionIndex]->getComponents<TextComponent>()[0]->SetColor(Color::White);
         selectedOptionIndex--;
         menuOptions[selectedOptionIndex]->getComponents<TextComponent>()[0]->SetColor(Color::Red);
-        std::this_thread::sleep_for(std::chrono::milliseconds(150)); // these are here so the cursor does not move too fast
+        this_thread::sleep_for(chrono::milliseconds(150)); // these are here so the cursor does not move too fast
     }
 }
 
@@ -269,13 +288,13 @@ void Level1Scene::moveDown() {
     if (selectedOptionIndex == -1) {
         selectedOptionIndex = 0;
         menuOptions[selectedOptionIndex]->getComponents<TextComponent>()[0]->SetColor(Color::Red);
-        std::this_thread::sleep_for(std::chrono::milliseconds(150)); // these are here so the cursor does not move too fast
+        this_thread::sleep_for(chrono::milliseconds(150)); // these are here so the cursor does not move too fast
     }
     else if (selectedOptionIndex + 1 < menuOptions.size()) {
         menuOptions[selectedOptionIndex]->getComponents<TextComponent>()[0]->SetColor(Color::White);
         selectedOptionIndex++;
         menuOptions[selectedOptionIndex]->getComponents<TextComponent>()[0]->SetColor(Color::Red);
-        std::this_thread::sleep_for(std::chrono::milliseconds(150)); // these are here so the cursor does not move too fast
+        this_thread::sleep_for(chrono::milliseconds(150)); // these are here so the cursor does not move too fast
     }
 }
 void Level1Scene::executeSelectedOption() {

@@ -27,6 +27,7 @@ int SaveSystem::WindowMode = 0;
 int SaveSystem::DeathCounter = 0;
 int SaveSystem::LastLevelCompleted = 0;
 vector<float> SaveSystem::LevelBestTimes = { 5.6f, 829203.4434f }; //test times
+vector<string> SaveSystem::Collected = {};
 
 void SaveSystem::initialiseSaveSystem() {
 	auto folderPath = SHGetKnownFolderPath(FOLDERID_RoamingAppData, 0, nullptr, &path_temp);
@@ -161,8 +162,12 @@ void SaveSystem::setLastLevelCompleted(int levelNumber) { LastLevelCompleted = l
 
 void SaveSystem::addNewLevelTime(int levelNumber, float newTime) { LevelBestTimes[levelNumber - 1] = newTime; }
 
+void SaveSystem::addCollected(vector<string> collected) { Collected.insert(Collected.end(), collected.begin(), collected.end()); }
+
 int SaveSystem::getDeathCount() { return DeathCounter; }
 
 int SaveSystem::getLastLevelCompleted() { return LastLevelCompleted; }
 
-const std::vector<float> &SaveSystem::getLevelBestTimes() { return LevelBestTimes; }
+const vector<float> &SaveSystem::getLevelBestTimes() { return LevelBestTimes; }
+
+vector<string> SaveSystem::getCollected() { return Collected; }
