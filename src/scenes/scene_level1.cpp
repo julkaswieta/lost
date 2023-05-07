@@ -222,11 +222,6 @@ void Level1Scene::Unload() {
 
 void Level1Scene::Update(const double& dt) {
     if (!Engine::paused) {
-        if (Keyboard::isKeyPressed(Controls::Exit)) {
-            Engine::paused = true;
-            displayMenu();
-        }
-
         ents.find("starTracker")[0]->getComponents<TextComponent>()[0]->
             SetText(to_string(collected.size()) + "/3");
 
@@ -240,6 +235,11 @@ void Level1Scene::Update(const double& dt) {
         
         if (!player->isAlive()) {
             Engine::ChangeScene((Scene*)&level1);
+        }
+
+        if (Keyboard::isKeyPressed(Controls::Exit)) {
+            Engine::paused = true;
+            displayMenu();
         }
     }
     // pause menu update
