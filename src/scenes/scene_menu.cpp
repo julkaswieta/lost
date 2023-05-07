@@ -1,49 +1,44 @@
+/**
+* scene_menu.cpp: implementation for MenuScene class
+*
+* Author: Julia Swietochowska
+* Last modified: 04/05/2023
+*/
 #include "scene_menu.h"
-#include "../components/cmp_text.h"
-#include "../game.h"
-#include <SFML/Window/Keyboard.hpp>
-#include <iostream>
+#include "SFML/Window/Keyboard.hpp"
 #include "../controls.h"
+#include "../components/cmp_text.h"
 
 using namespace std;
 using namespace sf;
 
+std::vector<std::shared_ptr<Entity>> MenuScene::options;
 
-void MenuScene::Load() {
-    selectedOptionIndex = -1;
-    {
-        string optionsText[4] = { "LOST", "Start Game", "Settings", "Exit" };
-        for (int i = 0; i < 4; ++i) {
-            auto menuOption = makeEntity();
-            auto textCmp = menuOption->addComponent<TextComponent>(optionsText[i]);
-            textCmp->getText().setOrigin(Vector2(textCmp->getText().getLocalBounds().width * 0.5f, textCmp->getText().getLocalBounds().height * 0.5f));
-            textCmp->getText().setPosition(Vector2f(Engine::getWindowSize().x * 0.5f, TOP_MARGIN + ((i + 1) * 50)));
-            if(i > 0)
-                options.push_back(menuOption);
-        }
-    }
-    setLoaded(true);
+void MenuScene::Unload()
+{
+    options.clear();
+    Scene::Unload();
 }
 
-void MenuScene::Update(const double& dt) {
+void MenuScene::Update(const double& dt)
+{
     if (Keyboard::isKeyPressed(Controls::MenuDown)) {
         moveDown();
     }
     if (Keyboard::isKeyPressed(Controls::MenuUp)) {
-        moveUp(); 
+        moveUp();
     }
     if (Keyboard::isKeyPressed(Controls::MenuSelect)) {
         executeSelectedOption();
     }
-
     Scene::Update(dt);
 }
 
 void MenuScene::moveUp() {
     if (selectedOptionIndex - 1 >= 0) {
-        options[selectedOptionIndex]->getComponents<TextComponent>()[0]->getText().setFillColor(Color::White);
+        options[selectedOptionIndex]->getComponents<TextComponent>()[0]->SetColor(Color::White);
         selectedOptionIndex--;
-        options[selectedOptionIndex]->getComponents<TextComponent>()[0]->getText().setFillColor(Color::Red);
+        options[selectedOptionIndex]->getComponents<TextComponent>()[0]->SetColor(Color::Red);
         std::this_thread::sleep_for(std::chrono::milliseconds(150)); // these are here so the cursor does not move too fast
     }
 }
@@ -55,28 +50,10 @@ void MenuScene::moveDown() {
         options[selectedOptionIndex]->getComponents<TextComponent>()[0]->SetColor(Color::Red);
         std::this_thread::sleep_for(std::chrono::milliseconds(150)); // these are here so the cursor does not move too fast
     }
-    else if (selectedOptionIndex + 1 < OPTIONS_COUNT) {
+    else if (selectedOptionIndex + 1 < options.size()) {
         options[selectedOptionIndex]->getComponents<TextComponent>()[0]->SetColor(Color::White);
         selectedOptionIndex++;
         options[selectedOptionIndex]->getComponents<TextComponent>()[0]->SetColor(Color::Red);
         std::this_thread::sleep_for(std::chrono::milliseconds(150)); // these are here so the cursor does not move too fast
     }
-}
-
-void MenuScene::executeSelectedOption() {
-    switch (selectedOptionIndex) {
-    case 0:
-        Engine::ChangeScene(&level1);
-        break;
-    case 1:
-        Engine::ChangeScene(&settings);
-        break;
-    case 2:
-        Engine::getWindow().close();
-    }
-}
-
-void MenuScene::Unload() {
-    options.clear();
-    Scene::Unload();
 }

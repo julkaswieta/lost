@@ -7,16 +7,16 @@
 class Engine {
 public:
     Engine() = delete;
-    static void Start(unsigned int width, unsigned int height,
-        const std::string& gameName, Scene* scn);
+    static void Start(const std::string& gameName, Scene* scn);
     static void ChangeScene(Scene*);
     static sf::RenderWindow& getWindow();
     static sf::Vector2u getWindowSize();
     static void setVsync(bool b);
+    static std::string gameName;
+    static bool paused;
 
 private:
     static Scene* activeScene;
-    static std::string gameName;
     static void Update();
     static void Render(sf::RenderWindow& window);
     static void calculateFps(double dt);

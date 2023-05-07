@@ -1,5 +1,6 @@
 #include "system_physics.h"
 #include "Box2D/Box2D.h"
+#include "engine.h"
 
 using namespace std;
 using namespace sf;
@@ -17,7 +18,8 @@ namespace Physics {
 
     // Steps all bodies in the world
     void Update(const double& dt) {
-        world->Step((float)dt, velocityIterations, positionIterations);
+        if(!Engine::paused)
+            world->Step((float)dt, velocityIterations, positionIterations);
     }
 
     // Clears and resets the world

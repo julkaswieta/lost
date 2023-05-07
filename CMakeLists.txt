@@ -38,11 +38,18 @@ set(B2D_INCS "lib/b2d/Box2D/")
 link_directories("${CMAKE_BINARY_DIR}/lib/sfml/lib")
 
 file(GLOB_RECURSE RESOURCE_FILES "res/*.*")
+
+# SFML_GamepadSupport
+file(GLOB_RECURSE SOURCE_FILES lib/SFML_GamepadSupport/*.cpp lib/SFML_GamepadSupport/*.h)
+add_library(lib_gamepad STATIC ${SOURCE_FILES} ${RESOURCE_FILES})
+target_include_directories(lib_gamepad INTERFACE "${CMAKE_SOURCE_DIR}/lib/SFML_GamepadSupport" PUBLIC SYSTEM ${B2D_INCS})
+target_link_libraries(lib_gamepad sfml-graphics Box2D)
+
 ## Engine lib
 file(GLOB_RECURSE SOURCE_FILES lib/engine/*.cpp lib/engine/*.h)
 add_library(lib_engine STATIC ${SOURCE_FILES} ${RESOURCE_FILES})
-target_include_directories(lib_engine INTERFACE "${CMAKE_SOURCE_DIR}/lib/engine/" PUBLIC SYSTEM ${B2D_INCS} )
-target_link_libraries(lib_engine lib_tile_level_loader lib_maths lib_ecm Box2D sfml-graphics sfml-audio)
+target_include_directories(lib_engine INTERFACE "${CMAKE_SOURCE_DIR}/lib/engine/" PUBLIC SYSTEM ${B2D_INCS})
+target_link_libraries(lib_engine lib_tile_level_loader lib_maths lib_ecm lib_gamepad Box2D sfml-graphics sfml-audio)
 
 ## Maths lib
 add_library(lib_maths INTERFACE)

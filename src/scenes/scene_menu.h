@@ -1,24 +1,30 @@
+/**
+* scene_menu.h: header file for MenuScene class
+*
+* Author: Julia Swietochowska
+* Last modified: 04/05/2023
+*/
 #pragma once
+#include "scene.h"
 
-#include "engine.h"
-
+/// An abstract class providing a template for menu scenes
 class MenuScene : public Scene {
 public:
 	MenuScene() = default;
 	~MenuScene() override = default;
-	void Load() override;
+	virtual void Load() override = 0;
 	void Unload() override;
 	void Update(const double& dt) override;
 
-private:
-	const int OPTIONS_COUNT = 3;
+protected:
 	const int TOP_MARGIN = 100;
 
-	std::vector<std::shared_ptr<Entity>> options;
-	int selectedOptionIndex;
+	static std::vector<std::shared_ptr<Entity>> options;
+	int selectedOptionIndex = -1;
 
-	void moveUp();
-	void moveDown();
+	virtual void moveUp();
+	virtual void moveDown();
 
-	void executeSelectedOption();
+	virtual void executeSelectedOption() = 0;
 };
+
