@@ -67,6 +67,19 @@ void Level1Scene::Load() {
                 sc->setTexure(Resources::get<sf::Texture>("Star.png"));
 			}
         }
+
+        auto starTracker = makeEntity();
+        starTracker->addTag("starTracker");
+        starTracker->setPosition(Vector2f(150.f, 90.f));
+        auto stSprite = starTracker->addComponent<SpriteComponent>();
+        stSprite->setTexure(Resources::get<sf::Texture>("Star.png"));
+        auto stText = starTracker->addComponent<TextComponent>("0");
+        stText->SetColor(Color::Black);
+        stText->getText().setOrigin(Vector2f(
+            stText->getText().getLocalBounds().width * 0.5f,
+            stText->getText().getLocalBounds().height * 0.5f
+        ));
+        stText->getText().setPosition(starTracker->getPosition() + Vector2f(55.f, -5.f));
     }
 
     // Add components and sprites to goal tile
@@ -155,14 +168,6 @@ void Level1Scene::Load() {
         }
     }
 
-    // Add debug text
-    {
-        auto txt = makeEntity();
-        txt->addTag("debug");
-        auto t = txt->addComponent<TextComponent>("debug");
-        t->SetColor(Color::Black);
-    }
-
     loadPauseMenu();
 
     //Simulate long loading times to check loading screen works
@@ -217,6 +222,14 @@ void Level1Scene::Unload() {
 
 void Level1Scene::Update(const double& dt) {
     if (!Engine::paused) {
+        if (Keyboard::isKeyPressed(Controls::Exit)) {
+            Engine::paused = true;
+            displayMenu();
+        }
+
+        ents.find("starTracker")[0]->getComponents<TextComponent>()[0]->
+            SetText(to_string(collected.size()) + "/3");
+
         if (ls::getTileAt(player->getPosition()) == ls::END) {
             SaveSystem::addCollected(collected);
             SaveSystem::setLastLevelCompleted(1);
@@ -224,13 +237,9 @@ void Level1Scene::Update(const double& dt) {
             SaveSystem::saveGame();
             Engine::ChangeScene((Scene*)&menu);
         }
-        else if (!player->isAlive())
-        {
+        
+        if (!player->isAlive()) {
             Engine::ChangeScene((Scene*)&level1);
-        }
-        if (Keyboard::isKeyPressed(Controls::Exit)) {
-            Engine::paused = true;
-            displayMenu();
         }
     }
     // pause menu update
