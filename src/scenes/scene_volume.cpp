@@ -1,10 +1,16 @@
+/**
+* scene_volume.cpp: implementation for VolumeScene class
+*
+* Author: Julia Swietochowska
+* Last modified: 04/05/2023
+*/
 #include "scene_volume.h"
 #include "../components/cmp_text.h"
 #include <engine.h>
 #include "SFML/Window/Keyboard.hpp"
 #include "../controls.h"
 #include "../game.h"
-
+#include "../save_system.h"
 
 using namespace std;
 using namespace sf;
@@ -30,18 +36,15 @@ void VolumeScene::Load()
             if (i == 1 || i == 3)
                 options.push_back(menuOption);
         }
-    } 
-    ACTIVE_OPTIONS_COUNT = options.size();
-    if(volume == 0)
-        volume = 50;
-    volumeChangeActive = false;
+    }
+    localVolume = SaveSystem::getVolume();
     selectedOptionIndex = -1;
     setLoaded(true);
 }
 
 void VolumeScene::Update(const double& dt)
 {
-    this->ents.find("Volume")[0]->getComponents<TextComponent>()[0]->SetText("Volume: " + to_string(volume));
+    this->ents.find("Volume")[0]->getComponents<TextComponent>()[0]->SetText("Volume: " + to_string(localVolume));
 
     if (volumeChangeActive) {
         if (Keyboard::isKeyPressed(Controls::NextOption)) {
@@ -68,15 +71,15 @@ void VolumeScene::moveDown()
 }
 
 void VolumeScene::volumeUp() {
-    if (volume < 100) {
-        volume++;
+    if (localVolume < 100) {
+        localVolume++;
         std::this_thread::sleep_for(std::chrono::milliseconds(100));
     }
 }
 
 void VolumeScene::volumeDown() {
-    if (volume > 0) {
-        volume--;
+    if (localVolume > 0) {
+        localVolume--;
         std::this_thread::sleep_for(std::chrono::milliseconds(100));
     }
 }
@@ -98,6 +101,8 @@ void VolumeScene::executeSelectedOption()
         this->ents.find("volMessage")[0]->setVisible(true);
         break;
     case 1:
+        SaveSystem::updateVolume(localVolume);
+        SaveSystem::saveSettings();
         Engine::ChangeScene(&settings);
         break;
     }

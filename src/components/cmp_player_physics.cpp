@@ -54,35 +54,30 @@ void PlayerPhysicsComponent::Update(double dt) {
 		dampen({ 0.9f, 1.0f });
 	}
 
-
 	// Handle Jump
 	if (Keyboard::isKeyPressed(Controls::Jump) || sf::Joystick::isButtonPressed(0, 0)) {
 		grounded = isGrounded();
-
-		if (grounded) {
-			setVelocity(Vector2f(getVelocity().x, 0.f));
-			teleport(Vector2f(pos.x, pos.y - 2.0f));
-			impulse(Vector2f(0, -12.f));
-			timeInAir = 0.f; // Reset the time in air when the player jumps off the ground
-			cout << "Jumped once!\n";
-			jumpButtonReleased = false;
-		}
-		else {
-			if (firstJump && !secondJump && jumpButtonReleased) {
-
-				setVelocity(Vector2f(getVelocity().x, 0.f));
-				impulse(Vector2f(0, -12.f));
-				cout << "Jumped twice!\n";
-				firstJump = false;
-				secondJump = true;
-			}
-		}
-	}
-	else {
-		jumpButtonReleased = true;
-	}
-
-
+        if (grounded) {
+            setVelocity(Vector2f(getVelocity().x, 0.f));
+            teleport(Vector2f(pos.x, pos.y - 2.0f));
+            impulse(Vector2f(0, -12.f));
+            timeInAir = 0.f; // Reset the time in air when the player jumps off the ground
+            cout << "Jumped once!\n";
+            jumpButtonReleased = false;
+        }
+        else {
+            if (firstJump && !secondJump && jumpButtonReleased) {
+                setVelocity(Vector2f(getVelocity().x, 0.f));
+                impulse(Vector2f(0, -12.f));
+                cout << "Jumped twice!\n";
+                firstJump = false;
+                secondJump = true;
+            }
+        }
+    }
+    else {
+        jumpButtonReleased = true;
+    }
 
 	// Check to see if we have landed yet
 	grounded = isGrounded();

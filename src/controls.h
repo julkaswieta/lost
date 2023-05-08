@@ -1,9 +1,18 @@
+/**
+* controls.h: header file for Controls class
+* 
+* Author: Julia Swietochowska
+* Last modified: 04/05/2023
+*/
 #pragma once
+
 #include "SFML/Window/Keyboard.hpp"
 #include <string>
+#include <vector>
 #include "Gamepad.h"
 #include "GamepadMgr.h"
 
+/// A class for storingand managing control mappings
 class Controls {
 public:
 	static sf::Keyboard::Key MoveLeft;
@@ -17,4 +26,6 @@ public:
 	static sf::Keyboard::Key PreviousOption;
 
 	static std::string toString(sf::Keyboard::Key key);
+	static std::string saveMappings();
+	static void loadMappings(std::vector<std::string> &mappingsFromFile);
 };

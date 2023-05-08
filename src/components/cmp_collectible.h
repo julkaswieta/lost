@@ -2,7 +2,7 @@
 #include "cmp_physics.h"
 #include <ecm.h>
 
-class HurtComponent : public Component {
+class CollectibleComponent : public Component {
 protected:
 	std::weak_ptr<Entity> player;
 	float size;
@@ -10,6 +10,6 @@ protected:
 public:
 	void Update(double dt) override;
 	void Render() override {}
-	explicit HurtComponent(Entity* p, float s);
-	HurtComponent() = delete;
+	explicit CollectibleComponent(Entity* p, float s);
+	CollectibleComponent() = delete;
 };

@@ -13,9 +13,7 @@ Vector2f LevelSystem::offset(0.0f, 30.0f);
 vector<unique_ptr<RectangleShape>> LevelSystem::sprites;
 
 map<LevelSystem::Tile, Color> LevelSystem::colours{
-    {WALL, Color::White}, {END, Color::Green}, {STAR, Color::Yellow},
-    {SPIKE_UP, Color::Red}, {SPIKE_DOWN, Color::Red}, {SPIKE_RIGHT, Color::Red}, {SPIKE_LEFT, Color::Red}, 
-    {SPIKE_BALL, Color::Red}, {SAWBLADE, Color::Red}, // Continue here
+    {WALL, Color::White}, // Continue here
 
     // Don't change these
     {EXIT, Color::Blue}, {SETTINGS, Color::Blue},

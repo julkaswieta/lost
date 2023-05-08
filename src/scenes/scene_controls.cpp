@@ -1,3 +1,9 @@
+/**
+* scene_controls.cpp: implementation for ControlsScene class
+*
+* Author: Julia Swietochowska
+* Last modified: 04/05/2023
+*/
 #include "scene_controls.h"
 #include "../controls.h"
 #include "../components/cmp_text.h"
@@ -5,41 +11,36 @@
 #include "../game.h"
 #include "SFML/Window/Event.hpp"
 #include "system_renderer.h"
+#include "../save_system.h"
 
 using namespace std;
 using namespace sf;
 
 void ControlsScene::Load() {
     {
-        const int elementsCount = 14;
+        const int elementsCount = 15;
         string optionsText[elementsCount] = { "Controls", "Keyboard", "Controller", 
             "Gameplay Controls", "Move Left", "Move Right", "Jump", "Pause", 
             "Menu Navigation", "Move Up", "Move Down", "Select Option", 
-            "Restore Defaults", "Exit"};
+            "Restore Defaults", "Exit", "Press Enter to remap this control, then press the new key" };
         for (int i = 0; i < elementsCount; ++i) {
             auto menuOption = makeEntity();
             auto textCmp = menuOption->addComponent<TextComponent>(optionsText[i]);
-            menuOption->addTag(optionsText[i]);
             textCmp->getText().setOrigin(Vector2(textCmp->getText().getLocalBounds().width * 0.5f, textCmp->getText().getLocalBounds().height * 0.5f));
             textCmp->getText().setPosition(positionOptionInWindow(i));
-            if (i != 0 && i != 3 && (i < 7 || i > 11)) // push only the elements with actions to options (menu navigation currently not remappable)
-                options.push_back(menuOption);
-        }
-
-        {
-            string remapText = "Press Enter to remap this control, then press the new key";
-
-            auto remapMessage = makeEntity();
-            auto textCmp = remapMessage->addComponent<TextComponent>(remapText);
-            remapMessage->setVisible(false);
-            remapMessage->addTag("remap");
-            textCmp->SetColor(Color::Blue);
-            textCmp->getText().setOrigin(Vector2(textCmp->getText().getLocalBounds().width * 0.5f, textCmp->getText().getLocalBounds().height * 0.5f));
-            textCmp->getText().setPosition(Vector2f(Engine::getWindowSize().x * 0.5f, Engine::getWindowSize().y - textCmp->getText().getLocalBounds().height));
+            if (i == 14) {
+                menuOption->addTag("remap");
+                textCmp->SetColor(Color::Blue);
+                menuOption->setVisible(false);
+                continue;
+            }
+            else 
+                menuOption->addTag(optionsText[i]);
+            if (i != 0 && i != 3 && (i < 7 || i > 11))
+                options.push_back(menuOption); // push only the elements with actions to options (menu navigation currently not remappable)
         }
 
     }
-    ACTIVE_OPTIONS_COUNT = options.size();
     selectedOptionIndex = -1;
     setLoaded(true);
 }
@@ -70,6 +71,8 @@ Vector2f ControlsScene::positionOptionInWindow(int i) {
     case 12:
     case 13:
         return Vector2f(Engine::getWindowSize().x * 0.5f, TOP_MARGIN + ((i - 3) * SPACING));
+    case 14:
+        return Vector2f(Engine::getWindowSize().x * 0.5f, Engine::getWindowSize().y - SPACING);
     }
 }
 
@@ -177,6 +180,7 @@ void ControlsScene::executeSelectedOption() {
             break;
         case 6:
             optionExecuted = true;
+            SaveSystem::saveSettings();
             Engine::ChangeScene(&settings);
             break;
         default:

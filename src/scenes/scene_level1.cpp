@@ -1,18 +1,33 @@
-#include "scene_level1.h"
-#include "../components/cmp_hurt_player.h"
-#include "../components/cmp_player_physics.h"
-#include "../components/cmp_sprite.h"
-#include "../components/cmp_text.h"
+/**
+* scene_level1.cpp: implementation for Level1Scene class
+*
+* Author: Dillon Aitken
+* Pause Menu: Julia Swietochowska
+* Last modified: 04/05/2023
+*/
 #include "../game.h"
-#include <LevelSystem.h>
-#include <iostream>
-#include <thread>
 #include "../controls.h"
+#include "../save_system.h"
+#include "../components/cmp_text.h"
+#include "../components/cmp_sprite.h"
+#include "../components/cmp_collectible.h"
+#include "../components/cmp_hurt_player.h"
+#include "../components/cmp_follow_player.h"
+#include "../components/cmp_player_physics.h"
+
+#include <thread>
+#include <iostream>
+#include <system_resources.h>
+#include <LevelSystem.h>
+
+#include "scene_level1.h"
+#include "../components/cmp_blob.h"
 
 using namespace std;
 using namespace sf;
 
-static shared_ptr<Entity> player;
+static shared_ptr<Entity> player, blob;
+vector<shared_ptr<Entity>> Level1Scene::menuOptions;
 
 void Level1Scene::Load() {
     cout << " Scene 1 Load" << endl;
@@ -24,13 +39,74 @@ void Level1Scene::Load() {
     // Create player
     {
         player = makeEntity();
-        player->setPosition(ls::getTilePosition(ls::findTiles(ls::START)[0]));
-        auto s = player->addComponent<ShapeComponent>();
-        s->setShape<sf::RectangleShape>(Vector2f(40.f, 60.f));
-        s->getShape().setFillColor(Color::Magenta);
-        s->getShape().setOrigin(Vector2f(20.f, 30.f));
         player->addTag("player");
-        player->addComponent<PlayerPhysicsComponent>(Vector2f(40.f, 60.f));
+        player->setPosition(ls::getTilePosition(ls::findTiles(ls::START)[0]));
+        player->addComponent<PlayerPhysicsComponent>(Vector2f(50.f, 60.f));
+        auto s = player->addComponent<ShapeComponent>();
+        s->setShape<sf::RectangleShape>(Vector2f(50.f, 60.f));
+        s->getShape().setFillColor(Color::Magenta);
+        s->getShape().setOrigin(Vector2f(25.f, 30.f));
+    }
+
+    // Create blob
+    {
+        blob = makeEntity();
+        blob->addTag("blob");
+        blob->setPosition(ls::getTilePosition(ls::findTiles(ls::ENEMY)[0]) + Vector2f(30.f, 40.f));
+        blob->addComponent<HurtComponent>(60.f);
+        auto ai = blob->addComponent<BlobComponent>(Vector2f(50.f, 40.f));
+        auto s = blob->addComponent<ShapeComponent>();
+        s->setShape<sf::RectangleShape>(Vector2f(50.f, 40.f));
+        s->getShape().setFillColor(Color::Blue);
+        s->getShape().setOrigin(Vector2f(25.f, 20.f));
+    }
+
+    // Add components and sprites to star tiles
+    {
+        collected.clear();
+
+        for (string s : SaveSystem::getCollected())// for each string in SaveSystem::Collected
+            if (s.rfind("Level1_", 0) == 0) // if string starts with "Level1"
+                collected.push_back(s); // add string to collected
+
+        auto stars = ls::findTiles(ls::STAR);
+        for (int i = 0; i < 3; i++) {
+            cout << "Checking for Level1_" << i + 1 << endl;
+            if (find(collected.begin(), collected.end(), "Level1_" + to_string(i + 1)) != collected.end()) {
+                cout << "Star " << i + 1 << " collected" << endl;
+            } else {
+                cout << "Star " << i + 1 << " not collected. Adding to level..." << endl;
+                auto s = makeEntity();
+                s->addTag("Level1_" + to_string(i + 1));
+                s->setPosition(ls::getTilePosition(stars[i]) + Vector2f(30.f, 30.f));
+                s->addComponent<CollectibleComponent>(55.f);
+                auto sc = s->addComponent<SpriteComponent>();
+                sc->setTexure(Resources::get<sf::Texture>("Star.png"));
+			}
+        }
+
+        auto starTracker = makeEntity();
+        starTracker->addTag("starTracker");
+        starTracker->setPosition(Vector2f(150.f, 90.f));
+        auto stSprite = starTracker->addComponent<SpriteComponent>();
+        stSprite->setTexure(Resources::get<sf::Texture>("Star.png"));
+        auto stText = starTracker->addComponent<TextComponent>("0");
+        stText->SetColor(Color::Black);
+        stText->getText().setOrigin(Vector2f(
+            stText->getText().getLocalBounds().width * 0.5f,
+            stText->getText().getLocalBounds().height * 0.5f
+        ));
+        stText->getText().setPosition(starTracker->getPosition() + Vector2f(55.f, -5.f));
+    }
+
+    // Add components and sprites to goal tile
+    {
+        auto goal = ls::findTiles(ls::END)[0];
+        auto g = makeEntity();
+        g->addTag("goal");
+        g->setPosition(ls::getTilePosition(goal) + Vector2f(30.f, 30.f));
+        auto sc = g->addComponent<SpriteComponent>();
+        sc->setTexure(Resources::get<sf::Texture>("Goal.png"));
     }
 
     // Add physics colliders to level tiles
@@ -41,57 +117,85 @@ void Level1Scene::Load() {
             pos += Vector2f(30.f, 30.f); //offset to center
             auto e = makeEntity();
             e->addTag("wall");
-
             e->setPosition(pos);
             e->addComponent<PhysicsComponent>(false, Vector2f(60.f, 60.f));
         }
     }
 
-    // Add hurt components to hazard tiles
+    // Add hurt components and sprites to hazard tiles
     {
-        vector<sf::Vector2ul> hazards;
-
-        for (auto su : ls::findTiles(ls::SPIKE_UP))
-        hazards.push_back(su);
-        
-        for (auto sd : ls::findTiles(ls::SPIKE_DOWN))
-        hazards.push_back(sd);
-        
-        for (auto sr : ls::findTiles(ls::SPIKE_RIGHT))
-        hazards.push_back(sr);
-        
-        for (auto sl : ls::findTiles(ls::SPIKE_LEFT))
-        hazards.push_back(sl);
-        
-        for (auto sl : ls::findTiles(ls::SPIKE_BALL))
-        hazards.push_back(sl);
-        
-        for (auto sl : ls::findTiles(ls::SAWBLADE))
-        hazards.push_back(sl);
-
-        for (auto s : hazards) {
+        for (auto su : ls::findTiles(ls::SPIKE_UP)){
             auto h = makeEntity();
-            auto pos = ls::getTilePosition(s) + Vector2f(30.f, 30.f); // Offset to center
+            auto pos = ls::getTilePosition(su) + Vector2f(30.f, 30.f);
             h->addTag("hazard");
             h->setPosition(pos);
-            h->addComponent<HurtComponent>();
+            h->addComponent<HurtComponent>(55.f);
+            auto sc = h->addComponent<SpriteComponent>();
+            sc->setTexure(Resources::get<sf::Texture>("SpikeUp.png"));
         }
-    }
 
-    // Add debug text
-    {
-        auto txt = makeEntity();
-        auto t = txt->addComponent<TextComponent>("debug");
-        t->SetColor(Color::Black);
+        for (auto sd : ls::findTiles(ls::SPIKE_DOWN)) {
+            auto h = makeEntity();
+            auto pos = ls::getTilePosition(sd) + Vector2f(30.f, 30.f);
+            h->addTag("hazard");
+            h->setPosition(pos);
+            h->addComponent<HurtComponent>(55.f);
+            auto sc = h->addComponent<SpriteComponent>();
+            sc->setTexure(Resources::get<sf::Texture>("SpikeDown.png"));
+        }
+
+        for (auto sr : ls::findTiles(ls::SPIKE_RIGHT)) {
+            auto h = makeEntity();
+            auto pos = ls::getTilePosition(sr) + Vector2f(30.f, 30.f);
+            h->addTag("hazard");
+            h->setPosition(pos);
+            h->addComponent<HurtComponent>(55.f);
+            auto sc = h->addComponent<SpriteComponent>();
+            sc->setTexure(Resources::get<sf::Texture>("SpikeRight.png"));
+        }
+
+        for (auto sl : ls::findTiles(ls::SPIKE_LEFT)) {
+            auto h = makeEntity();
+            auto pos = ls::getTilePosition(sl) + Vector2f(30.f, 30.f);
+            h->addTag("hazard");
+            h->setPosition(pos);
+            h->addComponent<HurtComponent>(55.f);
+            auto sc = h->addComponent<SpriteComponent>();
+            sc->setTexure(Resources::get<sf::Texture>("SpikeLeft.png"));
+        }
+
+        for (auto sball : ls::findTiles(ls::SPIKE_BALL)) {
+            auto h = makeEntity();
+            auto pos = ls::getTilePosition(sball) + Vector2f(30.f, 30.f);
+            h->addTag("hazard");
+            h->setPosition(pos);
+            h->addComponent<HurtComponent>(55.f);
+            auto sc = h->addComponent<SpriteComponent>();
+            sc->setTexure(Resources::get<sf::Texture>("SpikeBase.png"));
+        }
+
+        for (auto sblade : ls::findTiles(ls::SAWBLADE)) {
+            auto h = makeEntity();
+            auto pos = ls::getTilePosition(sblade) + Vector2f(30.f, 30.f);
+            h->addTag("hazard");
+            h->setPosition(pos);
+            h->addComponent<HurtComponent>(55.f);
+            auto sc = h->addComponent<SpriteComponent>();
+            sc->setTexure(Resources::get<sf::Texture>("SpikeBase.png"));
+        }
     }
 
     loadPauseMenu();
 
     //Simulate long loading times to check loading screen works
-    //std::this_thread::sleep_for(std::chrono::milliseconds(3000));
+    //this_thread::sleep_for(chrono::milliseconds(3000));
     cout << " Scene 1 Load Done" << endl;
 
     setLoaded(true);
+}
+
+void Level1Scene::AddCollected(string tag) {
+    collected.push_back(tag);
 }
 
 void Level1Scene::loadPauseMenu() {
@@ -107,7 +211,7 @@ void Level1Scene::loadPauseMenu() {
     background->addTag("background");
     background->setVisible(false);
 
-    string optionsText[4] = { "Game Paused", "Resume", "Save", "Exit to Main Menu" };
+    string optionsText[4] = { "Game Paused", "Resume", "Restart Level", "Exit to Main Menu" };
     for (int i = 0; i < 4; ++i) {
         auto menuOption = makeEntity();
         auto textCmp = menuOption->addComponent<TextComponent>(optionsText[i]);
@@ -127,17 +231,25 @@ void Level1Scene::Unload() {
     menuOptions.clear();
     cout << "Scene 1 Unload" << endl;
     player.reset();
+    blob.reset();
     ls::Unload();
     Scene::Unload();
 }
 
 void Level1Scene::Update(const double& dt) {
     if (!Engine::paused) {
+        ents.find("starTracker")[0]->getComponents<TextComponent>()[0]->
+            SetText(to_string(collected.size()) + "/3");
+
         if (ls::getTileAt(player->getPosition()) == ls::END) {
+            SaveSystem::addCollected(collected);
+            SaveSystem::setLastLevelCompleted(1);
+            SaveSystem::setDeathCounter(10);
+            SaveSystem::saveGame();
             Engine::ChangeScene((Scene*)&menu);
         }
-        else if (!player->isAlive())
-        {
+        
+        if (!player->isAlive()) {
             Engine::ChangeScene((Scene*)&level1);
         }
         if (Keyboard::isKeyPressed(Controls::Exit) || sf::Joystick::isButtonPressed(0,7)) {
@@ -191,7 +303,7 @@ void Level1Scene::moveUp() {
         menuOptions[selectedOptionIndex]->getComponents<TextComponent>()[0]->SetColor(Color::White);
         selectedOptionIndex--;
         menuOptions[selectedOptionIndex]->getComponents<TextComponent>()[0]->SetColor(Color::Red);
-        std::this_thread::sleep_for(std::chrono::milliseconds(150)); // these are here so the cursor does not move too fast
+        this_thread::sleep_for(chrono::milliseconds(150)); // these are here so the cursor does not move too fast
     }
 }
 
@@ -200,13 +312,13 @@ void Level1Scene::moveDown() {
     if (selectedOptionIndex == -1) {
         selectedOptionIndex = 0;
         menuOptions[selectedOptionIndex]->getComponents<TextComponent>()[0]->SetColor(Color::Red);
-        std::this_thread::sleep_for(std::chrono::milliseconds(150)); // these are here so the cursor does not move too fast
+        this_thread::sleep_for(chrono::milliseconds(150)); // these are here so the cursor does not move too fast
     }
     else if (selectedOptionIndex + 1 < menuOptions.size()) {
         menuOptions[selectedOptionIndex]->getComponents<TextComponent>()[0]->SetColor(Color::White);
         selectedOptionIndex++;
         menuOptions[selectedOptionIndex]->getComponents<TextComponent>()[0]->SetColor(Color::Red);
-        std::this_thread::sleep_for(std::chrono::milliseconds(150)); // these are here so the cursor does not move too fast
+        this_thread::sleep_for(chrono::milliseconds(150)); // these are here so the cursor does not move too fast
     }
 }
 void Level1Scene::executeSelectedOption() {
@@ -215,7 +327,7 @@ void Level1Scene::executeSelectedOption() {
         hideMenu();
         break;
     case 1:
-        //save
+        Engine::ChangeScene((Scene*)&level1);
         break;
     case 2:
         Engine::ChangeScene(&menu);

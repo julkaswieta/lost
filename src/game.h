@@ -1,6 +1,12 @@
+/**
+* Author: "Lost" devs 
+* Last modified: 04/05/2023
+*
+* Main game header file
+*/
 #pragma once
-#include "SFML/Window/Keyboard.hpp"
 
+#include "SFML/Window/Keyboard.hpp"
 #include "scenes/scene_main_menu.h"
 #include "scenes/scene_level1.h"
 #include "scenes/scene_settings.h"
