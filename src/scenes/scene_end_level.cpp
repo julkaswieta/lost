@@ -10,14 +10,17 @@
 #include "../game.h"
 #include "../components/cmp_text.h"
 #include "../save_system.h"
+#include <format>
 
 using namespace std;
 using namespace sf;
 
+stringstream timeDisplay;
+
 void EndLevelScene::Load()
 {
-    string optionsText[7] = { "Level Completed!", "Retry level", "Next level", "Exit to Main Menu", "Deaths so far:", "Level time:", "Stars collected" };
-    for (int i = 0; i < 7; ++i) {
+    string optionsText[6] = { "Level Completed!", "Retry level", "Next level", "Exit to Main Menu", "Deaths so far:", "Level time:    " };
+    for (int i = 0; i < 6; ++i) {
         auto menuOption = makeEntity();
         auto textCmp = menuOption->addComponent<TextComponent>(optionsText[i]);
         textCmp->getText().setOrigin(Vector2(textCmp->getText().getLocalBounds().width * 0.5f, textCmp->getText().getLocalBounds().height * 0.5f));
@@ -32,6 +35,9 @@ void EndLevelScene::Load()
     }
     previousLevel = SaveSystem::getLastLevelCompleted();
     deathCount = SaveSystem::getDeathCount();
+    time = level1.getTimer();
+    timeDisplay.str(string());
+    timeDisplay << setprecision(3) << time;
 } 
 
 void EndLevelScene::Unload()
@@ -43,7 +49,8 @@ void EndLevelScene::Unload()
 void EndLevelScene::Update(const double& dt)
 {
     ents.find("Deaths so far:")[0]->getComponents<TextComponent>()[0]->SetText("Deaths so far: " + to_string(deathCount));
-    MenuScene::Update(dt);
+    ents.find("Level time:    ")[0]->getComponents<TextComponent>()[0]->SetText("Level time: " + timeDisplay.str());
+        MenuScene::Update(dt);
 }
 
 void EndLevelScene::executeSelectedOption()

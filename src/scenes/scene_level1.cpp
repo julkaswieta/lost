@@ -29,6 +29,7 @@ using namespace sf;
 
 static shared_ptr<Entity> player, blob;
 vector<shared_ptr<Entity>> Level1Scene::menuOptions;
+float Level1Scene::timer = 0.f;
 
 void Level1Scene::Load() {
     std::cout << " Scene 1 Load" << endl;
@@ -38,7 +39,6 @@ void Level1Scene::Load() {
     ls::setOffset(Vector2f(0, ho));
 
     timer = 0.f;
-
     // Create player
     {
         b2Filter playerFilter;
@@ -402,4 +402,8 @@ void Level1Scene::executeSelectedOption() {
     case 2:
         Engine::ChangeScene(&menu);
     }
+}
+
+float Level1Scene::getTimer() {
+    return timer;
 }

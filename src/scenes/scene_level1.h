@@ -17,11 +17,12 @@ public:
   void Update(const double& dt) override;
   void Render() override;
   void AddCollected(std::string tag);
+  static float getTimer();
 
 private:
 	static std::vector<std::shared_ptr<Entity>> menuOptions;
 	int selectedOptionIndex = -1;
-	float timer;
+	static float timer;
 	std::vector<std::string> collected;
 
 	void updateTimerText();
