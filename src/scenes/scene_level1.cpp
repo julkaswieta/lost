@@ -38,7 +38,6 @@ void Level1Scene::Load() {
     auto ho = Engine::getWindowSize().y - (ls::getHeight() * 60.f);
     ls::setOffset(Vector2f(0, ho));
 
-    timer = 0.f;
     // Create player
     {
         b2Filter playerFilter;

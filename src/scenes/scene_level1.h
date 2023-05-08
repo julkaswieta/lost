@@ -23,7 +23,8 @@ private:
 	static std::vector<std::shared_ptr<Entity>> menuOptions;
 	int selectedOptionIndex = -1;
 
-	float timer, bestTime;
+	float bestTime;
+	static float timer;
 	std::string bestTimeString;
 	std::vector<std::string> collected;
 
