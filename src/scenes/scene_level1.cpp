@@ -21,6 +21,8 @@
 
 #include "scene_level1.h"
 #include "../components/cmp_blob.h"
+#include "../components/cmp_spike_ball.h"
+#include <system_physics.h>
 
 using namespace std;
 using namespace sf;
@@ -29,35 +31,30 @@ static shared_ptr<Entity> player, blob;
 vector<shared_ptr<Entity>> Level1Scene::menuOptions;
 
 void Level1Scene::Load() {
+
     cout << " Scene 1 Load" << endl;
     ls::LoadLevelFile("res/levels/level2.txt", 60.0f);
 
     auto ho = Engine::getWindowSize().y - (ls::getHeight() * 60.f);
     ls::setOffset(Vector2f(0, ho));
 
+    timer = 0.f;
+
     // Create player
     {
+        b2Filter playerFilter;
+        playerFilter.categoryBits = 0x0002;
+        playerFilter.maskBits = 0x0008;
+
         player = makeEntity();
         player->addTag("player");
         player->setPosition(ls::getTilePosition(ls::findTiles(ls::START)[0]));
         player->addComponent<PlayerPhysicsComponent>(Vector2f(50.f, 60.f));
+        player->getComponents<PlayerPhysicsComponent>()[0]->getFixture()->SetFilterData(playerFilter);
         auto s = player->addComponent<ShapeComponent>();
         s->setShape<sf::RectangleShape>(Vector2f(50.f, 60.f));
         s->getShape().setFillColor(Color::Magenta);
         s->getShape().setOrigin(Vector2f(25.f, 30.f));
-    }
-
-    // Create blob
-    {
-        blob = makeEntity();
-        blob->addTag("blob");
-        blob->setPosition(ls::getTilePosition(ls::findTiles(ls::ENEMY)[0]) + Vector2f(30.f, 40.f));
-        blob->addComponent<HurtComponent>(60.f);
-        auto ai = blob->addComponent<BlobComponent>(Vector2f(50.f, 40.f));
-        auto s = blob->addComponent<ShapeComponent>();
-        s->setShape<sf::RectangleShape>(Vector2f(50.f, 40.f));
-        s->getShape().setFillColor(Color::Blue);
-        s->getShape().setOrigin(Vector2f(25.f, 20.f));
     }
 
     // Add components and sprites to star tiles
@@ -70,32 +67,20 @@ void Level1Scene::Load() {
 
         auto stars = ls::findTiles(ls::STAR);
         for (int i = 0; i < 3; i++) {
-            cout << "Checking for Level1_" << i + 1 << endl;
+            std::cout << "Checking for Level1_" << i + 1 << endl;
             if (find(collected.begin(), collected.end(), "Level1_" + to_string(i + 1)) != collected.end()) {
-                cout << "Star " << i + 1 << " collected" << endl;
-            } else {
-                cout << "Star " << i + 1 << " not collected. Adding to level..." << endl;
+                std::cout << "Star " << i + 1 << " collected" << endl;
+            }
+            else {
+                std::cout << "Star " << i + 1 << " not collected. Adding to level..." << endl;
                 auto s = makeEntity();
                 s->addTag("Level1_" + to_string(i + 1));
                 s->setPosition(ls::getTilePosition(stars[i]) + Vector2f(30.f, 30.f));
                 s->addComponent<CollectibleComponent>(55.f);
                 auto sc = s->addComponent<SpriteComponent>();
                 sc->setTexure(Resources::get<sf::Texture>("Star.png"));
-			}
+            }
         }
-
-        auto starTracker = makeEntity();
-        starTracker->addTag("starTracker");
-        starTracker->setPosition(Vector2f(150.f, 90.f));
-        auto stSprite = starTracker->addComponent<SpriteComponent>();
-        stSprite->setTexure(Resources::get<sf::Texture>("Star.png"));
-        auto stText = starTracker->addComponent<TextComponent>("0/3");
-        stText->SetColor(Color::Black);
-        stText->getText().setOrigin(Vector2f(
-            stText->getText().getLocalBounds().width * 0.5f,
-            stText->getText().getLocalBounds().height * 0.5f
-        ));
-        stText->getText().setPosition(starTracker->getPosition() + Vector2f(70.f, -5.f));
     }
 
     // Add components and sprites to goal tile
@@ -106,19 +91,6 @@ void Level1Scene::Load() {
         g->setPosition(ls::getTilePosition(goal) + Vector2f(30.f, 30.f));
         auto sc = g->addComponent<SpriteComponent>();
         sc->setTexure(Resources::get<sf::Texture>("Goal.png"));
-    }
-
-    // Add physics colliders to level tiles
-    {
-        auto walls = ls::findTiles(ls::WALL);
-        for (auto w : walls) {
-            auto pos = ls::getTilePosition(w);
-            pos += Vector2f(30.f, 30.f); //offset to center
-            auto e = makeEntity();
-            e->addTag("wall");
-            e->setPosition(pos);
-            e->addComponent<PhysicsComponent>(false, Vector2f(60.f, 60.f));
-        }
     }
 
     // Add hurt components and sprites to hazard tiles
@@ -163,14 +135,20 @@ void Level1Scene::Load() {
             sc->setTexure(Resources::get<sf::Texture>("SpikeLeft.png"));
         }
 
+        b2Filter spikeBallFilter;
+        spikeBallFilter.categoryBits = 0x0006;
+        spikeBallFilter.maskBits = 0x0008;
+
         for (auto sball : ls::findTiles(ls::SPIKE_BALL)) {
             auto h = makeEntity();
             auto pos = ls::getTilePosition(sball) + Vector2f(30.f, 30.f);
             h->addTag("hazard");
             h->setPosition(pos);
-            h->addComponent<HurtComponent>(55.f);
+            h->addComponent<HurtComponent>(60.f);
+            h->addComponent<SpikeBallComponent>(Vector2f(60.f, 60.f));
+            h->getComponents<SpikeBallComponent>()[0]->getFixture()->SetFilterData(spikeBallFilter);
             auto sc = h->addComponent<SpriteComponent>();
-            sc->setTexure(Resources::get<sf::Texture>("SpikeBase.png"));
+            sc->setTexure(Resources::get<sf::Texture>("SpikeBall.png"));
         }
 
         for (auto sblade : ls::findTiles(ls::SAWBLADE)) {
@@ -184,17 +162,104 @@ void Level1Scene::Load() {
         }
     }
 
+    // Add physics colliders to level tiles
+    {
+        b2Filter wallFilter;
+        wallFilter.categoryBits = 0x0008;
+        wallFilter.maskBits = 0x0002 | 0x0004 | 0x0006;
+
+        auto walls = ls::findTiles(ls::WALL);
+        for (auto w : walls) {
+            auto pos = ls::getTilePosition(w);
+            pos += Vector2f(30.f, 30.f); //offset to center
+            auto e = makeEntity();
+            e->addTag("wall");
+            e->setPosition(pos);
+            e->addComponent<PhysicsComponent>(false, Vector2f(60.f, 60.f));
+            e->getComponents<PhysicsComponent>()[0]->getFixture()->SetFilterData(wallFilter);
+        }
+    }
+
+    // Create blob
+    {
+        b2Filter blobFilter;
+        blobFilter.categoryBits = 0x0004;
+        blobFilter.maskBits = 0x0008;
+
+        blob = makeEntity();
+        blob->addTag("blob");
+        blob->setPosition(ls::getTilePosition(ls::findTiles(ls::ENEMY)[0]) + Vector2f(30.f, 40.f));
+        blob->addComponent<HurtComponent>(50.f);
+        blob->addComponent<BlobComponent>(Vector2f(50.f, 40.f));
+        blob->getComponents<BlobComponent>()[0]->getFixture()->SetFilterData(blobFilter);
+        auto s = blob->addComponent<ShapeComponent>();
+        s->setShape<sf::RectangleShape>(Vector2f(50.f, 40.f));
+        s->getShape().setFillColor(Color::Blue);
+        s->getShape().setOrigin(Vector2f(25.f, 20.f));
+    }
+
+    // Add star counter in the top left of screen
+    {
+        auto starTracker = makeEntity();
+        starTracker->addTag("starTracker");
+        starTracker->setPosition(Vector2f(150.f, 90.f));
+        auto sprite = starTracker->addComponent<SpriteComponent>();
+        sprite->setTexure(Resources::get<sf::Texture>("Star.png"));
+        auto text = starTracker->addComponent<TextComponent>("0/3");
+        text->SetColor(Color::Black);
+        text->getText().setOrigin(Vector2f(0.f, text->getText().getLocalBounds().height * 0.5f));
+        text->getText().setPosition(Vector2f(190.f, 90.f));
+    }
+
+    // Temporary death tracker
+    {
+        auto deathTracker = makeEntity();
+        deathTracker->addTag("deathTracker");
+        deathTracker->setPosition(Vector2f(210.f, 90.f));
+        auto text = deathTracker->addComponent<TextComponent>("Deaths: " +
+            to_string(SaveSystem::getDeathCount()));
+        text->SetColor(Color::Black);
+        text->getText().setOrigin(Vector2f(0.f, text->getText().getLocalBounds().height * 0.5f));
+        text->getText().setPosition(Vector2f(300.f, 90.f));
+    }
+
+    // Add timeTracker in top right of screen
+    {
+        auto timeTracker = makeEntity();
+        timeTracker->addTag("timeTracker");
+        timeTracker->setPosition(Vector2f(Engine::getWindowSize().x - 180.f, 90.f));
+        auto text = timeTracker->addComponent<TextComponent>("00:00:00");
+        text->SetColor(Color::Black);
+        text->getText().setOrigin(Vector2f(
+            text->getText().getLocalBounds().width,
+            text->getText().getLocalBounds().height * 0.5f
+        ));
+        text->getText().setPosition(Vector2f(Engine::getWindowSize().x - 120.f, 90.f));
+    }
+
     loadPauseMenu();
 
     //Simulate long loading times to check loading screen works
     //this_thread::sleep_for(chrono::milliseconds(3000));
-    cout << " Scene 1 Load Done" << endl;
+    std::cout << " Scene 1 Load Done" << endl;
 
     setLoaded(true);
 }
 
 void Level1Scene::AddCollected(string tag) {
     collected.push_back(tag);
+}
+
+void Level1Scene::updateTimerText() {
+    string minutes = to_string((int)timer / 60);
+    if (minutes.length() == 1) minutes = "0" + minutes;
+    string seconds = to_string((int)timer % 60);
+    if (seconds.length() == 1) seconds = "0" + seconds;
+    string milliseconds = to_string((int)(timer * 100) % 100);
+    if (milliseconds.length() == 1) milliseconds = "0" + milliseconds;
+
+    ents.find("timeTracker")[0]->getComponents<TextComponent>()[0]->
+        SetText(minutes + ":" + seconds + ":" + milliseconds);
 }
 
 void Level1Scene::loadPauseMenu() {
@@ -228,7 +293,7 @@ void Level1Scene::loadPauseMenu() {
 
 void Level1Scene::Unload() {
     menuOptions.clear();
-    cout << "Scene 1 Unload" << endl;
+    std::cout << "Scene 1 Unload" << endl;
     player.reset();
     blob.reset();
     ls::Unload();
@@ -240,15 +305,21 @@ void Level1Scene::Update(const double& dt) {
         ents.find("starTracker")[0]->getComponents<TextComponent>()[0]->
             SetText(to_string(collected.size()) + "/3");
 
+        ents.find("deathTracker")[0]->getComponents<TextComponent>()[0]->
+			SetText("Deaths: " + to_string(SaveSystem::getDeathCount()));
+
+        timer += dt;
+        updateTimerText();
+
         if (ls::getTileAt(player->getPosition()) == ls::END) {
             SaveSystem::addCollected(collected);
             SaveSystem::setLastLevelCompleted(1);
-            SaveSystem::setDeathCounter(10);
             SaveSystem::saveGame();
-            Engine::ChangeScene((Scene*)&menu);
+            Engine::ChangeScene((Scene*)&endScene);
         }
         else if (!player->isAlive()) {
             SaveSystem::setDeathCounter(SaveSystem::getDeathCount() + 1);
+            SaveSystem::saveGame();
             Engine::ChangeScene((Scene*)&level1);
         }
         if (Keyboard::isKeyPressed(Controls::Exit) || sf::Joystick::isButtonPressed(0,7)) {
