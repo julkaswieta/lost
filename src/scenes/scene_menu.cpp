@@ -20,7 +20,7 @@ void MenuScene::Update(const double& dt)
     if (Keyboard::isKeyPressed(Controls::MenuUp)) {
         moveUp();
     }
-    if (Keyboard::isKeyPressed(Controls::MenuSelect)) {
+    if (Keyboard::isKeyPressed(Controls::MenuSelect) || sf::Joystick::isButtonPressed(0,0)) {
         executeSelectedOption();
     }
     Scene::Update(dt);

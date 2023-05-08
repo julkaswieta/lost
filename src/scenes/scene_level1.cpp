@@ -140,7 +140,7 @@ void Level1Scene::Update(const double& dt) {
         {
             Engine::ChangeScene((Scene*)&level1);
         }
-        if (Keyboard::isKeyPressed(Controls::Exit)) {
+        if (Keyboard::isKeyPressed(Controls::Exit) || sf::Joystick::isButtonPressed(0,7)) {
             Engine::paused = true;
             displayMenu();
         }
@@ -153,7 +153,7 @@ void Level1Scene::Update(const double& dt) {
         if (Keyboard::isKeyPressed(Controls::MenuUp)) {
             moveUp();
         }
-        if (Keyboard::isKeyPressed(Controls::MenuSelect)) {
+        if (Keyboard::isKeyPressed(Controls::MenuSelect) || sf::Joystick::isButtonPressed(0,0)) {
             executeSelectedOption();
         }
     }
