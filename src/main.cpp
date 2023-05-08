@@ -21,5 +21,5 @@ EndScene endScene;
 
 int main()
 {
-	Engine::Start("Lost", &endScene);
+	Engine::Start("Lost", &menu);
 }
