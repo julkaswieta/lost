@@ -21,6 +21,8 @@
 
 #include "scene_level1.h"
 #include "../components/cmp_blob.h"
+#include "../components/cmp_spike_ball.h"
+#include <system_physics.h>
 
 using namespace std;
 using namespace sf;
@@ -37,10 +39,15 @@ void Level1Scene::Load() {
 
     // Create player
     {
+        b2Filter playerFilter;
+        playerFilter.categoryBits = 0x0002;
+        playerFilter.maskBits = 0x0008;
+
         player = makeEntity();
         player->addTag("player");
         player->setPosition(ls::getTilePosition(ls::findTiles(ls::START)[0]));
         player->addComponent<PlayerPhysicsComponent>(Vector2f(50.f, 60.f));
+        player->getComponents<PlayerPhysicsComponent>()[0]->getFixture()->SetFilterData(playerFilter);
         auto s = player->addComponent<ShapeComponent>();
         s->setShape<sf::RectangleShape>(Vector2f(50.f, 60.f));
         s->getShape().setFillColor(Color::Magenta);
@@ -49,11 +56,16 @@ void Level1Scene::Load() {
 
     // Create blob
     {
+        b2Filter blobFilter;
+        blobFilter.categoryBits = 0x0004;
+        blobFilter.maskBits = 0x0008;
+
         blob = makeEntity();
         blob->addTag("blob");
         blob->setPosition(ls::getTilePosition(ls::findTiles(ls::ENEMY)[0]) + Vector2f(30.f, 40.f));
-        blob->addComponent<HurtComponent>(60.f);
-        auto ai = blob->addComponent<BlobComponent>(Vector2f(50.f, 40.f));
+        blob->addComponent<HurtComponent>(50.f);
+        blob->addComponent<BlobComponent>(Vector2f(50.f, 40.f));
+        blob->getComponents<BlobComponent>()[0]->getFixture()->SetFilterData(blobFilter);
         auto s = blob->addComponent<ShapeComponent>();
         s->setShape<sf::RectangleShape>(Vector2f(50.f, 40.f));
         s->getShape().setFillColor(Color::Blue);
@@ -108,19 +120,6 @@ void Level1Scene::Load() {
         sc->setTexure(Resources::get<sf::Texture>("Goal.png"));
     }
 
-    // Add physics colliders to level tiles
-    {
-        auto walls = ls::findTiles(ls::WALL);
-        for (auto w : walls) {
-            auto pos = ls::getTilePosition(w);
-            pos += Vector2f(30.f, 30.f); //offset to center
-            auto e = makeEntity();
-            e->addTag("wall");
-            e->setPosition(pos);
-            e->addComponent<PhysicsComponent>(false, Vector2f(60.f, 60.f));
-        }
-    }
-
     // Add hurt components and sprites to hazard tiles
     {
         for (auto su : ls::findTiles(ls::SPIKE_UP)){
@@ -163,14 +162,20 @@ void Level1Scene::Load() {
             sc->setTexure(Resources::get<sf::Texture>("SpikeLeft.png"));
         }
 
+        b2Filter spikeBallFilter;
+        spikeBallFilter.categoryBits = 0x0006;
+        spikeBallFilter.maskBits = 0x0008;
+
         for (auto sball : ls::findTiles(ls::SPIKE_BALL)) {
             auto h = makeEntity();
             auto pos = ls::getTilePosition(sball) + Vector2f(30.f, 30.f);
             h->addTag("hazard");
             h->setPosition(pos);
-            h->addComponent<HurtComponent>(55.f);
+            h->addComponent<HurtComponent>(60.f);
+            h->addComponent<SpikeBallComponent>(Vector2f(60.f, 60.f));
+            h->getComponents<SpikeBallComponent>()[0]->getFixture()->SetFilterData(spikeBallFilter);
             auto sc = h->addComponent<SpriteComponent>();
-            sc->setTexure(Resources::get<sf::Texture>("SpikeBase.png"));
+            sc->setTexure(Resources::get<sf::Texture>("SpikeBall.png"));
         }
 
         for (auto sblade : ls::findTiles(ls::SAWBLADE)) {
@@ -181,6 +186,24 @@ void Level1Scene::Load() {
             h->addComponent<HurtComponent>(55.f);
             auto sc = h->addComponent<SpriteComponent>();
             sc->setTexure(Resources::get<sf::Texture>("SpikeBase.png"));
+        }
+    }
+
+    // Add physics colliders to level tiles
+    {
+        b2Filter wallFilter;
+        wallFilter.categoryBits = 0x0008;
+        wallFilter.maskBits = 0x0002 | 0x0004 | 0x0006;
+
+        auto walls = ls::findTiles(ls::WALL);
+        for (auto w : walls) {
+            auto pos = ls::getTilePosition(w);
+            pos += Vector2f(30.f, 30.f); //offset to center
+            auto e = makeEntity();
+            e->addTag("wall");
+            e->setPosition(pos);
+            e->addComponent<PhysicsComponent>(false, Vector2f(60.f, 60.f));
+            e->getComponents<PhysicsComponent>()[0]->getFixture()->SetFilterData(wallFilter);
         }
     }
 
