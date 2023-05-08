@@ -40,6 +40,7 @@ public:
 
 	static int getDeathCount();
 	static int getLastLevelCompleted();
+	static float getLevelBestTime(int levelNumber);
 	static const std::vector<float> &getLevelBestTimes();
 	static std::vector<std::string> getCollected();
 
