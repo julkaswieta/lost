@@ -61,8 +61,7 @@ void SaveSystem::saveSettings() {
 	settingsSave << Controls::saveMappings();
 	settingsSave.close();
 	cout << "Settings saved\n";
-	cout << settingsFilePath << "\n";
-	
+	cout << settingsFilePath << "\n";	
 }
 
 // Loads and processes settings from a txt file
@@ -99,16 +98,24 @@ void SaveSystem::saveGame() {
 	gameSave << LastLevelCompleted << "\n";
 	gameSave << DeathCounter << "\n";
 	saveLevelTimes(gameSave);
+	saveCollected(gameSave);
 	gameSave.close();
 	cout << "game saved\n";
 }
 
 // formats and outputs level times to game save file
-inline void SaveSystem::saveLevelTimes(ofstream& gameSave) {
+void SaveSystem::saveLevelTimes(ofstream& gameSave) {
 	for (int i = 0; i < LevelBestTimes.size() - 1; ++i) {
-		gameSave << to_string(LevelBestTimes[i]) << "\n";
+		gameSave << to_string(LevelBestTimes[i]) << ",";
 	}
-	gameSave << to_string(LevelBestTimes[LevelBestTimes.size() - 1]);
+	gameSave << to_string(LevelBestTimes[LevelBestTimes.size() - 1]) + "\n";
+}
+
+void SaveSystem::saveCollected(ofstream& gameSave) {
+	for (int i = 0; i < Collected.size() - 1; ++i) {
+		gameSave << Collected[i] << ",";
+	}
+	gameSave << Collected[Collected.size() - 1];
 }
 
 // loads and processes game status from a file
@@ -122,20 +129,45 @@ void SaveSystem::loadGame() {
 	gameSave.close();
 
 	//process save contents
-	if (saveContents.size() >= 2) {
+	if (saveContents.size() == 2) {
 		LastLevelCompleted = stoi(saveContents[0]);
 		DeathCounter = stoi(saveContents[1]);
-		for (int i = 2; i < saveContents.size(); ++i) {
-			// process times saved
-			LevelBestTimes[i - 2] = stof(saveContents[i]);
-		}
+		loadLevelTimes(saveContents[2]);
+		loadCollected(saveContents[3]);
 	}
 
 	cout << "game loaded\n";
 }
 
+void SaveSystem::loadLevelTimes(string levelsSave) {
+	stringstream ss(levelsSave); 
+	while (ss.good()) {
+		string levelTime;
+		getline(ss, levelTime, ','); 
+		LevelBestTimes.push_back(stof(levelTime));
+	}
+}
+
+void SaveSystem::loadCollected(string collectedSave) {
+	stringstream ss(collectedSave);
+	while (ss.good()) {
+		string star;
+		getline(ss, star, ',');
+		Collected.push_back(star);
+	}
+}
+
 void SaveSystem::resetData() {
 	remove(gameSaveFilePath);
+}
+
+void SaveSystem::addCollected(vector<string> collected) { 
+	for (string star : collected) {
+		if (std::find(Collected.begin(), Collected.end(), star) == Collected.end())
+		{
+			Collected.push_back(star);
+		}
+	}
 }
 
 // getters and setterscfor settings
@@ -161,8 +193,6 @@ void SaveSystem::setDeathCounter(int newDeathCount) { DeathCounter = newDeathCou
 void SaveSystem::setLastLevelCompleted(int levelNumber) { LastLevelCompleted = levelNumber; }
 
 void SaveSystem::addNewLevelTime(int levelNumber, float newTime) { LevelBestTimes[levelNumber - 1] = newTime; }
-
-void SaveSystem::addCollected(vector<string> collected) { Collected.insert(Collected.end(), collected.begin(), collected.end()); }
 
 int SaveSystem::getDeathCount() { return DeathCounter; }
 
