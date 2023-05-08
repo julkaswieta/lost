@@ -17,6 +17,7 @@ SettingsScene settings;
 ControlsScene controls;
 VolumeScene volume;
 ResolutionScene resolution;
+EndScene endScene;
 
 int main()
 {

@@ -46,6 +46,8 @@ public:
 private:
 	static std::filesystem::path settingsFilePath;
 	static std::filesystem::path gameSaveFilePath;
+	
+	static bool collectedSaved;
 
 	static int Volume;
 	static int ResolutionIndex;
@@ -58,4 +60,7 @@ private:
 	static std::vector<std::string> Collected;
 
 	static void saveLevelTimes(std::ofstream& gameSave);
+	static void saveCollected(std::ofstream& gameSave);
+	static void loadLevelTimes(std::string levelsSave);
+	static void loadCollected(std::string collectedSave);
 };

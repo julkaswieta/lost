@@ -31,7 +31,7 @@ static shared_ptr<Entity> player, blob;
 vector<shared_ptr<Entity>> Level1Scene::menuOptions;
 
 void Level1Scene::Load() {
-    cout << " Scene 1 Load" << endl;
+    std::cout << " Scene 1 Load" << endl;
     ls::LoadLevelFile("res/levels/test_level_v3.txt", 60.0f);
 
     auto ho = Engine::getWindowSize().y - (ls::getHeight() * 60.f);
@@ -82,11 +82,11 @@ void Level1Scene::Load() {
 
         auto stars = ls::findTiles(ls::STAR);
         for (int i = 0; i < 3; i++) {
-            cout << "Checking for Level1_" << i + 1 << endl;
+            std::cout << "Checking for Level1_" << i + 1 << endl;
             if (find(collected.begin(), collected.end(), "Level1_" + to_string(i + 1)) != collected.end()) {
-                cout << "Star " << i + 1 << " collected" << endl;
+                std::cout << "Star " << i + 1 << " collected" << endl;
             } else {
-                cout << "Star " << i + 1 << " not collected. Adding to level..." << endl;
+                std::cout << "Star " << i + 1 << " not collected. Adding to level..." << endl;
                 auto s = makeEntity();
                 s->addTag("Level1_" + to_string(i + 1));
                 s->setPosition(ls::getTilePosition(stars[i]) + Vector2f(30.f, 30.f));
@@ -211,7 +211,7 @@ void Level1Scene::Load() {
 
     //Simulate long loading times to check loading screen works
     //this_thread::sleep_for(chrono::milliseconds(3000));
-    cout << " Scene 1 Load Done" << endl;
+    std::cout << " Scene 1 Load Done" << endl;
 
     setLoaded(true);
 }
@@ -251,7 +251,7 @@ void Level1Scene::loadPauseMenu() {
 
 void Level1Scene::Unload() {
     menuOptions.clear();
-    cout << "Scene 1 Unload" << endl;
+    std::cout << "Scene 1 Unload" << endl;
     player.reset();
     blob.reset();
     ls::Unload();
@@ -268,7 +268,7 @@ void Level1Scene::Update(const double& dt) {
             SaveSystem::setLastLevelCompleted(1);
             SaveSystem::setDeathCounter(10);
             SaveSystem::saveGame();
-            Engine::ChangeScene((Scene*)&menu);
+            Engine::ChangeScene((Scene*)&endScene);
         }
         else if (!player->isAlive()) {
             SaveSystem::setDeathCounter(SaveSystem::getDeathCount() + 1);

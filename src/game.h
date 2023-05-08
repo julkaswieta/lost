@@ -13,6 +13,7 @@
 #include "scenes/scene_controls.h"
 #include "scenes/scene_volume.h"
 #include "scenes/scene_resolution.h"
+#include "scenes/scene_end.h"
 
 extern MainMenuScene menu;
 extern Level1Scene level1;
@@ -20,3 +21,4 @@ extern SettingsScene settings;
 extern ControlsScene controls;
 extern VolumeScene volume;
 extern ResolutionScene resolution;
+extern EndScene endScene;
