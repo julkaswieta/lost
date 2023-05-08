@@ -21,8 +21,10 @@ public:
 private:
 	static std::vector<std::shared_ptr<Entity>> menuOptions;
 	int selectedOptionIndex = -1;
+	float timer;
 	std::vector<std::string> collected;
 
+	void updateTimerText();
 	void loadPauseMenu();
 	void moveUp();
 	void moveDown();

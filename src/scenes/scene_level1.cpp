@@ -37,6 +37,8 @@ void Level1Scene::Load() {
     auto ho = Engine::getWindowSize().y - (ls::getHeight() * 60.f);
     ls::setOffset(Vector2f(0, ho));
 
+    timer = 0.f;
+
     // Create player
     {
         b2Filter playerFilter;
@@ -85,7 +87,8 @@ void Level1Scene::Load() {
             std::cout << "Checking for Level1_" << i + 1 << endl;
             if (find(collected.begin(), collected.end(), "Level1_" + to_string(i + 1)) != collected.end()) {
                 std::cout << "Star " << i + 1 << " collected" << endl;
-            } else {
+            }
+            else {
                 std::cout << "Star " << i + 1 << " not collected. Adding to level..." << endl;
                 auto s = makeEntity();
                 s->addTag("Level1_" + to_string(i + 1));
@@ -93,21 +96,8 @@ void Level1Scene::Load() {
                 s->addComponent<CollectibleComponent>(55.f);
                 auto sc = s->addComponent<SpriteComponent>();
                 sc->setTexure(Resources::get<sf::Texture>("Star.png"));
-			}
+            }
         }
-
-        auto starTracker = makeEntity();
-        starTracker->addTag("starTracker");
-        starTracker->setPosition(Vector2f(150.f, 90.f));
-        auto stSprite = starTracker->addComponent<SpriteComponent>();
-        stSprite->setTexure(Resources::get<sf::Texture>("Star.png"));
-        auto stText = starTracker->addComponent<TextComponent>("0/3");
-        stText->SetColor(Color::Black);
-        stText->getText().setOrigin(Vector2f(
-            stText->getText().getLocalBounds().width * 0.5f,
-            stText->getText().getLocalBounds().height * 0.5f
-        ));
-        stText->getText().setPosition(starTracker->getPosition() + Vector2f(70.f, -5.f));
     }
 
     // Add components and sprites to goal tile
@@ -207,6 +197,45 @@ void Level1Scene::Load() {
         }
     }
 
+    // Add star counter in the top left of screen
+    {
+        auto starTracker = makeEntity();
+        starTracker->addTag("starTracker");
+        starTracker->setPosition(Vector2f(150.f, 90.f));
+        auto sprite = starTracker->addComponent<SpriteComponent>();
+        sprite->setTexure(Resources::get<sf::Texture>("Star.png"));
+        auto text = starTracker->addComponent<TextComponent>("0/3");
+        text->SetColor(Color::Black);
+        text->getText().setOrigin(Vector2f(0.f, text->getText().getLocalBounds().height * 0.5f));
+        text->getText().setPosition(Vector2f(190.f, 90.f));
+    }
+
+    // Temporary death tracker
+    {
+        auto deathTracker = makeEntity();
+        deathTracker->addTag("deathTracker");
+        deathTracker->setPosition(Vector2f(210.f, 90.f));
+        auto text = deathTracker->addComponent<TextComponent>("Deaths: " +
+            to_string(SaveSystem::getDeathCount()));
+        text->SetColor(Color::Black);
+        text->getText().setOrigin(Vector2f(0.f, text->getText().getLocalBounds().height * 0.5f));
+        text->getText().setPosition(Vector2f(300.f, 90.f));
+    }
+
+    // Add timeTracker in top right of screen
+    {
+        auto timeTracker = makeEntity();
+        timeTracker->addTag("timeTracker");
+        timeTracker->setPosition(Vector2f(Engine::getWindowSize().x - 180.f, 90.f));
+        auto text = timeTracker->addComponent<TextComponent>("00:00:00");
+        text->SetColor(Color::Black);
+        text->getText().setOrigin(Vector2f(
+            text->getText().getLocalBounds().width,
+            text->getText().getLocalBounds().height * 0.5f
+        ));
+        text->getText().setPosition(Vector2f(Engine::getWindowSize().x - 120.f, 90.f));
+    }
+
     loadPauseMenu();
 
     //Simulate long loading times to check loading screen works
@@ -218,6 +247,18 @@ void Level1Scene::Load() {
 
 void Level1Scene::AddCollected(string tag) {
     collected.push_back(tag);
+}
+
+void Level1Scene::updateTimerText() {
+    string minutes = to_string((int)timer / 60);
+    if (minutes.length() == 1) minutes = "0" + minutes;
+    string seconds = to_string((int)timer % 60);
+    if (seconds.length() == 1) seconds = "0" + seconds;
+    string milliseconds = to_string((int)(timer * 100) % 100);
+    if (milliseconds.length() == 1) milliseconds = "0" + milliseconds;
+
+    ents.find("timeTracker")[0]->getComponents<TextComponent>()[0]->
+        SetText(minutes + ":" + seconds + ":" + milliseconds);
 }
 
 void Level1Scene::loadPauseMenu() {
@@ -263,10 +304,15 @@ void Level1Scene::Update(const double& dt) {
         ents.find("starTracker")[0]->getComponents<TextComponent>()[0]->
             SetText(to_string(collected.size()) + "/3");
 
+        ents.find("deathTracker")[0]->getComponents<TextComponent>()[0]->
+			SetText("Deaths: " + to_string(SaveSystem::getDeathCount()));
+
+        timer += dt;
+        updateTimerText();
+
         if (ls::getTileAt(player->getPosition()) == ls::END) {
             SaveSystem::addCollected(collected);
             SaveSystem::setLastLevelCompleted(1);
-            SaveSystem::setDeathCounter(10);
             SaveSystem::saveGame();
             Engine::ChangeScene((Scene*)&endScene);
         }
