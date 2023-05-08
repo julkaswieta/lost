@@ -69,7 +69,6 @@ void PlayerPhysicsComponent::Update(double dt) {
         }
         else {
             if (firstJump && !secondJump && jumpButtonReleased) {
-
                 setVelocity(Vector2f(getVelocity().x, 0.f));
                 impulse(Vector2f(0, -12.f));
                 cout << "Jumped twice!\n";

@@ -8,19 +8,20 @@
 #include "../game.h"
 #include "../controls.h"
 #include "../save_system.h"
-#include "../components/cmp_hurt_player.h"
-#include "../components/cmp_player_physics.h"
-#include "../components/cmp_sprite.h"
 #include "../components/cmp_text.h"
+#include "../components/cmp_sprite.h"
 #include "../components/cmp_collectible.h"
-#include "../components/cmp_enemy_ai.h"
+#include "../components/cmp_hurt_player.h"
+#include "../components/cmp_follow_player.h"
+#include "../components/cmp_player_physics.h"
 
-#include <LevelSystem.h>
-#include <iostream>
 #include <thread>
+#include <iostream>
 #include <system_resources.h>
+#include <LevelSystem.h>
 
 #include "scene_level1.h"
+#include "../components/cmp_blob.h"
 
 using namespace std;
 using namespace sf;
@@ -38,13 +39,26 @@ void Level1Scene::Load() {
     // Create player
     {
         player = makeEntity();
+        player->addTag("player");
         player->setPosition(ls::getTilePosition(ls::findTiles(ls::START)[0]));
+        player->addComponent<PlayerPhysicsComponent>(Vector2f(50.f, 60.f));
         auto s = player->addComponent<ShapeComponent>();
         s->setShape<sf::RectangleShape>(Vector2f(50.f, 60.f));
         s->getShape().setFillColor(Color::Magenta);
         s->getShape().setOrigin(Vector2f(25.f, 30.f));
-        player->addTag("player");
-        player->addComponent<PlayerPhysicsComponent>(Vector2f(50.f, 60.f));
+    }
+
+    // Create blob
+    {
+        blob = makeEntity();
+        blob->addTag("blob");
+        blob->setPosition(ls::getTilePosition(ls::findTiles(ls::ENEMY)[0]) + Vector2f(30.f, 40.f));
+        blob->addComponent<HurtComponent>(60.f);
+        auto ai = blob->addComponent<BlobComponent>(Vector2f(50.f, 40.f));
+        auto s = blob->addComponent<ShapeComponent>();
+        s->setShape<sf::RectangleShape>(Vector2f(50.f, 40.f));
+        s->getShape().setFillColor(Color::Blue);
+        s->getShape().setOrigin(Vector2f(25.f, 20.f));
     }
 
     // Add components and sprites to star tiles
@@ -93,20 +107,6 @@ void Level1Scene::Load() {
         g->setPosition(ls::getTilePosition(goal) + Vector2f(30.f, 30.f));
         auto sc = g->addComponent<SpriteComponent>();
         sc->setTexure(Resources::get<sf::Texture>("Goal.png"));
-    }
-
-    // Create blob
-    {
-        blob = makeEntity();
-        blob->setPosition(ls::getTilePosition(ls::findTiles(ls::ENEMY)[0]));
-        auto s = blob->addComponent<ShapeComponent>();
-        s->setShape<sf::RectangleShape>(Vector2f(60.f, 40.f));
-        s->getShape().setFillColor(Color::Blue);
-        s->getShape().setOrigin(Vector2f(30.f, 20.f));
-        blob->addTag("blob");
-        //blob->addComponent<PhysicsComponent>(true, Vector2f(60.f, 40.f));
-        blob->addComponent<HurtComponent>();
-        auto ai = blob->addComponent<EnemyAIComponent>();
     }
 
     // Add physics colliders to level tiles
@@ -195,9 +195,7 @@ void Level1Scene::Load() {
 }
 
 void Level1Scene::AddCollected(string tag) {
-    cout << "Adding " << tag << " to collected" << endl;
     collected.push_back(tag);
-    cout << "Collected: " << collected << endl;
 }
 
 void Level1Scene::loadPauseMenu() {
@@ -233,6 +231,7 @@ void Level1Scene::Unload() {
     menuOptions.clear();
     cout << "Scene 1 Unload" << endl;
     player.reset();
+    blob.reset();
     ls::Unload();
     Scene::Unload();
 }
