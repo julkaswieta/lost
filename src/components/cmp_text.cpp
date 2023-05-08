@@ -9,7 +9,7 @@ void TextComponent::Render() { Renderer::Queue(&text); }
 TextComponent::TextComponent(Entity* const p, const std::string& str)
     : Component(p), string(str) {
     text.setString(string);
-    font = Resources::get<sf::Font>("RobotoMono-Regular.ttf");
+    font = Resources::get<sf::Font>("PixeloidSansBold.ttf");
     text.setFont(*font);
 }
 
