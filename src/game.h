@@ -14,6 +14,7 @@
 #include "scenes/scene_volume.h"
 #include "scenes/scene_resolution.h"
 #include "scenes/scene_end.h"
+#include "scenes/scene_end_level.h"
 
 extern MainMenuScene menu;
 extern Level1Scene level1;
@@ -22,3 +23,6 @@ extern ControlsScene controls;
 extern VolumeScene volume;
 extern ResolutionScene resolution;
 extern EndScene endScene;
+extern EndLevelScene endLevel;
+
+extern std::vector<Scene*> levels;

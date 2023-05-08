@@ -23,7 +23,7 @@ public:
 	static sf::Keyboard::Key Exit;
 	static sf::Keyboard::Key NextOption;
 	static sf::Keyboard::Key PreviousOption;
-	
+	static sf::Keyboard::Key Continue;
 
 	static std::string toString(sf::Keyboard::Key key);
 	static std::string saveMappings();

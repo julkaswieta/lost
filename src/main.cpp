@@ -18,6 +18,9 @@ ControlsScene controls;
 VolumeScene volume;
 ResolutionScene resolution;
 EndScene endScene;
+EndLevelScene endLevel;
+
+vector<Scene*> levels = { &level1, &endScene };
 
 int main()
 {
