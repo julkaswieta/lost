@@ -8,7 +8,7 @@ aa b       aaa a   ga         aa
 aaaaaa   aaaaa af   a  aa     aa
 aa           a aaa  a        daa
 aa d           a    aff   aa  aa
-aaaaaaafffaaaa a   faaa   ggffaa
+aaaaaaafffaaaa a   faaa     ffaa
 aaagggaaaaa       aaaggaa   aaaa
 aah                           aa
 aah                         c aa

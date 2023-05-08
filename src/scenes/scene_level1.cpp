@@ -12,7 +12,6 @@
 #include "../components/cmp_sprite.h"
 #include "../components/cmp_collectible.h"
 #include "../components/cmp_hurt_player.h"
-#include "../components/cmp_follow_player.h"
 #include "../components/cmp_player_physics.h"
 
 #include <thread>
@@ -90,13 +89,13 @@ void Level1Scene::Load() {
         starTracker->setPosition(Vector2f(150.f, 90.f));
         auto stSprite = starTracker->addComponent<SpriteComponent>();
         stSprite->setTexure(Resources::get<sf::Texture>("Star.png"));
-        auto stText = starTracker->addComponent<TextComponent>("0");
+        auto stText = starTracker->addComponent<TextComponent>("0/3");
         stText->SetColor(Color::Black);
         stText->getText().setOrigin(Vector2f(
             stText->getText().getLocalBounds().width * 0.5f,
             stText->getText().getLocalBounds().height * 0.5f
         ));
-        stText->getText().setPosition(starTracker->getPosition() + Vector2f(55.f, -5.f));
+        stText->getText().setPosition(starTracker->getPosition() + Vector2f(70.f, -5.f));
     }
 
     // Add components and sprites to goal tile
@@ -248,8 +247,8 @@ void Level1Scene::Update(const double& dt) {
             SaveSystem::saveGame();
             Engine::ChangeScene((Scene*)&menu);
         }
-        
-        if (!player->isAlive()) {
+        else if (!player->isAlive()) {
+            SaveSystem::setDeathCounter(SaveSystem::getDeathCount() + 1);
             Engine::ChangeScene((Scene*)&level1);
         }
         if (Keyboard::isKeyPressed(Controls::Exit) || sf::Joystick::isButtonPressed(0,7)) {
