@@ -26,7 +26,7 @@ Vector2u SaveSystem::Resolution = { 1920, 1080 };
 int SaveSystem::WindowMode = 0;
 int SaveSystem::DeathCounter = 0;
 int SaveSystem::LastLevelCompleted = 0;
-vector<float> SaveSystem::LevelBestTimes = { 5.6f, 829203.4434f }; //test times
+vector<float> SaveSystem::LevelBestTimes = {};
 vector<string> SaveSystem::Collected = {};
 
 void SaveSystem::initialiseSaveSystem() {
@@ -105,17 +105,23 @@ void SaveSystem::saveGame() {
 
 // formats and outputs level times to game save file
 void SaveSystem::saveLevelTimes(ofstream& gameSave) {
-	for (int i = 0; i < LevelBestTimes.size() - 1; ++i) {
-		gameSave << to_string(LevelBestTimes[i]) << ",";
+	if (!LevelBestTimes.empty()) {
+		for (int i = 0; i < LevelBestTimes.size() - 1; ++i) {
+			gameSave << to_string(LevelBestTimes[i]) << ",";
+		}
+		gameSave << to_string(LevelBestTimes[LevelBestTimes.size() - 1]) + "\n";
 	}
-	gameSave << to_string(LevelBestTimes[LevelBestTimes.size() - 1]) + "\n";
+	else
+		gameSave << "\n";
 }
 
 void SaveSystem::saveCollected(ofstream& gameSave) {
-	for (int i = 0; i < Collected.size() - 1; ++i) {
-		gameSave << Collected[i] << ",";
+	if (!Collected.empty()) {
+		for (int i = 0; i < Collected.size() - 1; ++i) {
+			gameSave << Collected[i] << ",";
+		}
+		gameSave << Collected[Collected.size() - 1];
 	}
-	gameSave << Collected[Collected.size() - 1];
 }
 
 // loads and processes game status from a file
@@ -159,6 +165,10 @@ void SaveSystem::loadCollected(string collectedSave) {
 
 void SaveSystem::resetData() {
 	remove(gameSaveFilePath);
+	DeathCounter = 0;
+	LastLevelCompleted = 0;
+	Collected.clear();
+	LevelBestTimes.clear();
 }
 
 void SaveSystem::addCollected(vector<string> collected) { 
