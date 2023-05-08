@@ -9,7 +9,9 @@
 #include "../controls.h"
 #include "../save_system.h"
 #include "../components/cmp_text.h"
+#include "../components/cmp_blob.h"
 #include "../components/cmp_sprite.h"
+#include "../components/cmp_spike_ball.h"
 #include "../components/cmp_collectible.h"
 #include "../components/cmp_hurt_player.h"
 #include "../components/cmp_player_physics.h"
@@ -17,12 +19,10 @@
 #include <thread>
 #include <iostream>
 #include <system_resources.h>
+#include <Box2D/Dynamics/b2Fixture.h>
 #include <LevelSystem.h>
 
 #include "scene_level1.h"
-#include "../components/cmp_blob.h"
-#include "../components/cmp_spike_ball.h"
-#include <system_physics.h>
 
 using namespace std;
 using namespace sf;
@@ -224,10 +224,19 @@ void Level1Scene::Load() {
 
     // Add timeTracker in top right of screen
     {
+        bestTime = SaveSystem::getLevelBestTime(1);
+
+        if (bestTime <= 0.f)
+            bestTimeString = "--:--:--";
+        else
+            bestTimeString = timeToString(bestTime);
+
         auto timeTracker = makeEntity();
         timeTracker->addTag("timeTracker");
         timeTracker->setPosition(Vector2f(Engine::getWindowSize().x - 180.f, 90.f));
-        auto text = timeTracker->addComponent<TextComponent>("00:00:00");
+        auto text = timeTracker->addComponent<TextComponent>(
+            "Best: 00:00:00 | Current: 00:00:00"
+        );
         text->SetColor(Color::Black);
         text->getText().setOrigin(Vector2f(
             text->getText().getLocalBounds().width,
@@ -249,16 +258,15 @@ void Level1Scene::AddCollected(string tag) {
     collected.push_back(tag);
 }
 
-void Level1Scene::updateTimerText() {
-    string minutes = to_string((int)timer / 60);
+string Level1Scene::timeToString(float s) {
+    string minutes = to_string((int)s / 60);
     if (minutes.length() == 1) minutes = "0" + minutes;
-    string seconds = to_string((int)timer % 60);
+    string seconds = to_string((int)s % 60);
     if (seconds.length() == 1) seconds = "0" + seconds;
-    string milliseconds = to_string((int)(timer * 100) % 100);
+    string milliseconds = to_string((int)(s * 100) % 100);
     if (milliseconds.length() == 1) milliseconds = "0" + milliseconds;
 
-    ents.find("timeTracker")[0]->getComponents<TextComponent>()[0]->
-        SetText(minutes + ":" + seconds + ":" + milliseconds);
+    return minutes + ":" + seconds + ":" + milliseconds;
 }
 
 void Level1Scene::loadPauseMenu() {
@@ -308,10 +316,18 @@ void Level1Scene::Update(const double& dt) {
 			SetText("Deaths: " + to_string(SaveSystem::getDeathCount()));
 
         timer += dt;
-        updateTimerText();
+        ents.find("timeTracker")[0]->getComponents<TextComponent>()[0]->
+            SetText("Best: " + bestTimeString + " | Current: " + timeToString(timer));
 
         if (ls::getTileAt(player->getPosition()) == ls::END) {
             SaveSystem::addCollected(collected);
+
+            if (bestTime <= 0.f || timer < bestTime) {
+				bestTime = timer;
+				bestTimeString = timeToString(bestTime);
+                SaveSystem::addNewLevelTime(1, timer);
+			}
+
             SaveSystem::setLastLevelCompleted(1);
             SaveSystem::saveGame();
             Engine::ChangeScene((Scene*)&endLevel);

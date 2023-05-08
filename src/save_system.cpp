@@ -26,7 +26,7 @@ Vector2u SaveSystem::Resolution = { 1920, 1080 };
 int SaveSystem::WindowMode = 0;
 int SaveSystem::DeathCounter = 0;
 int SaveSystem::LastLevelCompleted = 0;
-vector<float> SaveSystem::LevelBestTimes = {};
+vector<float> SaveSystem::LevelBestTimes = { 0.f, 0.f, 0.f };
 vector<string> SaveSystem::Collected = {};
 
 void SaveSystem::initialiseSaveSystem() {
@@ -214,6 +214,8 @@ void SaveSystem::addNewLevelTime(int levelNumber, float newTime) { LevelBestTime
 int SaveSystem::getDeathCount() { return DeathCounter; }
 
 int SaveSystem::getLastLevelCompleted() { return LastLevelCompleted; }
+
+float SaveSystem::getLevelBestTime(int levelNumber) { return LevelBestTimes[levelNumber - 1]; }
 
 const vector<float> &SaveSystem::getLevelBestTimes() { return LevelBestTimes; }
 
