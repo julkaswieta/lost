@@ -17,8 +17,9 @@ SettingsScene settings;
 ControlsScene controls;
 VolumeScene volume;
 ResolutionScene resolution;
+EndScene endScene;
 
 int main()
 {
-	Engine::Start("Lost", &menu);
+	Engine::Start("Lost", &endScene);
 }
