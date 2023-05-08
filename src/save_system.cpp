@@ -135,11 +135,14 @@ void SaveSystem::loadGame() {
 	gameSave.close();
 
 	//process save contents
-	if (saveContents.size() == 2) {
+	if (saveContents.size() >= 2) {
 		LastLevelCompleted = stoi(saveContents[0]);
 		DeathCounter = stoi(saveContents[1]);
-		loadLevelTimes(saveContents[2]);
-		loadCollected(saveContents[3]);
+		cout << DeathCounter << "\n";
+		if(saveContents.size() >= 3)
+			loadLevelTimes(saveContents[2]);
+		if(saveContents.size() >= 4)
+			loadCollected(saveContents[3]);
 	}
 
 	cout << "game loaded\n";
@@ -147,19 +150,23 @@ void SaveSystem::loadGame() {
 
 void SaveSystem::loadLevelTimes(string levelsSave) {
 	stringstream ss(levelsSave); 
-	while (ss.good()) {
-		string levelTime;
-		getline(ss, levelTime, ','); 
-		LevelBestTimes.push_back(stof(levelTime));
+	if (!levelsSave.empty()) {
+		while (ss.good()) {
+			string levelTime;
+			getline(ss, levelTime, ',');
+			LevelBestTimes.push_back(stof(levelTime));
+		}
 	}
 }
 
-void SaveSystem::loadCollected(string collectedSave) {
+void SaveSystem::loadCollected(string collectedSave = NULL) {
 	stringstream ss(collectedSave);
-	while (ss.good()) {
-		string star;
-		getline(ss, star, ',');
-		Collected.push_back(star);
+	if (!collectedSave.empty()) {
+		while (ss.good()) {
+			string star;
+			getline(ss, star, ',');
+			Collected.push_back(star);
+		}
 	}
 }
 

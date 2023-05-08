@@ -57,7 +57,7 @@ void Level1Scene::Load() {
     }
 
     // Create blob
-    {
+    /*{
         b2Filter blobFilter;
         blobFilter.categoryBits = 0x0004;
         blobFilter.maskBits = 0x0008;
@@ -72,7 +72,7 @@ void Level1Scene::Load() {
         s->setShape<sf::RectangleShape>(Vector2f(50.f, 40.f));
         s->getShape().setFillColor(Color::Blue);
         s->getShape().setOrigin(Vector2f(25.f, 20.f));
-    }
+    }*/
 
     // Add components and sprites to star tiles
     {
@@ -318,6 +318,7 @@ void Level1Scene::Update(const double& dt) {
         }
         else if (!player->isAlive()) {
             SaveSystem::setDeathCounter(SaveSystem::getDeathCount() + 1);
+            SaveSystem::saveGame();
             Engine::ChangeScene((Scene*)&level1);
         }
 
