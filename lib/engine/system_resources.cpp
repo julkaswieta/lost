@@ -1,4 +1,5 @@
 #include "system_resources.h"
+#include <SFML/Audio.hpp>
 
 namespace Resources {
     // load a font

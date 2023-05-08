@@ -8,6 +8,7 @@
 #include <iostream>
 #include <stdexcept>
 #include "../src/save_system.h"
+#include <SFML/Audio.hpp>
 
 using namespace sf;
 using namespace std;

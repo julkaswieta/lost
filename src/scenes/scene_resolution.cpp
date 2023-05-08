@@ -97,19 +97,19 @@ Vector2f ResolutionScene::positionElement(int elemIndex) {
 void ResolutionScene::Update(const double& dt) {
     displayCurrentSettings();
     if (resolutionChangeActive) {
-        if (Keyboard::isKeyPressed(Controls::NextOption)) {
+        if (Keyboard::isKeyPressed(Controls::NextOption) || sf::Joystick::getAxisPosition(0, sf::Joystick::PovX) >= 20) {
             nextResolution(true);
         }
-        if (Keyboard::isKeyPressed(Controls::PreviousOption)) {
+        if (Keyboard::isKeyPressed(Controls::PreviousOption) || sf::Joystick::getAxisPosition(0, sf::Joystick::PovX) <= -20) {
             nextResolution(false);
         }
     }
 
     if (windowModeChangeActive) {
-        if (Keyboard::isKeyPressed(Controls::NextOption)) {
+        if (Keyboard::isKeyPressed(Controls::NextOption) || sf::Joystick::getAxisPosition(0, sf::Joystick::PovX) >= 20) {
             nextWindowMode(true);
         }
-        if (Keyboard::isKeyPressed(Controls::PreviousOption)) {
+        if (Keyboard::isKeyPressed(Controls::PreviousOption) || sf::Joystick::getAxisPosition(0, sf::Joystick::PovX) <= -20) {
             nextWindowMode(false);
         }
     }

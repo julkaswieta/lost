@@ -30,7 +30,7 @@ vector<shared_ptr<Entity>> Level1Scene::menuOptions;
 
 void Level1Scene::Load() {
     cout << " Scene 1 Load" << endl;
-    ls::LoadLevelFile("res/levels/test_level_v3.txt", 60.0f);
+    ls::LoadLevelFile("res/levels/level2.txt", 60.0f);
 
     auto ho = Engine::getWindowSize().y - (ls::getHeight() * 60.f);
     ls::setOffset(Vector2f(0, ho));
