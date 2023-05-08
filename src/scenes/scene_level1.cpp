@@ -245,7 +245,7 @@ void Level1Scene::Update(const double& dt) {
             SaveSystem::setLastLevelCompleted(1);
             SaveSystem::setDeathCounter(10);
             SaveSystem::saveGame();
-            Engine::ChangeScene((Scene*)&menu);
+            Engine::ChangeScene((Scene*)&endScene);
         }
         else if (!player->isAlive()) {
             SaveSystem::setDeathCounter(SaveSystem::getDeathCount() + 1);
