@@ -95,7 +95,7 @@ void Level1Scene::Load() {
             stText->getText().getLocalBounds().width * 0.5f,
             stText->getText().getLocalBounds().height * 0.5f
         ));
-        stText->getText().setPosition(starTracker->getPosition() + Vector2f(55.f, -5.f));
+        stText->getText().setPosition(starTracker->getPosition() + Vector2f(70.f, -5.f));
     }
 
     // Add components and sprites to goal tile
