@@ -56,24 +56,6 @@ void Level1Scene::Load() {
         s->getShape().setOrigin(Vector2f(25.f, 30.f));
     }
 
-    // Create blob
-    {
-        b2Filter blobFilter;
-        blobFilter.categoryBits = 0x0004;
-        blobFilter.maskBits = 0x0008;
-
-        blob = makeEntity();
-        blob->addTag("blob");
-        blob->setPosition(ls::getTilePosition(ls::findTiles(ls::ENEMY)[0]) + Vector2f(30.f, 40.f));
-        blob->addComponent<HurtComponent>(50.f);
-        blob->addComponent<BlobComponent>(Vector2f(50.f, 40.f));
-        blob->getComponents<BlobComponent>()[0]->getFixture()->SetFilterData(blobFilter);
-        auto s = blob->addComponent<ShapeComponent>();
-        s->setShape<sf::RectangleShape>(Vector2f(50.f, 40.f));
-        s->getShape().setFillColor(Color::Blue);
-        s->getShape().setOrigin(Vector2f(25.f, 20.f));
-    }
-
     // Add components and sprites to star tiles
     {
         collected.clear();
@@ -195,6 +177,24 @@ void Level1Scene::Load() {
             e->addComponent<PhysicsComponent>(false, Vector2f(60.f, 60.f));
             e->getComponents<PhysicsComponent>()[0]->getFixture()->SetFilterData(wallFilter);
         }
+    }
+
+    // Create blob
+    {
+        b2Filter blobFilter;
+        blobFilter.categoryBits = 0x0004;
+        blobFilter.maskBits = 0x0008;
+
+        blob = makeEntity();
+        blob->addTag("blob");
+        blob->setPosition(ls::getTilePosition(ls::findTiles(ls::ENEMY)[0]) + Vector2f(30.f, 40.f));
+        blob->addComponent<HurtComponent>(50.f);
+        blob->addComponent<BlobComponent>(Vector2f(50.f, 40.f));
+        blob->getComponents<BlobComponent>()[0]->getFixture()->SetFilterData(blobFilter);
+        auto s = blob->addComponent<ShapeComponent>();
+        s->setShape<sf::RectangleShape>(Vector2f(50.f, 40.f));
+        s->getShape().setFillColor(Color::Blue);
+        s->getShape().setOrigin(Vector2f(25.f, 20.f));
     }
 
     // Add star counter in the top left of screen
