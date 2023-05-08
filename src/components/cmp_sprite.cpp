@@ -8,11 +8,11 @@ void SpriteComponent::setTexure(std::shared_ptr<sf::Texture> tex) {
     sprite->setTexture(*texture);
 }
 
-SpriteComponent::SpriteComponent(Entity* p)
-    : Component(p), sprite(make_shared<sf::Sprite>()) {}
+SpriteComponent::SpriteComponent(Entity* p, sf::Vector2f s)
+    : Component(p), sprite(make_shared<sf::Sprite>()), size(s) {}
 
 void SpriteComponent::Update(double dt) {
-    sprite->setPosition(parent->getPosition() - sf::Vector2f(30.f, 30.f));
+    sprite->setPosition(parent->getPosition() - sf::Vector2f(size.x / 2.f, size.y / 2.f));
     sprite->setRotation(sf::degrees(parent->getRotation()));
 }
 

@@ -1,6 +1,7 @@
 #include "../controls.h"
 #include "engine.h"
 #include "system_physics.h"
+#include "system_resources.h"
 #include "cmp_blob.h"
 
 #include <SFML/Window/Keyboard.hpp>
@@ -25,6 +26,7 @@ bool BlobComponent::isGrounded() const {
             onTop &= (manifold.points[j].y < pos.y - halfPlrHeigt);
         }
         if (onTop) {
+            parent->getComponents<SpriteComponent>()[0]->setTexure(groundTexture);
             return true;
         }
     }
@@ -42,12 +44,16 @@ void BlobComponent::Update(double dt) {
 
     if (auto pl = player.lock()) {
         if (pl->getPosition().x > parent->getPosition().x) {
-            if (getVelocity().x < maxVelocity.x)
+            if (getVelocity().x < maxVelocity.x) {
                 impulse({ (float)(dt * groundspeed), 0 });
+                parent->getComponents<SpriteComponent>()[0]->getSprite().setScale(Vector2f(-1.f, 1.f));
+            }
         }
         else {
-            if (getVelocity().x > -maxVelocity.x)
+            if (getVelocity().x > -maxVelocity.x) {
                 impulse({ -(float)(dt * groundspeed), 0 });
+                parent->getComponents<SpriteComponent>()[0]->getSprite().setScale(Vector2f(1.f, 1.f));
+            }
         }
     }
     
@@ -60,11 +66,14 @@ void BlobComponent::Update(double dt) {
     if (!grounded) {
         groundspeed = 10.f;
         setFriction(0.f);
+        timeOnGround = 0.f;
     }
     else {
-        Jump();
         groundspeed = 15.f;
         setFriction(0.2f);
+        timeOnGround += dt;
+        if (timeOnGround > 0.3f)
+            Jump();
     }
 
     // Clamp velocity.
@@ -80,6 +89,7 @@ void BlobComponent::Jump() {
     grounded = isGrounded();
 
     if (grounded) {
+        parent->getComponents<SpriteComponent>()[0]->setTexure(airTexture);
         const auto pos = parent->getPosition();
         setVelocity(Vector2f(getVelocity().x, 0.f));
         teleport(Vector2f(pos.x, pos.y - 2.0f));
@@ -90,11 +100,17 @@ void BlobComponent::Jump() {
 BlobComponent::BlobComponent(Entity* p, const Vector2f& s)
     : PhysicsComponent(p, true, s), player(parent->scene->ents.find("player")[0]) {
     size = sfmlVecToBoxVec(s, true);
+
+    // Load textures
+    groundTexture = Resources::get<Texture>("BlobGround.png");
+    airTexture = Resources::get<Texture>("BlobAir.png");
+    parent->getComponents<SpriteComponent>()[0]->getSprite().setOrigin(Vector2f(25.f, 0.f));
+
     maxVelocity = Vector2f(100.f, 300.f);
+    timeOnGround = 0.f;
     groundspeed = 30.f;
     grounded = false;
     body->SetSleepingAllowed(false);
     body->SetFixedRotation(true);
-    //Bullet items have higher-res collision detection
     body->SetBullet(true);
 }

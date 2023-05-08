@@ -55,6 +55,8 @@ void Level1Scene::Load() {
         s->getShape().setOrigin(Vector2f(25.f, 30.f));
     }
 
+    auto defaultSize = Vector2f(60.f, 60.f);
+
     // Add components and sprites to star tiles
     {
         collected.clear();
@@ -75,7 +77,7 @@ void Level1Scene::Load() {
                 s->addTag("Level1_" + to_string(i + 1));
                 s->setPosition(ls::getTilePosition(stars[i]) + Vector2f(30.f, 30.f));
                 s->addComponent<CollectibleComponent>(55.f);
-                auto sc = s->addComponent<SpriteComponent>();
+                auto sc = s->addComponent<SpriteComponent>(defaultSize);
                 sc->setTexure(Resources::get<sf::Texture>("Star.png"));
             }
         }
@@ -87,8 +89,8 @@ void Level1Scene::Load() {
         auto g = makeEntity();
         g->addTag("goal");
         g->setPosition(ls::getTilePosition(goal) + Vector2f(30.f, 30.f));
-        auto sc = g->addComponent<SpriteComponent>();
-        sc->setTexure(Resources::get<sf::Texture>("Goal.png"));
+        auto sprite = g->addComponent<SpriteComponent>(defaultSize);
+        sprite->setTexure(Resources::get<sf::Texture>("Goal.png"));
     }
 
     // Add hurt components and sprites to hazard tiles
@@ -99,7 +101,7 @@ void Level1Scene::Load() {
             h->addTag("hazard");
             h->setPosition(pos);
             h->addComponent<HurtComponent>(55.f);
-            auto sc = h->addComponent<SpriteComponent>();
+            auto sc = h->addComponent<SpriteComponent>(defaultSize);
             sc->setTexure(Resources::get<sf::Texture>("SpikeUp.png"));
         }
 
@@ -109,7 +111,7 @@ void Level1Scene::Load() {
             h->addTag("hazard");
             h->setPosition(pos);
             h->addComponent<HurtComponent>(55.f);
-            auto sc = h->addComponent<SpriteComponent>();
+            auto sc = h->addComponent<SpriteComponent>(defaultSize);
             sc->setTexure(Resources::get<sf::Texture>("SpikeDown.png"));
         }
 
@@ -119,7 +121,7 @@ void Level1Scene::Load() {
             h->addTag("hazard");
             h->setPosition(pos);
             h->addComponent<HurtComponent>(55.f);
-            auto sc = h->addComponent<SpriteComponent>();
+            auto sc = h->addComponent<SpriteComponent>(defaultSize);
             sc->setTexure(Resources::get<sf::Texture>("SpikeRight.png"));
         }
 
@@ -129,7 +131,7 @@ void Level1Scene::Load() {
             h->addTag("hazard");
             h->setPosition(pos);
             h->addComponent<HurtComponent>(55.f);
-            auto sc = h->addComponent<SpriteComponent>();
+            auto sc = h->addComponent<SpriteComponent>(defaultSize);
             sc->setTexure(Resources::get<sf::Texture>("SpikeLeft.png"));
         }
 
@@ -145,7 +147,7 @@ void Level1Scene::Load() {
             h->addComponent<HurtComponent>(60.f);
             h->addComponent<SpikeBallComponent>(Vector2f(60.f, 60.f));
             h->getComponents<SpikeBallComponent>()[0]->getFixture()->SetFilterData(spikeBallFilter);
-            auto sc = h->addComponent<SpriteComponent>();
+            auto sc = h->addComponent<SpriteComponent>(defaultSize);
             sc->setTexure(Resources::get<sf::Texture>("SpikeBall.png"));
         }
 
@@ -155,7 +157,7 @@ void Level1Scene::Load() {
             h->addTag("hazard");
             h->setPosition(pos);
             h->addComponent<HurtComponent>(55.f);
-            auto sc = h->addComponent<SpriteComponent>();
+            auto sc = h->addComponent<SpriteComponent>(defaultSize);
             sc->setTexure(Resources::get<sf::Texture>("SpikeBase.png"));
         }
     }
@@ -187,13 +189,10 @@ void Level1Scene::Load() {
         blob = makeEntity();
         blob->addTag("blob");
         blob->setPosition(ls::getTilePosition(ls::findTiles(ls::ENEMY)[0]) + Vector2f(30.f, 40.f));
+        blob->addComponent<SpriteComponent>(Vector2f(50.f, 40.f));
         blob->addComponent<HurtComponent>(50.f);
         blob->addComponent<BlobComponent>(Vector2f(50.f, 40.f));
         blob->getComponents<BlobComponent>()[0]->getFixture()->SetFilterData(blobFilter);
-        auto s = blob->addComponent<ShapeComponent>();
-        s->setShape<sf::RectangleShape>(Vector2f(50.f, 40.f));
-        s->getShape().setFillColor(Color::Blue);
-        s->getShape().setOrigin(Vector2f(25.f, 20.f));
     }
 
     // Add star counter in the top left of screen
@@ -201,7 +200,7 @@ void Level1Scene::Load() {
         auto starTracker = makeEntity();
         starTracker->addTag("starTracker");
         starTracker->setPosition(Vector2f(150.f, 90.f));
-        auto sprite = starTracker->addComponent<SpriteComponent>();
+        auto sprite = starTracker->addComponent<SpriteComponent>(defaultSize);
         sprite->setTexure(Resources::get<sf::Texture>("Star.png"));
         auto text = starTracker->addComponent<TextComponent>("0/3");
         text->SetColor(Color::Black);
