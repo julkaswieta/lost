@@ -1,18 +1,18 @@
 aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa
 aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa
 aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa
-v                             aa
-v                             aa
-v       k   kkk kkk kkk       aa
-v       k   k k k    k        aa
-v       k   k k kkk  k        aa
-v       k   k k   k  k        aa
-v       kkk kkk kkk  k        aa
-v       ggg ggg ggg  g        aa
-v                             aa
-v                             aa
-v  w        x      y      z   aa
-v     b                       aa
+aa                            aa
+aa                            aa
+aa      k   kkk kkk kkk       aa
+aa      k   k k k    k        aa
+aa      k   k k kkk  k        aa
+aa      k   k k   k  k        aa
+aa      kkk kkk kkk  k        aa
+aa      ggg ggg ggg  g        aa
+aa                            aa
+aa                            aa
+aa  w       x      y      z   aa
+aa     b                      aa
 aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa
 aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa
 aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa

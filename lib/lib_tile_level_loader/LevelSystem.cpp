@@ -12,12 +12,8 @@ float LevelSystem::tileSize(100.f);
 Vector2f LevelSystem::offset(0.0f, 30.0f);
 vector<unique_ptr<RectangleShape>> LevelSystem::sprites;
 
-map<LevelSystem::Tile, Color> LevelSystem::colours{
-    {WALL, Color::White}, // Continue here
-
-    // Don't change these
-    {EXIT, Color::Blue}, {SETTINGS, Color::Blue},
-    {LEVEL1, Color::Blue}, {LEVEL2, Color::Blue}, {LEVEL3, Color::Blue}
+map<LevelSystem::Tile, Color> LevelSystem::colours {
+    {WALL, Color::White}
 };
 
 void LevelSystem::readInLevelFile(const string& path, string& buffer) {

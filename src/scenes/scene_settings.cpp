@@ -53,7 +53,7 @@ void SettingsScene::executeSelectedOption() {
         ents.find("remove")[0]->setVisible(true);
         break;
     case 4:
-        Engine::ChangeScene(&menu);
+        Engine::ChangeScene(&levelMenu);
         break;
     }
 }

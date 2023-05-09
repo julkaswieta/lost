@@ -4,10 +4,11 @@
 * main.cpp: game starting point
 *
 * Author: "Lost" devs
-* Last modified: 04/05/2023
+* Last modified: 09/05/2023
 */
 #include "game.h"
 #include "engine.h"
+#include "scenes/scene_level_menu.h"
 #include "scenes/scene_level_1.h"
 #include "scenes/scene_level_2.h"
 #include "scenes/scene_level_3.h"
@@ -15,6 +16,7 @@
 using namespace std;
 
 MainMenuScene menu;
+LevelMenuScene levelMenu;
 Level1Scene level1;
 Level2Scene level2;
 Level3Scene level3;
@@ -29,5 +31,5 @@ vector<Scene*> levels = { &level1, &level2, &level3, &endScene };
 
 int main()
 {
-	Engine::Start("Lost", &menu);
+	Engine::Start("Lost", &levelMenu);
 }

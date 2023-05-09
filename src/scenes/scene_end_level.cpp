@@ -73,7 +73,7 @@ void EndLevelScene::executeSelectedOption()
         Engine::ChangeScene(levels[previousLevel]);
         break;
     case 2:
-        Engine::ChangeScene(&menu);
+        Engine::ChangeScene(&levelMenu);
         break;
     }
 }

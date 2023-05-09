@@ -219,7 +219,7 @@ void Level2Scene::Load() {
         auto deathTracker = makeEntity();
         deathTracker->addTag("deathTracker");
         deathTracker->setPosition(Vector2f(210.f, 90.f));
-        auto text = deathTracker->addComponent<TextComponent>("Deaths: " +
+        auto text = deathTracker->addComponent<TextComponent>("Total Deaths: " +
             to_string(SaveSystem::getDeathCount()));
         text->SetColor(Color::Black);
         text->getText().setOrigin(Vector2f(0.f, text->getText().getLocalBounds().height * 0.5f));
@@ -425,7 +425,7 @@ void Level2Scene::executeSelectedOption() {
         Engine::ChangeScene((Scene*)&level2);
         break;
     case 2:
-        Engine::ChangeScene(&menu);
+        Engine::ChangeScene(&levelMenu);
     }
 }
 
