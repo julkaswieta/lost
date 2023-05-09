@@ -3,6 +3,8 @@
 #include <LevelSystem.h>
 #include <SFML/Window/Keyboard.hpp>
 #include "../controls.h"
+#include <SFML/Audio.hpp>
+#include "system_resources.h"
 
 using namespace std;
 using namespace sf;
@@ -54,9 +56,25 @@ void PlayerPhysicsComponent::Update(double dt) {
 		dampen({ 0.9f, 1.0f });
 	}
 
+//sf:SoundBuffer buffer;
+//
+//	if (!buffer.loadFromFile("res/sound/UI.wav"))
+//	{
+//		cout << "ERROR";
+//	}
+//
+//	sf::Sound sound;
+//
+//	sound.setBuffer(buffer);
+
+	
+	//std::shared_ptr<sf::Sound> sound = Resources::get<sf::Sound>("funkymusic.wav");
+	
+
 	// Handle Jump
 	if (Keyboard::isKeyPressed(Controls::Jump) || sf::Joystick::isButtonPressed(0, 0)) {
 		grounded = isGrounded();
+		
         if (grounded) {
             setVelocity(Vector2f(getVelocity().x, 0.f));
             teleport(Vector2f(pos.x, pos.y - 2.0f));

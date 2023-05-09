@@ -28,7 +28,7 @@ void EndScene::Load()
 
 void EndScene::Update(const double& dt)
 {
-	if (Keyboard::isKeyPressed(Controls::MenuSelect)) {
+	if (Keyboard::isKeyPressed(Controls::MenuSelect) || sf::Joystick::isButtonPressed(0,0)) {
 		Engine::ChangeScene(&menu);
 	}
 	Scene::Update(dt);

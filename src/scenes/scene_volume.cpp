@@ -47,10 +47,10 @@ void VolumeScene::Update(const double& dt)
     this->ents.find("Volume")[0]->getComponents<TextComponent>()[0]->SetText("Volume: " + to_string(localVolume));
 
     if (volumeChangeActive) {
-        if (Keyboard::isKeyPressed(Controls::NextOption)) {
+        if (Keyboard::isKeyPressed(Controls::NextOption) || sf::Joystick::getAxisPosition(0, sf::Joystick::PovX) >= 20) {
             volumeUp();
         }
-        if (Keyboard::isKeyPressed(Controls::PreviousOption)) {
+        if (Keyboard::isKeyPressed(Controls::PreviousOption) || sf::Joystick::getAxisPosition(0, sf::Joystick::PovX) <= -20) {
             volumeDown();
         }
     }

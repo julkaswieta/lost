@@ -329,10 +329,10 @@ void Level1Scene::Update(const double& dt) {
     }
     // pause menu update
     else {
-        if (Keyboard::isKeyPressed(Controls::MenuDown)) {
+        if (Keyboard::isKeyPressed(Controls::MenuDown) || sf::Joystick::getAxisPosition(0, sf::Joystick::PovY) >= 20) {
             moveDown();
         }
-        if (Keyboard::isKeyPressed(Controls::MenuUp)) {
+        if (Keyboard::isKeyPressed(Controls::MenuUp) || sf::Joystick::getAxisPosition(0, sf::Joystick::PovY) <= -20) {
             moveUp();
         }
         if (Keyboard::isKeyPressed(Controls::MenuSelect) || sf::Joystick::isButtonPressed(0,0)) {

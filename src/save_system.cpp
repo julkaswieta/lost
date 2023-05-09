@@ -187,7 +187,7 @@ void SaveSystem::addCollected(vector<string> collected) {
 	}
 }
 
-// getters and setterscfor settings
+// getters and setters for settings
 void SaveSystem::updateVolume(int newVolume) { Volume = newVolume; }
 
 void SaveSystem::updateResolutionIndex(int newResolutionIndex) { ResolutionIndex = newResolutionIndex; }

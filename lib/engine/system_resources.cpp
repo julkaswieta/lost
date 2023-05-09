@@ -21,8 +21,8 @@ namespace Resources {
         };
         return tex;
     };
-#ifdef SOUND
-    template <> // explicit specialization for T = SoundBuffer
+
+    #ifdef   template <> // explicit specialization for T = SoundBuffer
     std::shared_ptr<sf::SoundBuffer> load(const std::string& name) {
         auto buf = std::make_shared<sf::SoundBuffer>();
         if (!buf->loadFromFile("res/sound/" + name)) {
@@ -38,7 +38,7 @@ namespace Resources {
             throw("not found: " + name);
         };
         return music;
-    };
-#endif // SOUND
+#endif    };
+
 
 }
