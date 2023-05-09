@@ -27,10 +27,9 @@ bool BlobComponent::isGrounded() const {
             onTop &= (manifold.points[j].y < pos.y - halfPlrHeigt);
         }
         if (onTop) {
-            if (!grounded) {
+            if (!grounded)
 				sound->getComponents<GameSoundsComponent>()[0]->playEnemyJumpSound();
-                parent->getComponents<SpriteComponent>()[0]->setTexure(groundTexture);
-			}
+            parent->getComponents<SpriteComponent>()[0]->setTexure(groundTexture);
             return true;
         }
     }
@@ -50,13 +49,15 @@ void BlobComponent::Update(double dt) {
         if (pl->getPosition().x > parent->getPosition().x) {
             if (getVelocity().x < maxVelocity.x) {
                 impulse({ (float)(dt * groundspeed), 0 });
-                parent->getComponents<SpriteComponent>()[0]->getSprite().setScale(Vector2f(-1.f, 1.f));
+                groundTexture = groundRight;
+                airTexture = airRight;
             }
         }
         else {
             if (getVelocity().x > -maxVelocity.x) {
                 impulse({ -(float)(dt * groundspeed), 0 });
-                parent->getComponents<SpriteComponent>()[0]->getSprite().setScale(Vector2f(1.f, 1.f));
+                groundTexture = groundLeft;
+                airTexture = airLeft;
             }
         }
     }
@@ -105,9 +106,13 @@ BlobComponent::BlobComponent(Entity* p, const Vector2f& s) : PhysicsComponent(p,
     size(sfmlVecToBoxVec(s, true)) {
 
     // Load textures
-    groundTexture = Resources::get<Texture>("BlobGround.png");
-    airTexture = Resources::get<Texture>("BlobAir.png");
-    parent->getComponents<SpriteComponent>()[0]->getSprite().setOrigin(Vector2f(25.f, 0.f));
+    groundLeft = Resources::get<Texture>("BlobGroundLeft.png");
+    groundRight = Resources::get<Texture>("BlobGroundRight.png");
+    airLeft = Resources::get<Texture>("BlobAirLeft.png");
+    airRight = Resources::get<Texture>("BlobAirRight.png");
+    groundTexture = groundRight;
+    airTexture = airRight;
+
     maxVelocity = Vector2f(100.f, 300.f);
     timeOnGround = 0.f;
     groundspeed = 30.f;

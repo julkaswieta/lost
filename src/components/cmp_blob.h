@@ -3,7 +3,7 @@
 
 class BlobComponent : public PhysicsComponent {
 protected:
-	std::shared_ptr<sf::Texture> groundTexture, airTexture;
+	std::shared_ptr<sf::Texture> groundLeft, groundRight, airLeft, airRight, groundTexture, airTexture;
 	std::shared_ptr<Entity> sound;
 	std::weak_ptr<Entity> player;
 	b2Vec2 size;

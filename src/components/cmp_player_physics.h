@@ -3,6 +3,7 @@
 
 class PlayerPhysicsComponent : public PhysicsComponent {
 protected:
+	std::shared_ptr<sf::Texture> groundLeft, groundRight, airLeft, airRight, groundTexture, airTexture;
 	std::shared_ptr<Entity> sound;
 	b2Vec2 size;
 	sf::Vector2f maxVelocity;

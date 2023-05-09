@@ -29,6 +29,7 @@ bool PlayerPhysicsComponent::isGrounded() const {
         if (onTop) {
             if (!grounded)
                 sound->getComponents<GameSoundsComponent>()[0]->playPlayerHitSound();
+            parent->getComponents<SpriteComponent>()[0]->setTexure(groundTexture);
             return true;
         }
     }
@@ -45,14 +46,22 @@ void PlayerPhysicsComponent::Update(double dt) {
 	}
 
 	// Player Right Movement
-	if (Keyboard::isKeyPressed(Controls::MoveRight) || sf::Joystick::getAxisPosition(0, sf::Joystick::PovX) >= 20) {
+	if (Keyboard::isKeyPressed(Controls::MoveRight) || 
+        sf::Joystick::getAxisPosition(0, sf::Joystick::PovX) >= 20) {
 		if (getVelocity().x < maxVelocity.x)
 			impulse({ (float)(dt * groundspeed), 0 });
+
+        groundTexture = groundRight;
+        airTexture = airRight;
 	}
 	// Player Left Movement
-	else if (Keyboard::isKeyPressed(Controls::MoveLeft) || sf::Joystick::getAxisPosition(0, sf::Joystick::PovX) <= -20) {
+	else if (Keyboard::isKeyPressed(Controls::MoveLeft) || 
+        sf::Joystick::getAxisPosition(0, sf::Joystick::PovX) <= -20) {
 		if (getVelocity().x > -maxVelocity.x)
 			impulse({ -(float)(dt * groundspeed), 0 });
+
+        groundTexture = groundLeft;
+        airTexture = airLeft;
 	}
 
 	else {
@@ -79,6 +88,7 @@ void PlayerPhysicsComponent::Update(double dt) {
                 cout << "Jumped twice!\n";
                 firstJump = false;
                 secondJump = true;
+                parent->getComponents<SpriteComponent>()[0]->setTexure(airTexture);
             }
         }
     }
@@ -119,6 +129,14 @@ PlayerPhysicsComponent::PlayerPhysicsComponent(Entity* p, const Vector2f& s) : P
     sound(parent->scene->ents.find("gameSounds")[0]),
     size(sfmlVecToBoxVec(s, true)) {
 
+    //Load textures
+    groundLeft = Resources::get<Texture>("PlayerWalkLeft.png");
+    groundRight = Resources::get<Texture>("PlayerWalkRight.png");
+    airLeft = Resources::get<Texture>("PlayerJumpLeft.png");
+    airRight = Resources::get<Texture>("PlayerJumpRight.png");
+    groundTexture = groundRight;
+    airTexture = airRight;
+
     maxVelocity = Vector2f(200.f, 400.f);
     groundspeed = 30.f;
     timeInAir = 0.f;
@@ -129,6 +147,4 @@ PlayerPhysicsComponent::PlayerPhysicsComponent(Entity* p, const Vector2f& s) : P
     body->SetSleepingAllowed(false);
     body->SetFixedRotation(true);
     body->SetBullet(true);
-
-
 }

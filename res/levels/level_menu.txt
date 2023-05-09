@@ -3,11 +3,11 @@ aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa
 aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa
 v                             aa
 v                             aa
-v       d   ddd ddd ddd       aa
-v       d   d d d    d        aa
-v       d   d d ddd  d        aa
-v       d   d d   d  d        aa
-v       ddd ddd ddd  d        aa
+v       k   kkk kkk kkk       aa
+v       k   k k k    k        aa
+v       k   k k kkk  k        aa
+v       k   k k   k  k        aa
+v       kkk kkk kkk  k        aa
 v       ggg ggg ggg  g        aa
 v                             aa
 v                             aa
