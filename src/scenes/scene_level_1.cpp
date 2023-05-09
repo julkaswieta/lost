@@ -33,9 +33,9 @@ vector<shared_ptr<Entity>> Level1Scene::menuOptions;
 float Level1Scene::timer;
 
 void Level1Scene::Load() {
-	std::cout << " Scene 1 Load" << endl;
+    // Load the level file and set the offset for level rendering
+    std::cout << "Level 1 Load" << endl;
     ls::LoadLevelFile("res/levels/level_1.txt", 60.0f);
-
     auto ho = Engine::getWindowSize().y - (ls::getHeight() * 60.f);
     ls::setOffset(Vector2f(0, ho));
 
@@ -67,7 +67,8 @@ void Level1Scene::Load() {
         player->getComponents<PlayerPhysicsComponent>()[0]->getFixture()->SetFilterData(playerFilter);
 
         // Add the sprite component and set the texture for the player entity
-        player->addComponent<SpriteComponent>(Vector2f(40.f, 60.f));
+        auto sprite = player->addComponent<SpriteComponent>(Vector2f(40.f, 60.f));
+        sprite->setTexure(Resources::get<Texture>("PlayerWalkRight.png"));
     }
 
     // Add components and sprites to star tiles depending 
@@ -238,13 +239,14 @@ void Level1Scene::Load() {
         blob = makeEntity();
         blob->addTag("blob");
         blob->setPosition(ls::getTilePosition(ls::findTiles(ls::ENEMY)[0]) + Vector2f(30.f, 40.f));
-        // Add a SpriteComponent with size 50x40
-        blob->addComponent<SpriteComponent>(Vector2f(50.f, 40.f));
         // Add a HurtComponent with radius of 50
         blob->addComponent<HurtComponent>(50.f);
         // Add BlobComponent with a size of 50x40 and set the filter data
         blob->addComponent<BlobComponent>(Vector2f(50.f, 40.f));
         blob->getComponents<BlobComponent>()[0]->getFixture()->SetFilterData(blobFilter);
+        // Add a SpriteComponent with size 50x40
+        auto sprite = blob->addComponent<SpriteComponent>(Vector2f(50.f, 40.f));
+        sprite->setTexure(Resources::get<Texture>("BlobGroundLeft.png"));
     }
 
     // Add star counter in the top left of screen
@@ -259,24 +261,27 @@ void Level1Scene::Load() {
         // Add a TextComponent with the number of stars collected
         auto text = starTracker->addComponent<TextComponent>("0/3");
         text->SetColor(Color::Black);
+        // Set origin to the left center of the text
         text->getText().setOrigin(Vector2f(0.f, text->getText().getLocalBounds().height * 0.5f));
         text->getText().setPosition(Vector2f(190.f, 90.f));
     }
 
-    // Total death tracker
+    // Add death counter in top middle of screen
     {
         // Create a new entity and add a TextComponent to display the total deaths
         auto deathTracker = makeEntity();
         deathTracker->addTag("deathTracker");
         deathTracker->setPosition(Vector2f(210.f, 90.f));
+        // Add a TextComponent with the number of total deaths on your save file
         auto text = deathTracker->addComponent<TextComponent>("Total Deaths: " +
             to_string(SaveSystem::getDeathCount()));
         text->SetColor(Color::Black);
+        // Set origin to the left center of the text
         text->getText().setOrigin(Vector2f(0.f, text->getText().getLocalBounds().height * 0.5f));
         text->getText().setPosition(Vector2f(300.f, 90.f));
     }
 
-    // Add timeTracker in top right of screen
+    // Add timer in top right of screen
     {
         timer = 0.f;
         bestTime = SaveSystem::getLevelBestTime(1);

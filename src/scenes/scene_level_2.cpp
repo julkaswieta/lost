@@ -33,9 +33,9 @@ vector<shared_ptr<Entity>> Level2Scene::menuOptions;
 float Level2Scene::timer;
 
 void Level2Scene::Load() {
+    // Load the level file and set the offset for level rendering
     std::cout << "Level 2 Load" << endl;
     ls::LoadLevelFile("res/levels/level_2.txt", 60.0f);
-
     auto ho = Engine::getWindowSize().y - (ls::getHeight() * 60.f);
     ls::setOffset(Vector2f(0, ho));
 
@@ -61,13 +61,12 @@ void Level2Scene::Load() {
         player = makeEntity();
         player->addTag("player");
         player->setPosition(ls::getTilePosition(ls::findTiles(ls::START)[0]));
-
         // Add the player physics component and set the fixture filter data
         player->addComponent<PlayerPhysicsComponent>(Vector2f(30.f, 60.f));
         player->getComponents<PlayerPhysicsComponent>()[0]->getFixture()->SetFilterData(playerFilter);
-
         // Add the sprite component and set the texture for the player entity
-        player->addComponent<SpriteComponent>(Vector2f(40.f, 60.f));
+        auto sprite = player->addComponent<SpriteComponent>(Vector2f(40.f, 60.f));
+        sprite->setTexure(Resources::get<Texture>("PlayerWalkRight.png"));
     }
 
     // Add components and sprites to star tiles depending 
@@ -119,51 +118,66 @@ void Level2Scene::Load() {
 
     // Add hurt components and sprites to hazard tiles
     {
-        for (auto su : ls::findTiles(ls::SPIKE_UP)){
+        // Find all tiles with hazard spikes pointing up and create a new entity for each
+        for (auto su : ls::findTiles(ls::SPIKE_UP)) {
+            // Set position, tag as "hazard", and add a HurtComponent with radius of 50
             auto h = makeEntity();
             auto pos = ls::getTilePosition(su) + Vector2f(30.f, 30.f);
             h->addTag("hazard");
             h->setPosition(pos);
             h->addComponent<HurtComponent>(50.f);
+            // Add a SpriteComponent with texture "SpikeUp.png"
             auto sc = h->addComponent<SpriteComponent>(defaultSize);
             sc->setTexure(Resources::get<sf::Texture>("SpikeUp.png"));
         }
 
+        // Find all tiles with hazard spikes pointing down and create a new entity for each
         for (auto sd : ls::findTiles(ls::SPIKE_DOWN)) {
+            // Set position, tag as "hazard", and add a HurtComponent with radius of 50
             auto h = makeEntity();
             auto pos = ls::getTilePosition(sd) + Vector2f(30.f, 30.f);
             h->addTag("hazard");
             h->setPosition(pos);
             h->addComponent<HurtComponent>(50.f);
+            // Add a SpriteComponent with texture "SpikeDown.png"
             auto sc = h->addComponent<SpriteComponent>(defaultSize);
             sc->setTexure(Resources::get<sf::Texture>("SpikeDown.png"));
         }
 
+        // Find all tiles with hazard spikes pointing right and create a new entity for each
         for (auto sr : ls::findTiles(ls::SPIKE_RIGHT)) {
+            // Set position, tag as "hazard", and add a HurtComponent with radius of 50
             auto h = makeEntity();
             auto pos = ls::getTilePosition(sr) + Vector2f(30.f, 30.f);
             h->addTag("hazard");
             h->setPosition(pos);
             h->addComponent<HurtComponent>(50.f);
+            // Add a SpriteComponent with texture "SpikeRight.png"
             auto sc = h->addComponent<SpriteComponent>(defaultSize);
             sc->setTexure(Resources::get<sf::Texture>("SpikeRight.png"));
         }
 
+        // Find all tiles with hazard spikes pointing left and create a new entity for each
         for (auto sl : ls::findTiles(ls::SPIKE_LEFT)) {
+            // Set position, tag as "hazard", and add a HurtComponent with radius of 50
             auto h = makeEntity();
             auto pos = ls::getTilePosition(sl) + Vector2f(30.f, 30.f);
             h->addTag("hazard");
             h->setPosition(pos);
             h->addComponent<HurtComponent>(50.f);
+            // Add a SpriteComponent with texture "SpikeLeft.png"
             auto sc = h->addComponent<SpriteComponent>(defaultSize);
             sc->setTexure(Resources::get<sf::Texture>("SpikeLeft.png"));
         }
 
+        // Set the filter category and mask bits for the spike ball entity
         b2Filter spikeBallFilter;
         spikeBallFilter.categoryBits = 0x0006;
         spikeBallFilter.maskBits = 0x0008;
 
+        // Find all tiles with hazard spike balls and create a new entity for each
         for (auto sball : ls::findTiles(ls::SPIKE_BALL)) {
+            // Set position, tag as "hazard", and add a HurtComponent with radius of 50
             auto h = makeEntity();
             auto pos = ls::getTilePosition(sball) + Vector2f(30.f, 30.f);
             h->addTag("hazard");
@@ -171,16 +185,20 @@ void Level2Scene::Load() {
             h->addComponent<HurtComponent>(55.f);
             h->addComponent<SpikeBallComponent>(Vector2f(60.f, 60.f));
             h->getComponents<SpikeBallComponent>()[0]->getFixture()->SetFilterData(spikeBallFilter);
+            // Add a SpriteComponent with texture "SpikeBall.png"
             auto sc = h->addComponent<SpriteComponent>(defaultSize);
             sc->setTexure(Resources::get<sf::Texture>("SpikeBall.png"));
         }
 
+        // Find all tiles with hazard sawblades and create a new entity for each
         for (auto sblade : ls::findTiles(ls::SAWBLADE)) {
+            // Set position, tag as "hazard", and add a HurtComponent with radius of 50
             auto h = makeEntity();
             auto pos = ls::getTilePosition(sblade) + Vector2f(30.f, 30.f);
             h->addTag("hazard");
             h->setPosition(pos);
             h->addComponent<HurtComponent>(50.f);
+            // Add a SpriteComponent with texture "SpikeBase.png"
             auto sc = h->addComponent<SpriteComponent>(defaultSize);
             sc->setTexure(Resources::get<sf::Texture>("SpikeBase.png"));
         }
@@ -188,17 +206,21 @@ void Level2Scene::Load() {
 
     // Add physics colliders to level tiles
     {
+        // Set the filter category and mask bits for the level tiles
         b2Filter wallFilter;
         wallFilter.categoryBits = 0x0008;
         wallFilter.maskBits = 0x0002 | 0x0004 | 0x0006;
 
+        // Find all wall tiles and create a new entity for each
         auto walls = ls::findTiles(ls::WALL);
         for (auto w : walls) {
+            // Set position and tag as wall
             auto pos = ls::getTilePosition(w);
             pos += Vector2f(30.f, 30.f); //offset to center
             auto e = makeEntity();
             e->addTag("wall");
             e->setPosition(pos);
+            // Add a PhysicsComponent with a size of 60x60 and set the filter data
             e->addComponent<PhysicsComponent>(false, Vector2f(60.f, 60.f));
             e->getComponents<PhysicsComponent>()[0]->getFixture()->SetFilterData(wallFilter);
         }
@@ -215,36 +237,44 @@ void Level2Scene::Load() {
         blob = makeEntity();
         blob->addTag("blob");
         blob->setPosition(ls::getTilePosition(ls::findTiles(ls::ENEMY)[0]) + Vector2f(30.f, 40.f));
-        // Add a SpriteComponent with size 50x40
-        blob->addComponent<SpriteComponent>(Vector2f(50.f, 40.f));
         // Add a HurtComponent with radius of 50
         blob->addComponent<HurtComponent>(50.f);
         // Add BlobComponent with a size of 50x40 and set the filter data
         blob->addComponent<BlobComponent>(Vector2f(50.f, 40.f));
         blob->getComponents<BlobComponent>()[0]->getFixture()->SetFilterData(blobFilter);
+        // Add a SpriteComponent with size 50x40
+        auto sprite = blob->addComponent<SpriteComponent>(Vector2f(50.f, 40.f));
+        sprite->setTexure(Resources::get<Texture>("BlobGroundLeft.png"));
     }
 
     // Add star counter in the top left of screen
     {
+        // Create a new entity
         auto starTracker = makeEntity();
         starTracker->addTag("starTracker");
         starTracker->setPosition(Vector2f(150.f, 90.f));
+        // Add a SpriteComponent with texture "Star.png"
         auto sprite = starTracker->addComponent<SpriteComponent>(defaultSize);
         sprite->setTexure(Resources::get<sf::Texture>("Star.png"));
+        // Add a TextComponent with the number of stars collected
         auto text = starTracker->addComponent<TextComponent>("0/3");
         text->SetColor(Color::Black);
+        // Set origin to the left center of the text
         text->getText().setOrigin(Vector2f(0.f, text->getText().getLocalBounds().height * 0.5f));
         text->getText().setPosition(Vector2f(190.f, 90.f));
     }
 
-    // Temporary death tracker
+    // Add death counter in top middle of screen
     {
+        // Create a new entity and add a TextComponent to display the total deaths
         auto deathTracker = makeEntity();
         deathTracker->addTag("deathTracker");
         deathTracker->setPosition(Vector2f(210.f, 90.f));
+        // Add a TextComponent with the number of total deaths on your save file
         auto text = deathTracker->addComponent<TextComponent>("Total Deaths: " +
             to_string(SaveSystem::getDeathCount()));
         text->SetColor(Color::Black);
+        // Set origin to the left center of the text
         text->getText().setOrigin(Vector2f(0.f, text->getText().getLocalBounds().height * 0.5f));
         text->getText().setPosition(Vector2f(300.f, 90.f));
     }

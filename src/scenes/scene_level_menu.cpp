@@ -93,13 +93,12 @@ void LevelMenuScene::Load() {
         player = makeEntity();
         player->addTag("player");
         player->setPosition(ls::getTilePosition(ls::findTiles(ls::START)[0]));
-
         // Add the player physics component and set the fixture filter data
         player->addComponent<PlayerPhysicsComponent>(Vector2f(30.f, 60.f));
         player->getComponents<PlayerPhysicsComponent>()[0]->getFixture()->SetFilterData(playerFilter);
-
         // Add the sprite component and set the texture for the player entity
-        player->addComponent<SpriteComponent>(Vector2f(40.f, 60.f));
+        auto sprite = player->addComponent<SpriteComponent>(Vector2f(40.f, 60.f));
+        sprite->setTexure(Resources::get<Texture>("PlayerWalkRight.png"));
     }
 
     // Add hurt components and sprites to hazard tiles
@@ -277,7 +276,7 @@ void LevelMenuScene::Update(const double& dt) {
             Engine::ChangeScene((Scene*)&level2);
         }
         else if (ls::getTileAt(player->getPosition()) == ls::LEVEL3) {
-            Engine::ChangeScene((Scene*)&level1);
+            Engine::ChangeScene((Scene*)&level3);
         }
         else if (!player->isAlive()) {
             // increment death count and save the game, then return to the level menu scene
