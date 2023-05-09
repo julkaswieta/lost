@@ -8,7 +8,6 @@ void HurtComponent::Update(double dt) {
     if (auto pl = player.lock()) {
         if (length(pl->getPosition() - parent->getPosition()) < size) {
             pl->setForDelete();
-            parent->setForDelete();
         }
     }
 }

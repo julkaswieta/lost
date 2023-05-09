@@ -1,5 +1,5 @@
 /**
-* scene_level1.cpp: implementation for Level1Scene class
+* scene_level_1.cpp: implementation for Level3Scene class
 *
 * Author: Dillon Aitken
 * Pause Menu: Julia Swietochowska
@@ -22,18 +22,18 @@
 #include <Box2D/Dynamics/b2Fixture.h>
 #include <LevelSystem.h>
 
-#include "scene_level1.h"
+#include "scene_level_3.h"
 
 using namespace std;
 using namespace sf;
 
 static shared_ptr<Entity> player, blob;
-vector<shared_ptr<Entity>> Level1Scene::menuOptions;
-float Level1Scene::timer = 0.f;
+vector<shared_ptr<Entity>> Level3Scene::menuOptions;
+float Level3Scene::timer = 0.f;
 
-void Level1Scene::Load() {
-    std::cout << " Scene 1 Load" << endl;
-    ls::LoadLevelFile("res/levels/test_level_v3.txt", 60.0f);
+void Level3Scene::Load() {
+    std::cout << "Level 3 Load" << endl;
+    ls::LoadLevelFile("res/levels/level_3.txt", 60.0f);
 
     auto ho = Engine::getWindowSize().y - (ls::getHeight() * 60.f);
     ls::setOffset(Vector2f(0, ho));
@@ -62,19 +62,19 @@ void Level1Scene::Load() {
         collected.clear();
 
         for (string s : SaveSystem::getCollected())// for each string in SaveSystem::Collected
-            if (s.rfind("Level1_", 0) == 0) // if string starts with "Level1"
+            if (s.rfind("Level3_", 0) == 0) // if string starts with "Level3"
                 collected.push_back(s); // add string to collected
 
         auto stars = ls::findTiles(ls::STAR);
         for (int i = 0; i < 3; i++) {
-            std::cout << "Checking for Level1_" << i + 1 << endl;
-            if (find(collected.begin(), collected.end(), "Level1_" + to_string(i + 1)) != collected.end()) {
+            std::cout << "Checking for Level3_" << i + 1 << endl;
+            if (find(collected.begin(), collected.end(), "Level3_" + to_string(i + 1)) != collected.end()) {
                 std::cout << "Star " << i + 1 << " collected" << endl;
             }
             else {
                 std::cout << "Star " << i + 1 << " not collected. Adding to level..." << endl;
                 auto s = makeEntity();
-                s->addTag("Level1_" + to_string(i + 1));
+                s->addTag("Level3_" + to_string(i + 1));
                 s->setPosition(ls::getTilePosition(stars[i]) + Vector2f(30.f, 30.f));
                 s->addComponent<CollectibleComponent>(55.f);
                 auto sc = s->addComponent<SpriteComponent>(defaultSize);
@@ -222,7 +222,7 @@ void Level1Scene::Load() {
 
     // Add timeTracker in top right of screen
     {
-        bestTime = SaveSystem::getLevelBestTime(1);
+        bestTime = SaveSystem::getLevelBestTime(3);
 
         if (bestTime <= 0.f)
             bestTimeString = "--:--:--";
@@ -247,16 +247,16 @@ void Level1Scene::Load() {
 
     //Simulate long loading times to check loading screen works
     //this_thread::sleep_for(chrono::milliseconds(3000));
-    std::cout << " Scene 1 Load Done" << endl;
+    std::cout << "Level 3 Load Done" << endl;
 
     setLoaded(true);
 }
 
-void Level1Scene::AddCollected(string tag) {
+void Level3Scene::AddCollected(string tag) {
     collected.push_back(tag);
 }
 
-string Level1Scene::timeToString(float s) {
+string Level3Scene::timeToString(float s) {
     string minutes = to_string((int)s / 60);
     if (minutes.length() == 1) minutes = "0" + minutes;
     string seconds = to_string((int)s % 60);
@@ -267,7 +267,7 @@ string Level1Scene::timeToString(float s) {
     return minutes + ":" + seconds + ":" + milliseconds;
 }
 
-void Level1Scene::loadPauseMenu() {
+void Level3Scene::loadPauseMenu() {
     auto background = makeEntity();
     auto shapeCmp = background->addComponent<ShapeComponent>();
     shapeCmp->setShape<sf::RectangleShape>(Vector2f(500.f, 500.f));
@@ -296,16 +296,16 @@ void Level1Scene::loadPauseMenu() {
     Engine::paused = false;
 }
 
-void Level1Scene::Unload() {
+void Level3Scene::Unload() {
     menuOptions.clear();
-    std::cout << "Scene 1 Unload" << endl;
+    std::cout << "Level 3 Unload" << endl;
     player.reset();
     blob.reset();
     ls::Unload();
     Scene::Unload();
 }
 
-void Level1Scene::Update(const double& dt) {
+void Level3Scene::Update(const double& dt) {
     if (!Engine::paused) {
         ents.find("starTracker")[0]->getComponents<TextComponent>()[0]->
             SetText(to_string(collected.size()) + "/3");
@@ -323,17 +323,17 @@ void Level1Scene::Update(const double& dt) {
             if (bestTime <= 0.f || timer < bestTime) {
 				bestTime = timer;
 				bestTimeString = timeToString(bestTime);
-                SaveSystem::addNewLevelTime(1, timer);
+                SaveSystem::addNewLevelTime(3, timer);
 			}
 
-            SaveSystem::setLastLevelCompleted(1);
+            SaveSystem::setLastLevelCompleted(3);
             SaveSystem::saveGame();
             Engine::ChangeScene((Scene*)&endLevel);
         }
         else if (!player->isAlive()) {
             SaveSystem::setDeathCounter(SaveSystem::getDeathCount() + 1);
             SaveSystem::saveGame();
-            Engine::ChangeScene((Scene*)&level1);
+            Engine::ChangeScene((Scene*)&level3);
         }
 
         if (Keyboard::isKeyPressed(Controls::Exit)) {
@@ -356,12 +356,12 @@ void Level1Scene::Update(const double& dt) {
     Scene::Update(dt);
 }
 
-void Level1Scene::Render() {
+void Level3Scene::Render() {
     ls::Render(Engine::getWindow());
     Scene::Render();
 }
 
-void Level1Scene::displayMenu() {
+void Level3Scene::displayMenu() {
     ents.find("background")[0]->setVisible(true);
     auto menu = ents.find("menu");
     for (auto menuoption : menu) {
@@ -371,7 +371,7 @@ void Level1Scene::displayMenu() {
     ents.find("player")[0]->setAlive(false);
 }
 
-void Level1Scene::hideMenu() {
+void Level3Scene::hideMenu() {
     Engine::paused = false;
     ents.find("background")[0]->setVisible(false);
     auto menu = ents.find("menu");
@@ -382,7 +382,7 @@ void Level1Scene::hideMenu() {
     ents.find("player")[0]->setAlive(true);
 }
 
-void Level1Scene::moveUp() {
+void Level3Scene::moveUp() {
     if (selectedOptionIndex - 1 >= 0) {
         menuOptions[selectedOptionIndex]->getComponents<TextComponent>()[0]->SetColor(Color::White);
         selectedOptionIndex--;
@@ -391,7 +391,7 @@ void Level1Scene::moveUp() {
     }
 }
 
-void Level1Scene::moveDown() {
+void Level3Scene::moveDown() {
     // handle initial state when nothing is selected
     if (selectedOptionIndex == -1) {
         selectedOptionIndex = 0;
@@ -405,7 +405,7 @@ void Level1Scene::moveDown() {
         this_thread::sleep_for(chrono::milliseconds(150)); // these are here so the cursor does not move too fast
     }
 }
-void Level1Scene::executeSelectedOption() {
+void Level3Scene::executeSelectedOption() {
     switch (selectedOptionIndex) {
     case 0:
         hideMenu();
@@ -418,6 +418,6 @@ void Level1Scene::executeSelectedOption() {
     }
 }
 
-float Level1Scene::getTimer() {
+float Level3Scene::getTimer() {
     return timer;
 }

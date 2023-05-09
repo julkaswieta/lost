@@ -1,16 +1,15 @@
 /**
-* scene_level1.h: header file for Level1Scene class
+* scene_level_1.h: header file for Level1Scene class
 *
 * Author: Dillon Aitken
 * Pause Menu: Julia Swietochowska
-* Last modified: 04/05/2023
+* Last modified: 09/05/2023
 */
 #pragma once
-
 #include "engine.h"
 
 /// Scene for first level
-class Level1Scene : public Scene {
+class Level2Scene : public Scene {
 public:
   void Load() override;
   void Unload() override;

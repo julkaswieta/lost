@@ -4,13 +4,15 @@
 * Author: Julia Swietochowska
 * Last modified: 08/05/2023
 */
-#include "scene_end_level.h"
-#include "../controls.h"
 #include "engine.h"
 #include "../game.h"
-#include "../components/cmp_text.h"
+#include "../controls.h"
 #include "../save_system.h"
+#include "../components/cmp_text.h"
+
 #include <format>
+
+#include "scene_end_level.h"
 
 using namespace std;
 using namespace sf;
@@ -35,7 +37,15 @@ void EndLevelScene::Load()
     }
     previousLevel = SaveSystem::getLastLevelCompleted();
     deathCount = SaveSystem::getDeathCount();
-    time = level1.getTimer();
+
+    //Get time based on level
+    if (previousLevel == 1)
+		time = level1.getTimer();
+	else if (previousLevel == 2)
+		time = level2.getTimer();
+	else if (previousLevel == 3)
+		time = level3.getTimer();
+
     timeDisplay.str(string());
     timeDisplay << setprecision(3) << time;
 } 
