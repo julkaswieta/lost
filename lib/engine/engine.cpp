@@ -1,13 +1,13 @@
 #include "engine.h"
-#include "system_physics.h"
-#include "system_renderer.h"
-#include "system_resources.h"
-#include "GamepadMgr.h"
-#include <SFML/Graphics.hpp>
+
 #include <future>
 #include <iostream>
 #include <stdexcept>
+
 #include "../src/save_system.h"
+#include "system_physics.h"
+#include "system_renderer.h"
+#include "system_resources.h"
 
 using namespace sf;
 using namespace std;
@@ -42,7 +42,6 @@ void Engine::Start(const std::string& gameName, Scene* scn) {
 
     Renderer::Initialise(rw);
     Physics::Initialise();
-    GamepadMgr::Instance().Initialize();
     ChangeScene(scn);
 
     while (rw.isOpen()) {

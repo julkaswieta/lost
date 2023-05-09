@@ -1,12 +1,12 @@
-#include "../controls.h"
+#include "cmp_blob.h"
+
+#include <LevelSystem.h>
+
 #include "engine.h"
 #include "system_physics.h"
 #include "system_resources.h"
-#include "cmp_blob.h"
-
-#include <SFML/Window/Keyboard.hpp>
-#include <LevelSystem.h>
 #include "cmp_game_sounds.h"
+#include "../controls.h"
 
 using namespace std;
 using namespace sf;
@@ -60,9 +60,6 @@ void BlobComponent::Update(double dt) {
             }
         }
     }
-    
-    // Dampen X axis movement
-    // dampen({ 0.9f, 1.0f });
     
     // Check to see if we have landed yet
     grounded = isGrounded();

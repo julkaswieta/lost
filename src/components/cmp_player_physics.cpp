@@ -1,10 +1,11 @@
-#include "system_physics.h"
-#include "../controls.h"
+#include "cmp_player_physics.h"
 
 #include <LevelSystem.h>
 #include <SFML/Window/Keyboard.hpp>
 
-#include "cmp_player_physics.h"
+#include "../controls.h"
+#include "system_physics.h"
+#include "system_resources.h"
 #include "cmp_game_sounds.h"
 
 using namespace std;
@@ -32,38 +33,37 @@ bool PlayerPhysicsComponent::isGrounded() const {
         }
     }
 
-    return false;
+	return false;
 }
 
 void PlayerPhysicsComponent::Update(double dt) {
-    const auto pos = parent->getPosition();
+	const auto pos = parent->getPosition();
 
-    //Teleport to start if we fall off map.
-    if (pos.y > ls::getHeight() * ls::getTileSize()) {
-        teleport(ls::getTilePosition(ls::findTiles(ls::START)[0]));
-    }
+	//Teleport to start if we fall off map.
+	if (pos.y > ls::getHeight() * ls::getTileSize()) {
+		teleport(ls::getTilePosition(ls::findTiles(ls::START)[0]));
+	}
 
-    if (Keyboard::isKeyPressed(Controls::MoveLeft) ||
-        Keyboard::isKeyPressed(Controls::MoveRight)) {
-        // Moving Either Left or Right
-        if (Keyboard::isKeyPressed(Controls::MoveRight)) {
-            if (getVelocity().x < maxVelocity.x)
-                impulse({ (float)(dt * groundspeed), 0 });
-        }
-        else {
-            if (getVelocity().x > -maxVelocity.x)
-                impulse({ -(float)(dt * groundspeed), 0 });
-        }
-    }
-    else {
-        // Dampen X axis movement
-        dampen({ 0.9f, 1.0f });
-    }
+	// Player Right Movement
+	if (Keyboard::isKeyPressed(Controls::MoveRight) || sf::Joystick::getAxisPosition(0, sf::Joystick::PovX) >= 20) {
+		if (getVelocity().x < maxVelocity.x)
+			impulse({ (float)(dt * groundspeed), 0 });
+	}
+	// Player Left Movement
+	else if (Keyboard::isKeyPressed(Controls::MoveLeft) || sf::Joystick::getAxisPosition(0, sf::Joystick::PovX) <= -20) {
+		if (getVelocity().x > -maxVelocity.x)
+			impulse({ -(float)(dt * groundspeed), 0 });
+	}
 
-    // Handle Jump
-    if (Keyboard::isKeyPressed(Controls::Jump)) {
-        grounded = isGrounded();
+	else {
+		// Dampen X axis movement
+		dampen({ 0.9f, 1.0f });
+	}
 
+	// Handle Jump
+	if (Keyboard::isKeyPressed(Controls::Jump) || sf::Joystick::isButtonPressed(0, 0)) {
+		grounded = isGrounded();
+		
         if (grounded) {
             setVelocity(Vector2f(getVelocity().x, 0.f));
             teleport(Vector2f(pos.x, pos.y - 2.0f));
@@ -86,33 +86,33 @@ void PlayerPhysicsComponent::Update(double dt) {
         jumpButtonReleased = true;
     }
 
-    // Check to see if we have landed yet
-    grounded = isGrounded();
+	// Check to see if we have landed yet
+	grounded = isGrounded();
 
-    // In the Update function, increment the timeInAir if the player is in the air
-    if (!grounded) {
-        groundspeed = 20.f;
-        setFriction(0.f);
-        timeInAir += dt;
-        if (!firstJump && !secondJump && timeInAir > 0.2f) {
-            firstJump = true;
-        }
-    }
-    else {
-        groundspeed = 30.f;
-        setFriction(0.2f);
-        timeInAir = 0.f;
-        firstJump = false;
-        secondJump = false;
-    }
+	// In the Update function, increment the timeInAir if the player is in the air
+	if (!grounded) {
+		groundspeed = 20.f;
+		setFriction(0.f);
+		timeInAir += dt;
+		if (!firstJump && !secondJump && timeInAir > 0.2f) {
+			firstJump = true;
+		}
+	}
+	else {
+		groundspeed = 30.f;
+		setFriction(0.2f);
+		timeInAir = 0.f;
+		firstJump = false;
+		secondJump = false;
+	}
 
-    // Clamp velocity.
-    auto v = getVelocity();
-    v.x = copysign(min(abs(v.x), maxVelocity.x), v.x);
-    v.y = copysign(min(abs(v.y), maxVelocity.y), v.y);
-    setVelocity(v);
+	// Clamp velocity.
+	auto v = getVelocity();
+	v.x = copysign(min(abs(v.x), maxVelocity.x), v.x);
+	v.y = copysign(min(abs(v.y), maxVelocity.y), v.y);
+	setVelocity(v);
 
-    PhysicsComponent::Update(dt);
+	PhysicsComponent::Update(dt);
 }
 
 PlayerPhysicsComponent::PlayerPhysicsComponent(Entity* p, const Vector2f& s) : PhysicsComponent(p, true, s),
@@ -129,4 +129,6 @@ PlayerPhysicsComponent::PlayerPhysicsComponent(Entity* p, const Vector2f& s) : P
     body->SetSleepingAllowed(false);
     body->SetFixedRotation(true);
     body->SetBullet(true);
+
+
 }

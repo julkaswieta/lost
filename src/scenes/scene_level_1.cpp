@@ -3,9 +3,8 @@
 *
 * Author: Dillon Aitken
 * Pause Menu: Julia Swietochowska
-* Last modified: 04/05/2023
+* Last modified: 09/05/2023
 */
-
 #include "scene_level_1.h"
 
 #include <thread>
@@ -34,7 +33,7 @@ vector<shared_ptr<Entity>> Level1Scene::menuOptions;
 float Level1Scene::timer;
 
 void Level1Scene::Load() {
-    std::cout << " Scene 1 Load" << endl;
+	std::cout << " Scene 1 Load" << endl;
     ls::LoadLevelFile("res/levels/level_1.txt", 60.0f);
 
     auto ho = Engine::getWindowSize().y - (ls::getHeight() * 60.f);
@@ -56,10 +55,10 @@ void Level1Scene::Load() {
         player = makeEntity();
         player->addTag("player");
         player->setPosition(ls::getTilePosition(ls::findTiles(ls::START)[0]));
-        player->addComponent<PlayerPhysicsComponent>(Vector2f(20.f, 60.f));
+        player->addComponent<PlayerPhysicsComponent>(Vector2f(30.f, 60.f));
         player->getComponents<PlayerPhysicsComponent>()[0]->getFixture()->SetFilterData(playerFilter);
         auto sprite = player->addComponent<SpriteComponent>(Vector2f(40.f, 60.f));
-        sprite->setTexure(Resources::get<Texture>("PlayerWalk3.png"));
+        sprite->setTexure(Resources::get<Texture>("PlayerWalkRight2.png"));
     }
 
     auto defaultSize = Vector2f(60.f, 60.f);
@@ -107,7 +106,7 @@ void Level1Scene::Load() {
             auto pos = ls::getTilePosition(su) + Vector2f(30.f, 30.f);
             h->addTag("hazard");
             h->setPosition(pos);
-            h->addComponent<HurtComponent>(55.f);
+            h->addComponent<HurtComponent>(50.f);
             auto sc = h->addComponent<SpriteComponent>(defaultSize);
             sc->setTexure(Resources::get<sf::Texture>("SpikeUp.png"));
         }
@@ -117,7 +116,7 @@ void Level1Scene::Load() {
             auto pos = ls::getTilePosition(sd) + Vector2f(30.f, 30.f);
             h->addTag("hazard");
             h->setPosition(pos);
-            h->addComponent<HurtComponent>(55.f);
+            h->addComponent<HurtComponent>(50.f);
             auto sc = h->addComponent<SpriteComponent>(defaultSize);
             sc->setTexure(Resources::get<sf::Texture>("SpikeDown.png"));
         }
@@ -127,7 +126,7 @@ void Level1Scene::Load() {
             auto pos = ls::getTilePosition(sr) + Vector2f(30.f, 30.f);
             h->addTag("hazard");
             h->setPosition(pos);
-            h->addComponent<HurtComponent>(55.f);
+            h->addComponent<HurtComponent>(50.f);
             auto sc = h->addComponent<SpriteComponent>(defaultSize);
             sc->setTexure(Resources::get<sf::Texture>("SpikeRight.png"));
         }
@@ -137,7 +136,7 @@ void Level1Scene::Load() {
             auto pos = ls::getTilePosition(sl) + Vector2f(30.f, 30.f);
             h->addTag("hazard");
             h->setPosition(pos);
-            h->addComponent<HurtComponent>(55.f);
+            h->addComponent<HurtComponent>(50.f);
             auto sc = h->addComponent<SpriteComponent>(defaultSize);
             sc->setTexure(Resources::get<sf::Texture>("SpikeLeft.png"));
         }
@@ -151,7 +150,7 @@ void Level1Scene::Load() {
             auto pos = ls::getTilePosition(sball) + Vector2f(30.f, 30.f);
             h->addTag("hazard");
             h->setPosition(pos);
-            h->addComponent<HurtComponent>(60.f);
+            h->addComponent<HurtComponent>(55.f);
             h->addComponent<SpikeBallComponent>(Vector2f(60.f, 60.f));
             h->getComponents<SpikeBallComponent>()[0]->getFixture()->SetFilterData(spikeBallFilter);
             auto sc = h->addComponent<SpriteComponent>(defaultSize);
@@ -163,7 +162,7 @@ void Level1Scene::Load() {
             auto pos = ls::getTilePosition(sblade) + Vector2f(30.f, 30.f);
             h->addTag("hazard");
             h->setPosition(pos);
-            h->addComponent<HurtComponent>(55.f);
+            h->addComponent<HurtComponent>(50.f);
             auto sc = h->addComponent<SpriteComponent>(defaultSize);
             sc->setTexure(Resources::get<sf::Texture>("SpikeBase.png"));
         }
@@ -343,21 +342,20 @@ void Level1Scene::Update(const double& dt) {
             SaveSystem::saveGame();
             Engine::ChangeScene((Scene*)&level1);
         }
-
-        if (Keyboard::isKeyPressed(Controls::Exit)) {
+        if (Keyboard::isKeyPressed(Controls::Exit) || sf::Joystick::isButtonPressed(0,7)) {
             Engine::paused = true;
             displayMenu();
         }
     }
     // pause menu update
     else {
-        if (Keyboard::isKeyPressed(Controls::MenuDown)) {
+        if (Keyboard::isKeyPressed(Controls::MenuDown) || sf::Joystick::getAxisPosition(0, sf::Joystick::PovY) <= -20) {
             moveDown();
         }
-        if (Keyboard::isKeyPressed(Controls::MenuUp)) {
+        if (Keyboard::isKeyPressed(Controls::MenuUp) || sf::Joystick::getAxisPosition(0, sf::Joystick::PovY) >= 20) {
             moveUp();
         }
-        if (Keyboard::isKeyPressed(Controls::MenuSelect)) {
+        if (Keyboard::isKeyPressed(Controls::MenuSelect) || sf::Joystick::isButtonPressed(0,0)) {
             executeSelectedOption();
         }
     }

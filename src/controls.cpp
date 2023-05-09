@@ -5,7 +5,8 @@
 * Last modified: 04/05/2023
 */
 #include "controls.h"
-#include "SFML/System/String.hpp"
+
+#include <SFML/System/String.hpp>
 
 using namespace sf;
 using namespace std;

@@ -57,10 +57,8 @@ void Level2Scene::Load() {
         player->setPosition(ls::getTilePosition(ls::findTiles(ls::START)[0]));
         player->addComponent<PlayerPhysicsComponent>(Vector2f(50.f, 60.f));
         player->getComponents<PlayerPhysicsComponent>()[0]->getFixture()->SetFilterData(playerFilter);
-        auto s = player->addComponent<ShapeComponent>();
-        s->setShape<sf::RectangleShape>(Vector2f(50.f, 60.f));
-        s->getShape().setFillColor(Color::Magenta);
-        s->getShape().setOrigin(Vector2f(25.f, 30.f));
+        auto sprite = player->addComponent<SpriteComponent>(Vector2f(40.f, 60.f));
+        sprite->setTexure(Resources::get<Texture>("PlayerWalkRight2.png"));
     }
 
     auto defaultSize = Vector2f(60.f, 60.f);
@@ -108,7 +106,7 @@ void Level2Scene::Load() {
             auto pos = ls::getTilePosition(su) + Vector2f(30.f, 30.f);
             h->addTag("hazard");
             h->setPosition(pos);
-            h->addComponent<HurtComponent>(55.f);
+            h->addComponent<HurtComponent>(50.f);
             auto sc = h->addComponent<SpriteComponent>(defaultSize);
             sc->setTexure(Resources::get<sf::Texture>("SpikeUp.png"));
         }
@@ -118,7 +116,7 @@ void Level2Scene::Load() {
             auto pos = ls::getTilePosition(sd) + Vector2f(30.f, 30.f);
             h->addTag("hazard");
             h->setPosition(pos);
-            h->addComponent<HurtComponent>(55.f);
+            h->addComponent<HurtComponent>(50.f);
             auto sc = h->addComponent<SpriteComponent>(defaultSize);
             sc->setTexure(Resources::get<sf::Texture>("SpikeDown.png"));
         }
@@ -128,7 +126,7 @@ void Level2Scene::Load() {
             auto pos = ls::getTilePosition(sr) + Vector2f(30.f, 30.f);
             h->addTag("hazard");
             h->setPosition(pos);
-            h->addComponent<HurtComponent>(55.f);
+            h->addComponent<HurtComponent>(50.f);
             auto sc = h->addComponent<SpriteComponent>(defaultSize);
             sc->setTexure(Resources::get<sf::Texture>("SpikeRight.png"));
         }
@@ -138,7 +136,7 @@ void Level2Scene::Load() {
             auto pos = ls::getTilePosition(sl) + Vector2f(30.f, 30.f);
             h->addTag("hazard");
             h->setPosition(pos);
-            h->addComponent<HurtComponent>(55.f);
+            h->addComponent<HurtComponent>(50.f);
             auto sc = h->addComponent<SpriteComponent>(defaultSize);
             sc->setTexure(Resources::get<sf::Texture>("SpikeLeft.png"));
         }
@@ -152,7 +150,7 @@ void Level2Scene::Load() {
             auto pos = ls::getTilePosition(sball) + Vector2f(30.f, 30.f);
             h->addTag("hazard");
             h->setPosition(pos);
-            h->addComponent<HurtComponent>(60.f);
+            h->addComponent<HurtComponent>(55.f);
             h->addComponent<SpikeBallComponent>(Vector2f(60.f, 60.f));
             h->getComponents<SpikeBallComponent>()[0]->getFixture()->SetFilterData(spikeBallFilter);
             auto sc = h->addComponent<SpriteComponent>(defaultSize);
@@ -164,7 +162,7 @@ void Level2Scene::Load() {
             auto pos = ls::getTilePosition(sblade) + Vector2f(30.f, 30.f);
             h->addTag("hazard");
             h->setPosition(pos);
-            h->addComponent<HurtComponent>(55.f);
+            h->addComponent<HurtComponent>(50.f);
             auto sc = h->addComponent<SpriteComponent>(defaultSize);
             sc->setTexure(Resources::get<sf::Texture>("SpikeBase.png"));
         }
@@ -345,20 +343,20 @@ void Level2Scene::Update(const double& dt) {
             Engine::ChangeScene((Scene*)&level2);
         }
 
-        if (Keyboard::isKeyPressed(Controls::Exit)) {
+        if (Keyboard::isKeyPressed(Controls::Exit) || sf::Joystick::isButtonPressed(0, 7)) {
             Engine::paused = true;
             displayMenu();
         }
     }
     // pause menu update
     else {
-        if (Keyboard::isKeyPressed(Controls::MenuDown)) {
+        if (Keyboard::isKeyPressed(Controls::MenuDown) || sf::Joystick::getAxisPosition(0, sf::Joystick::PovY) <= -20) {
             moveDown();
         }
-        if (Keyboard::isKeyPressed(Controls::MenuUp)) {
+        if (Keyboard::isKeyPressed(Controls::MenuUp) || sf::Joystick::getAxisPosition(0, sf::Joystick::PovY) >= 20) {
             moveUp();
         }
-        if (Keyboard::isKeyPressed(Controls::MenuSelect)) {
+        if (Keyboard::isKeyPressed(Controls::MenuSelect) || sf::Joystick::isButtonPressed(0, 0)) {
             executeSelectedOption();
         }
     }

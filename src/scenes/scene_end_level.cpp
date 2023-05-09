@@ -4,15 +4,15 @@
 * Author: Julia Swietochowska
 * Last modified: 08/05/2023
 */
-#include "engine.h"
+#include "scene_end_level.h"
+
+#include <format>
+
 #include "../game.h"
 #include "../controls.h"
 #include "../save_system.h"
 #include "../components/cmp_text.h"
-
-#include <format>
-
-#include "scene_end_level.h"
+#include "engine.h"
 
 using namespace std;
 using namespace sf;

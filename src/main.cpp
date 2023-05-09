@@ -6,8 +6,8 @@
 * Author: "Lost" devs
 * Last modified: 04/05/2023
 */
-#include "engine.h"
 #include "game.h"
+#include "engine.h"
 #include "scenes/scene_level_1.h"
 #include "scenes/scene_level_2.h"
 #include "scenes/scene_level_3.h"

@@ -5,13 +5,15 @@
 * Last modified: 04/05/2023
 */
 #include "scene_controls.h"
-#include "../controls.h"
-#include "../components/cmp_text.h"
-#include "engine.h"
+
+#include <SFML/Window/Event.hpp>
+
 #include "../game.h"
-#include "SFML/Window/Event.hpp"
-#include "system_renderer.h"
+#include "../controls.h"
 #include "../save_system.h"
+#include "../components/cmp_text.h"
+#include "system_renderer.h"
+#include "engine.h"
 
 using namespace std;
 using namespace sf;

@@ -1,8 +1,11 @@
 #pragma once
-#include <SFML/Graphics/RenderWindow.hpp>
+#include <SFML/Window/Keyboard.hpp>
+#include <SFML/Window/Joystick.hpp>
+#include <SFML/Graphics.hpp>
 #include <SFML/Audio.hpp>
 #include <maths.h>
 #include <string>
+
 #include "scene.h"
 
 class Engine {

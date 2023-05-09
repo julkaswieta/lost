@@ -2,15 +2,16 @@
 * scene_main_menu.cpp: implementation for MainMenuScene class
 *
 * Author: Julia Swietochowska
-* Last modified: 04/05/2023
+* Last modified: 09/05/2023
 */
 #include "scene_main_menu.h"
-#include "../components/cmp_text.h"
-#include "../game.h"
-#include <SFML/Window/Keyboard.hpp>
+
 #include <iostream>
+
+#include "../game.h"
 #include "../controls.h"
 #include "../save_system.h"
+#include "../components/cmp_text.h"
 
 using namespace std;
 using namespace sf;
