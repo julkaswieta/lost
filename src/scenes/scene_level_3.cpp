@@ -41,48 +41,66 @@ void Level3Scene::Load() {
 
     // Load sounds
     {
+        // Add a sound component to the scene for playing sounds
         auto gameSounds = makeEntity();
         gameSounds->addTag("gameSounds");
         gameSounds->addComponent<GameSoundsComponent>();
     }
 
-    // Create player
+    // Define the default size for sprites
+    auto defaultSize = Vector2f(60.f, 60.f);
+
+    // Create the player entity and add the necessary components
     {
+        // Set collision filtering for the player
         b2Filter playerFilter;
         playerFilter.categoryBits = 0x0002;
         playerFilter.maskBits = 0x0008;
 
+        // Create the player entity and set its position
         player = makeEntity();
         player->addTag("player");
         player->setPosition(ls::getTilePosition(ls::findTiles(ls::START)[0]));
-        player->addComponent<PlayerPhysicsComponent>(Vector2f(50.f, 60.f));
+
+        // Add the player physics component and set the fixture filter data
+        player->addComponent<PlayerPhysicsComponent>(Vector2f(30.f, 60.f));
         player->getComponents<PlayerPhysicsComponent>()[0]->getFixture()->SetFilterData(playerFilter);
-        auto sprite = player->addComponent<SpriteComponent>(Vector2f(40.f, 60.f));
-        sprite->setTexure(Resources::get<Texture>("PlayerWalkRight2.png"));
+
+        // Add the sprite component and set the texture for the player entity
+        player->addComponent<SpriteComponent>(Vector2f(40.f, 60.f));
     }
 
-    auto defaultSize = Vector2f(60.f, 60.f);
-
-    // Add components and sprites to star tiles
+    // Add components and sprites to star tiles depending 
+    // on whether they have been collected or not
     {
+        // Clear the previously collected stars
         collected.clear();
 
-        for (string s : SaveSystem::getCollected())// for each string in SaveSystem::Collected
-            if (s.rfind("Level3_", 0) == 0) // if string starts with "Level3"
-                collected.push_back(s); // add string to collected
+        // For each collected string in SaveSystem::Collected,
+        // add it to collected vector if it starts with "Level1"
+        for (string s : SaveSystem::getCollected())
+            if (s.rfind("Level1_", 0) == 0)
+                collected.push_back(s);
 
+        // Find all tiles tagged as "STAR" in the level
         auto stars = ls::findTiles(ls::STAR);
         for (int i = 0; i < 3; i++) {
-            std::cout << "Checking for Level3_" << i + 1 << endl;
-            if (find(collected.begin(), collected.end(), "Level3_" + to_string(i + 1)) != collected.end()) {
+            // Check if star i+1 has been collected
+            std::cout << "Checking for Level1_" << i + 1 << endl;
+            if (find(collected.begin(), collected.end(), "Level1_" + to_string(i + 1)) != collected.end()) {
+                // If star i+1 is in collected vector, it has been collected
                 std::cout << "Star " << i + 1 << " collected" << endl;
             }
             else {
+                // If star i+1 has not been collected, add a collectible entity to the level
                 std::cout << "Star " << i + 1 << " not collected. Adding to level..." << endl;
+                // Create a new entity and set position
                 auto s = makeEntity();
-                s->addTag("Level3_" + to_string(i + 1));
+                s->addTag("Level1_" + to_string(i + 1));
                 s->setPosition(ls::getTilePosition(stars[i]) + Vector2f(30.f, 30.f));
+                // Add a CollectibleComponent to the entity
                 s->addComponent<CollectibleComponent>(55.f);
+                // Add a SpriteComponent with the texture "Star.png"
                 auto sc = s->addComponent<SpriteComponent>(defaultSize);
                 sc->setTexure(Resources::get<sf::Texture>("Star.png"));
             }
@@ -188,15 +206,20 @@ void Level3Scene::Load() {
 
     // Create blob
     {
+        // Set the filter category and mask bits for the blob entity
         b2Filter blobFilter;
         blobFilter.categoryBits = 0x0004;
         blobFilter.maskBits = 0x0008;
 
+        // Create a new entity and set position
         blob = makeEntity();
         blob->addTag("blob");
         blob->setPosition(ls::getTilePosition(ls::findTiles(ls::ENEMY)[0]) + Vector2f(30.f, 40.f));
+        // Add a SpriteComponent with size 50x40
         blob->addComponent<SpriteComponent>(Vector2f(50.f, 40.f));
+        // Add a HurtComponent with radius of 50
         blob->addComponent<HurtComponent>(50.f);
+        // Add BlobComponent with a size of 50x40 and set the filter data
         blob->addComponent<BlobComponent>(Vector2f(50.f, 40.f));
         blob->getComponents<BlobComponent>()[0]->getFixture()->SetFilterData(blobFilter);
     }
