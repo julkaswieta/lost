@@ -33,7 +33,6 @@ void SaveSystem::initialiseSaveSystem() {
 	auto folderPath = SHGetKnownFolderPath(FOLDERID_RoamingAppData, 0, nullptr, &path_temp);
 	if (folderPath != S_OK) {
 		CoTaskMemFree(path_temp);
-		cout << "Save system initialisation failed";
 	}
 	else {
 		
@@ -45,7 +44,6 @@ void SaveSystem::initialiseSaveSystem() {
 		if (CreateDirectory(settingsFilePath.string().c_str(), NULL) || ERROR_ALREADY_EXISTS == GetLastError()) {
 			settingsFilePath.append("settings_save.txt");
 			gameSaveFilePath.append("game_save.txt");
-			cout << settingsFilePath << "\n";
 		}
 
 	}
@@ -60,8 +58,6 @@ void SaveSystem::saveSettings() {
 	settingsSave << WindowMode << "\n";
 	settingsSave << Controls::saveMappings();
 	settingsSave.close();
-	cout << "Settings saved\n";
-	cout << settingsFilePath << "\n";	
 }
 
 // Loads and processes settings from a txt file
@@ -88,7 +84,6 @@ void SaveSystem::loadSettings() {
 		Controls::loadMappings(mappings);
 		Resolution = ResolutionScene::getResolution(ResolutionIndex);
 	}
-	cout << "Settings loaded\n";
 }
 
 // saves the game status to a txt file
@@ -100,7 +95,6 @@ void SaveSystem::saveGame() {
 	saveLevelTimes(gameSave);
 	saveCollected(gameSave);
 	gameSave.close();
-	cout << "game saved\n";
 }
 
 // formats and outputs level times to game save file
@@ -138,14 +132,11 @@ void SaveSystem::loadGame() {
 	if (saveContents.size() >= 2) {
 		LastLevelCompleted = stoi(saveContents[0]);
 		DeathCounter = stoi(saveContents[1]);
-		cout << DeathCounter << "\n";
 		if(saveContents.size() >= 3)
 			loadLevelTimes(saveContents[2]);
 		if(saveContents.size() >= 4)
 			loadCollected(saveContents[3]);
 	}
-
-	cout << "game loaded\n";
 }
 
 void SaveSystem::loadLevelTimes(string levelsSave) {

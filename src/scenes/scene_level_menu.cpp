@@ -31,7 +31,6 @@ static shared_ptr<Entity> player;
 
 void LevelMenuScene::Load() {
     // Load the level file and set the offset for level rendering
-	std::cout << " Scene Menu Load" << endl;
     ls::LoadLevelFile("res/levels/level_menu.txt", 60.0f);
     auto ho = Engine::getWindowSize().y - (ls::getHeight() * 60.f);
     ls::setOffset(Vector2f(0, ho));
@@ -241,10 +240,6 @@ void LevelMenuScene::Load() {
         text->getText().setPosition(Vector2f(Engine::getWindowSize().x - 120.f, 90.f));
     }
 
-    //Simulate long loading times to check loading screen works
-    //this_thread::sleep_for(chrono::milliseconds(3000));
-    std::cout << " Scene Menu Load Done" << endl;
-
     // Set loaded flag to true
     setLoaded(true);
     // Make sure the engine is not paused
@@ -253,7 +248,6 @@ void LevelMenuScene::Load() {
 
 void LevelMenuScene::Unload() {
     // Unload all entities
-    std::cout << "Scene Menu Unload" << endl;
     player.reset();
     ls::Unload();
     Scene::Unload();

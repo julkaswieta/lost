@@ -34,7 +34,6 @@ float Level3Scene::timer;
 
 void Level3Scene::Load() {
     // Load the level file and set the offset for level rendering
-    std::cout << "Level 3 Load" << endl;
     ls::LoadLevelFile("res/levels/level_3.txt", 60.0f);
     auto ho = Engine::getWindowSize().y - (ls::getHeight() * 60.f);
     ls::setOffset(Vector2f(0, ho));
@@ -85,14 +84,11 @@ void Level3Scene::Load() {
         auto stars = ls::findTiles(ls::STAR);
         for (int i = 0; i < 3; i++) {
             // Check if star i+1 has been collected
-            std::cout << "Checking for Level3_" << i + 1 << endl;
             if (find(collected.begin(), collected.end(), "Level3_" + to_string(i + 1)) != collected.end()) {
                 // If star i+1 is in collected vector, it has been collected
-                std::cout << "Star " << i + 1 << " collected" << endl;
             }
             else {
                 // If star i+1 has not been collected, add a collectible entity to the level
-                std::cout << "Star " << i + 1 << " not collected. Adding to level..." << endl;
                 // Create a new entity and set position
                 auto s = makeEntity();
                 s->addTag("Level3_" + to_string(i + 1));
@@ -298,10 +294,6 @@ void Level3Scene::Load() {
 
     loadPauseMenu();
 
-    //Simulate long loading times to check loading screen works
-    //this_thread::sleep_for(chrono::milliseconds(3000));
-    std::cout << "Level 3 Load Done" << endl;
-
     setLoaded(true);
 }
 
@@ -351,7 +343,6 @@ void Level3Scene::loadPauseMenu() {
 
 void Level3Scene::Unload() {
     menuOptions.clear();
-    std::cout << "Level 3 Unload" << endl;
     player.reset();
     blob.reset();
     ls::Unload();

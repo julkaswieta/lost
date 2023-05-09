@@ -34,7 +34,6 @@ float Level1Scene::timer;
 
 void Level1Scene::Load() {
     // Load the level file and set the offset for level rendering
-    std::cout << "Level 1 Load" << endl;
     ls::LoadLevelFile("res/levels/level_1.txt", 60.0f);
     auto ho = Engine::getWindowSize().y - (ls::getHeight() * 60.f);
     ls::setOffset(Vector2f(0, ho));
@@ -87,14 +86,11 @@ void Level1Scene::Load() {
         auto stars = ls::findTiles(ls::STAR);
         for (int i = 0; i < 3; i++) {
             // Check if star i+1 has been collected
-            std::cout << "Checking for Level1_" << i + 1 << endl;
             if (find(collected.begin(), collected.end(), "Level1_" + to_string(i + 1)) != collected.end()) { 
                 // If star i+1 is in collected vector, it has been collected
-                std::cout << "Star " << i + 1 << " collected" << endl;
             }
             else {
                 // If star i+1 has not been collected, add a collectible entity to the level
-                std::cout << "Star " << i + 1 << " not collected. Adding to level..." << endl;
                 // Create a new entity and set position
                 auto s = makeEntity();
                 s->addTag("Level1_" + to_string(i + 1));
@@ -309,7 +305,6 @@ void Level1Scene::Load() {
 
     //Simulate long loading times to check loading screen works
     //this_thread::sleep_for(chrono::milliseconds(3000));
-    std::cout << " Level 1 Load Done" << endl;
 
     setLoaded(true);
 }
@@ -375,7 +370,6 @@ void Level1Scene::loadPauseMenu() {
 // This function clears the menu options vector, unloads the player, blob, and level, and calls the parent Scene's unload function
 void Level1Scene::Unload() {
     menuOptions.clear();
-    std::cout << "Level 1 Unload" << endl;
     player.reset();
     blob.reset();
     ls::Unload();
