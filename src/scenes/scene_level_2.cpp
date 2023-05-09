@@ -29,7 +29,7 @@ using namespace sf;
 
 static shared_ptr<Entity> player, blob;
 vector<shared_ptr<Entity>> Level2Scene::menuOptions;
-float Level2Scene::timer = 0.f;
+float Level2Scene::timer;
 
 void Level2Scene::Load() {
     std::cout << "Level 2 Load" << endl;
@@ -222,6 +222,7 @@ void Level2Scene::Load() {
 
     // Add timeTracker in top right of screen
     {
+        timer = 0.f;
         bestTime = SaveSystem::getLevelBestTime(2);
 
         if (bestTime <= 0.f)
