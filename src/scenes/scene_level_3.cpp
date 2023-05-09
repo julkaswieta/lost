@@ -77,17 +77,17 @@ void Level3Scene::Load() {
         collected.clear();
 
         // For each collected string in SaveSystem::Collected,
-        // add it to collected vector if it starts with "Level1"
+        // add it to collected vector if it starts with "Level3"
         for (string s : SaveSystem::getCollected())
-            if (s.rfind("Level1_", 0) == 0)
+            if (s.rfind("Level3_", 0) == 0)
                 collected.push_back(s);
 
         // Find all tiles tagged as "STAR" in the level
         auto stars = ls::findTiles(ls::STAR);
         for (int i = 0; i < 3; i++) {
             // Check if star i+1 has been collected
-            std::cout << "Checking for Level1_" << i + 1 << endl;
-            if (find(collected.begin(), collected.end(), "Level1_" + to_string(i + 1)) != collected.end()) {
+            std::cout << "Checking for Level3_" << i + 1 << endl;
+            if (find(collected.begin(), collected.end(), "Level3_" + to_string(i + 1)) != collected.end()) {
                 // If star i+1 is in collected vector, it has been collected
                 std::cout << "Star " << i + 1 << " collected" << endl;
             }
@@ -96,7 +96,7 @@ void Level3Scene::Load() {
                 std::cout << "Star " << i + 1 << " not collected. Adding to level..." << endl;
                 // Create a new entity and set position
                 auto s = makeEntity();
-                s->addTag("Level1_" + to_string(i + 1));
+                s->addTag("Level3_" + to_string(i + 1));
                 s->setPosition(ls::getTilePosition(stars[i]) + Vector2f(30.f, 30.f));
                 // Add a CollectibleComponent to the entity
                 s->addComponent<CollectibleComponent>(55.f);
