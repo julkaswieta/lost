@@ -1,5 +1,5 @@
 #include "cmp_collectible.h"
-#include "../scenes/scene_level1.h"
+#include "../scenes/scene_level_1.h"
 #include <engine.h>
 
 using namespace std;

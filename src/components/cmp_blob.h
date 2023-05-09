@@ -3,11 +3,13 @@
 
 class BlobComponent : public PhysicsComponent {
 protected:
+	std::shared_ptr<sf::Texture> groundTexture, airTexture;
 	std::weak_ptr<Entity> player;
 	b2Vec2 size;
 	sf::Vector2f maxVelocity;
 	float groundspeed;
 	bool grounded;
+	float timeOnGround = 0.f;
 
 	bool isGrounded() const;
 	void Jump();

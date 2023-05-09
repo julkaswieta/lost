@@ -12,7 +12,7 @@ class EndScene : public Scene {
 public:
 	EndScene() = default;
 	~EndScene() override = default;
-	virtual void Load() override;
+	void Load() override;
 	void Update(const double& dt) override;
 };
 

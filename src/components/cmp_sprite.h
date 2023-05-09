@@ -8,10 +8,11 @@ class SpriteComponent : public Component {
 protected:
     std::shared_ptr<sf::Sprite> sprite;
     std::shared_ptr<sf::Texture> texture;
+    sf::Vector2f size;
 public:
     SpriteComponent() = delete;
 
-    explicit SpriteComponent(Entity* p);
+    explicit SpriteComponent(Entity* p, sf::Vector2f pos);
     void Update(double dt) override;
     void Render() override;
 

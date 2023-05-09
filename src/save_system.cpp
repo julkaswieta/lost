@@ -209,11 +209,23 @@ void SaveSystem::setDeathCounter(int newDeathCount) { DeathCounter = newDeathCou
 
 void SaveSystem::setLastLevelCompleted(int levelNumber) { LastLevelCompleted = levelNumber; }
 
-void SaveSystem::addNewLevelTime(int levelNumber, float newTime) { LevelBestTimes[levelNumber - 1] = newTime; }
+void SaveSystem::addNewLevelTime(int levelNumber, float newTime) { 
+	if (LevelBestTimes.size() < levelNumber)
+		LevelBestTimes.push_back(0.f);
+
+	LevelBestTimes[levelNumber - 1] = newTime;
+}
 
 int SaveSystem::getDeathCount() { return DeathCounter; }
 
 int SaveSystem::getLastLevelCompleted() { return LastLevelCompleted; }
+
+float SaveSystem::getLevelBestTime(int levelNumber) { 
+	if (LevelBestTimes.size() >= levelNumber)
+		return LevelBestTimes[levelNumber - 1];
+	else
+		return 0.0f;
+}
 
 const vector<float> &SaveSystem::getLevelBestTimes() { return LevelBestTimes; }
 

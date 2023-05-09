@@ -21,6 +21,7 @@ Keyboard::Key Controls::MenuSelect = Keyboard::Enter;
 Keyboard::Key Controls::Exit = Keyboard::Escape;
 Keyboard::Key Controls::NextOption = Keyboard::Right;
 Keyboard::Key Controls::PreviousOption = Keyboard::Left;
+Keyboard::Key Controls::Continue = Keyboard::Space;
 
 string Controls::toString(Keyboard::Key key) {
 	return Keyboard::getDescription(Keyboard::delocalize(key)).toAnsiString();

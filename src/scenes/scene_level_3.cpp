@@ -1,5 +1,5 @@
 /**
-* scene_level1.cpp: implementation for Level1Scene class
+* scene_level_1.cpp: implementation for Level3Scene class
 *
 * Author: Dillon Aitken
 * Pause Menu: Julia Swietochowska
@@ -9,7 +9,9 @@
 #include "../controls.h"
 #include "../save_system.h"
 #include "../components/cmp_text.h"
+#include "../components/cmp_blob.h"
 #include "../components/cmp_sprite.h"
+#include "../components/cmp_spike_ball.h"
 #include "../components/cmp_collectible.h"
 #include "../components/cmp_hurt_player.h"
 #include "../components/cmp_player_physics.h"
@@ -17,28 +19,24 @@
 #include <thread>
 #include <iostream>
 #include <system_resources.h>
+#include <Box2D/Dynamics/b2Fixture.h>
 #include <LevelSystem.h>
 
-#include "scene_level1.h"
-#include "../components/cmp_blob.h"
-#include "../components/cmp_spike_ball.h"
-#include <system_physics.h>
+#include "scene_level_3.h"
 
 using namespace std;
 using namespace sf;
 
 static shared_ptr<Entity> player, blob;
-vector<shared_ptr<Entity>> Level1Scene::menuOptions;
+vector<shared_ptr<Entity>> Level3Scene::menuOptions;
+float Level3Scene::timer;
 
-void Level1Scene::Load() {
-
-    cout << " Scene 1 Load" << endl;
-    ls::LoadLevelFile("res/levels/level2.txt", 60.0f);
+void Level3Scene::Load() {
+    std::cout << "Level 3 Load" << endl;
+    ls::LoadLevelFile("res/levels/level_3.txt", 60.0f);
 
     auto ho = Engine::getWindowSize().y - (ls::getHeight() * 60.f);
     ls::setOffset(Vector2f(0, ho));
-
-    timer = 0.f;
 
     // Create player
     {
@@ -57,27 +55,29 @@ void Level1Scene::Load() {
         s->getShape().setOrigin(Vector2f(25.f, 30.f));
     }
 
+    auto defaultSize = Vector2f(60.f, 60.f);
+
     // Add components and sprites to star tiles
     {
         collected.clear();
 
         for (string s : SaveSystem::getCollected())// for each string in SaveSystem::Collected
-            if (s.rfind("Level1_", 0) == 0) // if string starts with "Level1"
+            if (s.rfind("Level3_", 0) == 0) // if string starts with "Level3"
                 collected.push_back(s); // add string to collected
 
         auto stars = ls::findTiles(ls::STAR);
         for (int i = 0; i < 3; i++) {
-            std::cout << "Checking for Level1_" << i + 1 << endl;
-            if (find(collected.begin(), collected.end(), "Level1_" + to_string(i + 1)) != collected.end()) {
+            std::cout << "Checking for Level3_" << i + 1 << endl;
+            if (find(collected.begin(), collected.end(), "Level3_" + to_string(i + 1)) != collected.end()) {
                 std::cout << "Star " << i + 1 << " collected" << endl;
             }
             else {
                 std::cout << "Star " << i + 1 << " not collected. Adding to level..." << endl;
                 auto s = makeEntity();
-                s->addTag("Level1_" + to_string(i + 1));
+                s->addTag("Level3_" + to_string(i + 1));
                 s->setPosition(ls::getTilePosition(stars[i]) + Vector2f(30.f, 30.f));
                 s->addComponent<CollectibleComponent>(55.f);
-                auto sc = s->addComponent<SpriteComponent>();
+                auto sc = s->addComponent<SpriteComponent>(defaultSize);
                 sc->setTexure(Resources::get<sf::Texture>("Star.png"));
             }
         }
@@ -89,8 +89,8 @@ void Level1Scene::Load() {
         auto g = makeEntity();
         g->addTag("goal");
         g->setPosition(ls::getTilePosition(goal) + Vector2f(30.f, 30.f));
-        auto sc = g->addComponent<SpriteComponent>();
-        sc->setTexure(Resources::get<sf::Texture>("Goal.png"));
+        auto sprite = g->addComponent<SpriteComponent>(defaultSize);
+        sprite->setTexure(Resources::get<sf::Texture>("Goal.png"));
     }
 
     // Add hurt components and sprites to hazard tiles
@@ -101,7 +101,7 @@ void Level1Scene::Load() {
             h->addTag("hazard");
             h->setPosition(pos);
             h->addComponent<HurtComponent>(55.f);
-            auto sc = h->addComponent<SpriteComponent>();
+            auto sc = h->addComponent<SpriteComponent>(defaultSize);
             sc->setTexure(Resources::get<sf::Texture>("SpikeUp.png"));
         }
 
@@ -111,7 +111,7 @@ void Level1Scene::Load() {
             h->addTag("hazard");
             h->setPosition(pos);
             h->addComponent<HurtComponent>(55.f);
-            auto sc = h->addComponent<SpriteComponent>();
+            auto sc = h->addComponent<SpriteComponent>(defaultSize);
             sc->setTexure(Resources::get<sf::Texture>("SpikeDown.png"));
         }
 
@@ -121,7 +121,7 @@ void Level1Scene::Load() {
             h->addTag("hazard");
             h->setPosition(pos);
             h->addComponent<HurtComponent>(55.f);
-            auto sc = h->addComponent<SpriteComponent>();
+            auto sc = h->addComponent<SpriteComponent>(defaultSize);
             sc->setTexure(Resources::get<sf::Texture>("SpikeRight.png"));
         }
 
@@ -131,7 +131,7 @@ void Level1Scene::Load() {
             h->addTag("hazard");
             h->setPosition(pos);
             h->addComponent<HurtComponent>(55.f);
-            auto sc = h->addComponent<SpriteComponent>();
+            auto sc = h->addComponent<SpriteComponent>(defaultSize);
             sc->setTexure(Resources::get<sf::Texture>("SpikeLeft.png"));
         }
 
@@ -147,7 +147,7 @@ void Level1Scene::Load() {
             h->addComponent<HurtComponent>(60.f);
             h->addComponent<SpikeBallComponent>(Vector2f(60.f, 60.f));
             h->getComponents<SpikeBallComponent>()[0]->getFixture()->SetFilterData(spikeBallFilter);
-            auto sc = h->addComponent<SpriteComponent>();
+            auto sc = h->addComponent<SpriteComponent>(defaultSize);
             sc->setTexure(Resources::get<sf::Texture>("SpikeBall.png"));
         }
 
@@ -157,7 +157,7 @@ void Level1Scene::Load() {
             h->addTag("hazard");
             h->setPosition(pos);
             h->addComponent<HurtComponent>(55.f);
-            auto sc = h->addComponent<SpriteComponent>();
+            auto sc = h->addComponent<SpriteComponent>(defaultSize);
             sc->setTexure(Resources::get<sf::Texture>("SpikeBase.png"));
         }
     }
@@ -189,13 +189,10 @@ void Level1Scene::Load() {
         blob = makeEntity();
         blob->addTag("blob");
         blob->setPosition(ls::getTilePosition(ls::findTiles(ls::ENEMY)[0]) + Vector2f(30.f, 40.f));
+        blob->addComponent<SpriteComponent>(Vector2f(50.f, 40.f));
         blob->addComponent<HurtComponent>(50.f);
         blob->addComponent<BlobComponent>(Vector2f(50.f, 40.f));
         blob->getComponents<BlobComponent>()[0]->getFixture()->SetFilterData(blobFilter);
-        auto s = blob->addComponent<ShapeComponent>();
-        s->setShape<sf::RectangleShape>(Vector2f(50.f, 40.f));
-        s->getShape().setFillColor(Color::Blue);
-        s->getShape().setOrigin(Vector2f(25.f, 20.f));
     }
 
     // Add star counter in the top left of screen
@@ -203,7 +200,7 @@ void Level1Scene::Load() {
         auto starTracker = makeEntity();
         starTracker->addTag("starTracker");
         starTracker->setPosition(Vector2f(150.f, 90.f));
-        auto sprite = starTracker->addComponent<SpriteComponent>();
+        auto sprite = starTracker->addComponent<SpriteComponent>(defaultSize);
         sprite->setTexure(Resources::get<sf::Texture>("Star.png"));
         auto text = starTracker->addComponent<TextComponent>("0/3");
         text->SetColor(Color::Black);
@@ -225,10 +222,20 @@ void Level1Scene::Load() {
 
     // Add timeTracker in top right of screen
     {
+        timer = 0.f;
+        bestTime = SaveSystem::getLevelBestTime(3);
+
+        if (bestTime <= 0.f)
+            bestTimeString = "--:--:--";
+        else
+            bestTimeString = timeToString(bestTime);
+
         auto timeTracker = makeEntity();
         timeTracker->addTag("timeTracker");
         timeTracker->setPosition(Vector2f(Engine::getWindowSize().x - 180.f, 90.f));
-        auto text = timeTracker->addComponent<TextComponent>("00:00:00");
+        auto text = timeTracker->addComponent<TextComponent>(
+            "Best: 00:00:00 | Current: 00:00:00"
+        );
         text->SetColor(Color::Black);
         text->getText().setOrigin(Vector2f(
             text->getText().getLocalBounds().width,
@@ -241,28 +248,27 @@ void Level1Scene::Load() {
 
     //Simulate long loading times to check loading screen works
     //this_thread::sleep_for(chrono::milliseconds(3000));
-    std::cout << " Scene 1 Load Done" << endl;
+    std::cout << "Level 3 Load Done" << endl;
 
     setLoaded(true);
 }
 
-void Level1Scene::AddCollected(string tag) {
+void Level3Scene::AddCollected(string tag) {
     collected.push_back(tag);
 }
 
-void Level1Scene::updateTimerText() {
-    string minutes = to_string((int)timer / 60);
+string Level3Scene::timeToString(float s) {
+    string minutes = to_string((int)s / 60);
     if (minutes.length() == 1) minutes = "0" + minutes;
-    string seconds = to_string((int)timer % 60);
+    string seconds = to_string((int)s % 60);
     if (seconds.length() == 1) seconds = "0" + seconds;
-    string milliseconds = to_string((int)(timer * 100) % 100);
+    string milliseconds = to_string((int)(s * 100) % 100);
     if (milliseconds.length() == 1) milliseconds = "0" + milliseconds;
 
-    ents.find("timeTracker")[0]->getComponents<TextComponent>()[0]->
-        SetText(minutes + ":" + seconds + ":" + milliseconds);
+    return minutes + ":" + seconds + ":" + milliseconds;
 }
 
-void Level1Scene::loadPauseMenu() {
+void Level3Scene::loadPauseMenu() {
     auto background = makeEntity();
     auto shapeCmp = background->addComponent<ShapeComponent>();
     shapeCmp->setShape<sf::RectangleShape>(Vector2f(500.f, 500.f));
@@ -291,16 +297,16 @@ void Level1Scene::loadPauseMenu() {
     Engine::paused = false;
 }
 
-void Level1Scene::Unload() {
+void Level3Scene::Unload() {
     menuOptions.clear();
-    std::cout << "Scene 1 Unload" << endl;
+    std::cout << "Level 3 Unload" << endl;
     player.reset();
     blob.reset();
     ls::Unload();
     Scene::Unload();
 }
 
-void Level1Scene::Update(const double& dt) {
+void Level3Scene::Update(const double& dt) {
     if (!Engine::paused) {
         ents.find("starTracker")[0]->getComponents<TextComponent>()[0]->
             SetText(to_string(collected.size()) + "/3");
@@ -309,45 +315,54 @@ void Level1Scene::Update(const double& dt) {
 			SetText("Deaths: " + to_string(SaveSystem::getDeathCount()));
 
         timer += dt;
-        updateTimerText();
+        ents.find("timeTracker")[0]->getComponents<TextComponent>()[0]->
+            SetText("Best: " + bestTimeString + " | Current: " + timeToString(timer));
 
         if (ls::getTileAt(player->getPosition()) == ls::END) {
             SaveSystem::addCollected(collected);
-            SaveSystem::setLastLevelCompleted(1);
+
+            if (bestTime <= 0.f || timer < bestTime) {
+				bestTime = timer;
+				bestTimeString = timeToString(bestTime);
+                SaveSystem::addNewLevelTime(3, timer);
+			}
+
+            SaveSystem::setLastLevelCompleted(3);
             SaveSystem::saveGame();
-            Engine::ChangeScene((Scene*)&endScene);
+            Engine::ChangeScene((Scene*)&endLevel);
         }
         else if (!player->isAlive()) {
             SaveSystem::setDeathCounter(SaveSystem::getDeathCount() + 1);
             SaveSystem::saveGame();
-            Engine::ChangeScene((Scene*)&level1);
+            Engine::ChangeScene((Scene*)&level3);
         }
-        if (Keyboard::isKeyPressed(Controls::Exit) || sf::Joystick::isButtonPressed(0,7)) {
+
+        if (Keyboard::isKeyPressed(Controls::Exit)) {
             Engine::paused = true;
             displayMenu();
         }
     }
     // pause menu update
     else {
-        if (Keyboard::isKeyPressed(Controls::MenuDown) || sf::Joystick::getAxisPosition(0, sf::Joystick::PovY) >= 20) {
+        if (Keyboard::isKeyPressed(Controls::MenuDown)) {
             moveDown();
         }
-        if (Keyboard::isKeyPressed(Controls::MenuUp) || sf::Joystick::getAxisPosition(0, sf::Joystick::PovY) <= -20) {
+        if (Keyboard::isKeyPressed(Controls::MenuUp)) {
             moveUp();
         }
-        if (Keyboard::isKeyPressed(Controls::MenuSelect) || sf::Joystick::isButtonPressed(0,0)) {
+        if (Keyboard::isKeyPressed(Controls::MenuSelect)) {
             executeSelectedOption();
         }
     }
     Scene::Update(dt);
 }
 
-void Level1Scene::Render() {
+void Level3Scene::Render() {
     ls::Render(Engine::getWindow());
     Scene::Render();
 }
 
-void Level1Scene::displayMenu() {
+void Level3Scene::displayMenu() {
     ents.find("background")[0]->setVisible(true);
     auto menu = ents.find("menu");
     for (auto menuoption : menu) {
@@ -357,7 +372,7 @@ void Level1Scene::displayMenu() {
     ents.find("player")[0]->setAlive(false);
 }
 
-void Level1Scene::hideMenu() {
+void Level3Scene::hideMenu() {
     Engine::paused = false;
     ents.find("background")[0]->setVisible(false);
     auto menu = ents.find("menu");
@@ -368,7 +383,7 @@ void Level1Scene::hideMenu() {
     ents.find("player")[0]->setAlive(true);
 }
 
-void Level1Scene::moveUp() {
+void Level3Scene::moveUp() {
     if (selectedOptionIndex - 1 >= 0) {
         menuOptions[selectedOptionIndex]->getComponents<TextComponent>()[0]->SetColor(Color::White);
         selectedOptionIndex--;
@@ -377,7 +392,7 @@ void Level1Scene::moveUp() {
     }
 }
 
-void Level1Scene::moveDown() {
+void Level3Scene::moveDown() {
     // handle initial state when nothing is selected
     if (selectedOptionIndex == -1) {
         selectedOptionIndex = 0;
@@ -391,7 +406,7 @@ void Level1Scene::moveDown() {
         this_thread::sleep_for(chrono::milliseconds(150)); // these are here so the cursor does not move too fast
     }
 }
-void Level1Scene::executeSelectedOption() {
+void Level3Scene::executeSelectedOption() {
     switch (selectedOptionIndex) {
     case 0:
         hideMenu();
@@ -402,4 +417,8 @@ void Level1Scene::executeSelectedOption() {
     case 2:
         Engine::ChangeScene(&menu);
     }
+}
+
+float Level3Scene::getTimer() {
+    return timer;
 }
