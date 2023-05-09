@@ -337,20 +337,20 @@ void Level3Scene::Update(const double& dt) {
             Engine::ChangeScene((Scene*)&level3);
         }
 
-        if (Keyboard::isKeyPressed(Controls::Exit)) {
+        if (Keyboard::isKeyPressed(Controls::Exit) || sf::Joystick::isButtonPressed(0, 7)) {
             Engine::paused = true;
             displayMenu();
         }
     }
     // pause menu update
     else {
-        if (Keyboard::isKeyPressed(Controls::MenuDown)) {
+        if (Keyboard::isKeyPressed(Controls::MenuDown) || sf::Joystick::getAxisPosition(0, sf::Joystick::PovY) <= -20) {
             moveDown();
         }
-        if (Keyboard::isKeyPressed(Controls::MenuUp)) {
+        if (Keyboard::isKeyPressed(Controls::MenuUp) || sf::Joystick::getAxisPosition(0, sf::Joystick::PovY) >= 20) {
             moveUp();
         }
-        if (Keyboard::isKeyPressed(Controls::MenuSelect)) {
+        if (Keyboard::isKeyPressed(Controls::MenuSelect) || sf::Joystick::isButtonPressed(0, 0)) {
             executeSelectedOption();
         }
     }
