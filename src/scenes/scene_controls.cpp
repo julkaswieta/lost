@@ -88,9 +88,9 @@ void ControlsScene::updateControlsUI() {
     this->ents.find("Move Right")[0]->getComponents<TextComponent>()[0]->SetText("Move Right: " + Controls::toString(Controls::MoveRight));
     this->ents.find("Jump")[0]->getComponents<TextComponent>()[0]->SetText("Jump: " + Controls::toString(Controls::Jump));
     this->ents.find("Pause")[0]->getComponents<TextComponent>()[0]->SetText("Pause: " + Controls::toString(Controls::Exit));
-    this->ents.find("Move Up")[0]->getComponents<TextComponent>()[0]->SetText("Jump: " + Controls::toString(Controls::MenuUp));
-    this->ents.find("Move Down")[0]->getComponents<TextComponent>()[0]->SetText("Jump: " + Controls::toString(Controls::MenuDown));
-    this->ents.find("Select Option")[0]->getComponents<TextComponent>()[0]->SetText("Jump: " + Controls::toString(Controls::MenuSelect));
+    this->ents.find("Move Up")[0]->getComponents<TextComponent>()[0]->SetText("Up: " + Controls::toString(Controls::MenuUp));
+    this->ents.find("Move Down")[0]->getComponents<TextComponent>()[0]->SetText("Down: " + Controls::toString(Controls::MenuDown));
+    this->ents.find("Select Option")[0]->getComponents<TextComponent>()[0]->SetText("Select: " + Controls::toString(Controls::MenuSelect));
 }
 
 void ControlsScene::moveUp() {
