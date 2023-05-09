@@ -18,7 +18,6 @@ void SpikeBallComponent::Update(double dt) {
             if ((pl->getPosition().x > parent->getPosition().x - 60.f) &&
                 (pl->getPosition().x < parent->getPosition().x + 60.f)) {
                 body->SetActive(true);
-                impulse(Vector2f(0.f, 0.1f));
             }
         }
     }

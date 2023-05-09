@@ -211,29 +211,33 @@ void LevelMenuScene::Load() {
         }
     }
 
-    // Total death tracker
+    // Add death counter in top left of screen
     {
-        // Create a new entity and add a TextComponent to display the total deaths
+        // Create a new entity and set position
         auto deathTracker = makeEntity();
         deathTracker->addTag("deathTracker");
         deathTracker->setPosition(Vector2f(210.f, 90.f));
+        // Add a TextComponent with the number of total deaths on your save file
         auto text = deathTracker->addComponent<TextComponent>("Total Deaths: " +
             to_string(SaveSystem::getDeathCount()));
         text->SetColor(Color::Black);
+        // Set origin to the left center of the text
         text->getText().setOrigin(Vector2f(0.f, text->getText().getLocalBounds().height * 0.5f));
         text->getText().setPosition(Vector2f(120.f, 90.f));
     }
 
     // Add exit instructions
     {
-        // Create a new entity and add a TextComponent to display the exit instructions
+        // Create a new entity and set position
         auto exitText = makeEntity();
         exitText->addTag("exitText");
         exitText->setPosition(Vector2f(Engine::getWindowSize().x - 180.f, 90.f));
+        // Add a TextComponent with the exit instructions
         auto text = exitText->addComponent<TextComponent>(
             "Press Esc to exit the game."
         );
         text->SetColor(Color::Black);
+        // Set origin to the right center of the text
         text->getText().setOrigin(Vector2f(
             text->getText().getLocalBounds().width,
             text->getText().getLocalBounds().height * 0.5f

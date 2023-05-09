@@ -106,12 +106,14 @@ void Level2Scene::Load() {
         }
     }
 
-    // Add components and sprites to goal tile
+    // Add components and sprite to goal tile
     {
+        // Find the goal tile, create a new entity for it, and set position
         auto goal = ls::findTiles(ls::END)[0];
         auto g = makeEntity();
         g->addTag("goal");
         g->setPosition(ls::getTilePosition(goal) + Vector2f(30.f, 30.f));
+        // Add a SpriteComponent with texture "Goal.png"
         auto sprite = g->addComponent<SpriteComponent>(defaultSize);
         sprite->setTexure(Resources::get<sf::Texture>("Goal.png"));
     }
@@ -266,7 +268,7 @@ void Level2Scene::Load() {
 
     // Add death counter in top middle of screen
     {
-        // Create a new entity and add a TextComponent to display the total deaths
+        // Create a new entity and set position
         auto deathTracker = makeEntity();
         deathTracker->addTag("deathTracker");
         deathTracker->setPosition(Vector2f(210.f, 90.f));
@@ -279,27 +281,35 @@ void Level2Scene::Load() {
         text->getText().setPosition(Vector2f(300.f, 90.f));
     }
 
-    // Add timeTracker in top right of screen
+    // Add timer display in top right of screen
     {
+        // Set timer to zero
         timer = 0.f;
-        bestTime = SaveSystem::getLevelBestTime(2);
+        // Load the previous best time from the save file
+        bestTime = SaveSystem::getLevelBestTime(3);
 
+        // Format the best time string
         if (bestTime <= 0.f)
             bestTimeString = "--:--:--";
         else
             bestTimeString = timeToString(bestTime);
 
+        // Create an entity for the time tracker and set its position
         auto timeTracker = makeEntity();
         timeTracker->addTag("timeTracker");
         timeTracker->setPosition(Vector2f(Engine::getWindowSize().x - 180.f, 90.f));
+
+        // Add a text component to display the current and best times
         auto text = timeTracker->addComponent<TextComponent>(
             "Best: 00:00:00 | Current: 00:00:00"
         );
         text->SetColor(Color::Black);
+        // Set origin to the right center of the text
         text->getText().setOrigin(Vector2f(
             text->getText().getLocalBounds().width,
             text->getText().getLocalBounds().height * 0.5f
         ));
+        // Position the text in the top right of the screen
         text->getText().setPosition(Vector2f(Engine::getWindowSize().x - 120.f, 90.f));
     }
 
@@ -309,7 +319,10 @@ void Level2Scene::Load() {
     //this_thread::sleep_for(chrono::milliseconds(3000));
     std::cout << "Level 2 Load Done" << endl;
 
+    // Set loaded flag to true
     setLoaded(true);
+    // Make sure the engine is not paused
+    Engine::paused = false;
 }
 
 void Level2Scene::AddCollected(string tag) {
