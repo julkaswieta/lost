@@ -64,7 +64,6 @@ void Engine::Start(const std::string& gameName, Scene* scn) {
 
 // changes the active scene (unloads previous and loads new)
 void Engine::ChangeScene(Scene* s) {
-    cout << "Eng: changing scene: " << s << endl;
     auto old = activeScene;
     activeScene = s;
 
@@ -73,7 +72,6 @@ void Engine::ChangeScene(Scene* s) {
     }
 
     if (!s->isLoaded()) {
-        cout << "Eng: Entering Loading Screen\n";
         loadingTime = 0;
         activeScene->LoadAsync();
         //activeScene->Load();
@@ -163,9 +161,7 @@ namespace timing {
 namespace loading {
     // update for loading screen
     void loadingUpdate(float dt, const Scene* const scn) {
-        //  cout << "Eng: Loading Screen\n";
         if (scn->isLoaded()) {
-            cout << "Eng: Exiting Loading Screen\n";
             currentlyLoading = false;
         }
         else {
@@ -176,7 +172,6 @@ namespace loading {
 
     // render for loading screen
     void loadingRender() {
-        // cout << "Eng: Loading Screen Render\n";
         static CircleShape octagon(80, 8);
         octagon.setOrigin(Vector2f(80, 80));
         octagon.setRotation(degrees(loadingSpinner));

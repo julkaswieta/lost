@@ -321,7 +321,10 @@ void Level1Scene::Load() {
     //this_thread::sleep_for(chrono::milliseconds(3000));
     std::cout << " Level 1 Load Done" << endl;
 
+    // Set loaded flag to true
     setLoaded(true);
+    // Make sure the engine is not paused
+    Engine::paused = false;
 }
 
 // This function adds the to the vector "collected"
