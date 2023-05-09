@@ -5,6 +5,15 @@
 * Pause Menu: Julia Swietochowska
 * Last modified: 04/05/2023
 */
+
+#include "scene_level_1.h"
+
+#include <thread>
+#include <iostream>
+#include <system_resources.h>
+#include <Box2D/Dynamics/b2Fixture.h>
+#include <LevelSystem.h>
+
 #include "../game.h"
 #include "../controls.h"
 #include "../save_system.h"
@@ -14,15 +23,8 @@
 #include "../components/cmp_spike_ball.h"
 #include "../components/cmp_collectible.h"
 #include "../components/cmp_hurt_player.h"
+#include "../components/cmp_game_sounds.h"
 #include "../components/cmp_player_physics.h"
-
-#include <thread>
-#include <iostream>
-#include <system_resources.h>
-#include <Box2D/Dynamics/b2Fixture.h>
-#include <LevelSystem.h>
-
-#include "scene_level_1.h"
 
 using namespace std;
 using namespace sf;
@@ -38,6 +40,13 @@ void Level1Scene::Load() {
     auto ho = Engine::getWindowSize().y - (ls::getHeight() * 60.f);
     ls::setOffset(Vector2f(0, ho));
 
+    // Load sounds
+    {
+        auto gameSounds = makeEntity();
+        gameSounds->addTag("gameSounds");
+        gameSounds->addComponent<GameSoundsComponent>();
+    }
+
     // Create player
     {
         b2Filter playerFilter;
@@ -47,12 +56,10 @@ void Level1Scene::Load() {
         player = makeEntity();
         player->addTag("player");
         player->setPosition(ls::getTilePosition(ls::findTiles(ls::START)[0]));
-        player->addComponent<PlayerPhysicsComponent>(Vector2f(50.f, 60.f));
+        player->addComponent<PlayerPhysicsComponent>(Vector2f(20.f, 60.f));
         player->getComponents<PlayerPhysicsComponent>()[0]->getFixture()->SetFilterData(playerFilter);
-        auto s = player->addComponent<ShapeComponent>();
-        s->setShape<sf::RectangleShape>(Vector2f(50.f, 60.f));
-        s->getShape().setFillColor(Color::Magenta);
-        s->getShape().setOrigin(Vector2f(25.f, 30.f));
+        auto sprite = player->addComponent<SpriteComponent>(Vector2f(40.f, 60.f));
+        sprite->setTexure(Resources::get<Texture>("PlayerWalk3.png"));
     }
 
     auto defaultSize = Vector2f(60.f, 60.f);

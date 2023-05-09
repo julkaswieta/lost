@@ -1,9 +1,9 @@
 #pragma once
-
 #include "cmp_physics.h"
 
 class PlayerPhysicsComponent : public PhysicsComponent {
 protected:
+	std::shared_ptr<Entity> sound;
 	b2Vec2 size;
 	sf::Vector2f maxVelocity;
 	float groundspeed;
@@ -12,7 +12,6 @@ protected:
 	bool firstJump;
 	bool secondJump;
 	bool jumpButtonReleased;
-
 	bool isGrounded() const;
 	
 public:

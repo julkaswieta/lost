@@ -1,8 +1,8 @@
+#include "engine.h"
+#include "cmp_game_sounds.h"
 #include "cmp_hurt_player.h"
-#include <engine.h>
 
 using namespace std;
-using namespace sf;
 
 void HurtComponent::Update(double dt) {
     if (auto pl = player.lock()) {
@@ -12,5 +12,7 @@ void HurtComponent::Update(double dt) {
     }
 }
 
-HurtComponent::HurtComponent(Entity* p, float s)
-    : Component(p), player(parent->scene->ents.find("player")[0]), size(s) {}
+HurtComponent::HurtComponent(Entity* p, float s) : Component(p), 
+    player(parent->scene->ents.find("player")[0]),
+    sound(parent->scene->ents.find("gameSounds")[0]),
+    size(s) {}

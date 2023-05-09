@@ -6,6 +6,7 @@
 
 #include <SFML/Window/Keyboard.hpp>
 #include <LevelSystem.h>
+#include "cmp_game_sounds.h"
 
 using namespace std;
 using namespace sf;
@@ -26,7 +27,10 @@ bool BlobComponent::isGrounded() const {
             onTop &= (manifold.points[j].y < pos.y - halfPlrHeigt);
         }
         if (onTop) {
-            parent->getComponents<SpriteComponent>()[0]->setTexure(groundTexture);
+            if (!grounded) {
+				sound->getComponents<GameSoundsComponent>()[0]->playEnemyJumpSound();
+                parent->getComponents<SpriteComponent>()[0]->setTexure(groundTexture);
+			}
             return true;
         }
     }
@@ -89,23 +93,24 @@ void BlobComponent::Jump() {
     grounded = isGrounded();
 
     if (grounded) {
-        parent->getComponents<SpriteComponent>()[0]->setTexure(airTexture);
         const auto pos = parent->getPosition();
         setVelocity(Vector2f(getVelocity().x, 0.f));
         teleport(Vector2f(pos.x, pos.y - 2.0f));
         impulse(Vector2f(0, -10.f));
+
+        parent->getComponents<SpriteComponent>()[0]->setTexure(airTexture);
     }
 }
 
-BlobComponent::BlobComponent(Entity* p, const Vector2f& s)
-    : PhysicsComponent(p, true, s), player(parent->scene->ents.find("player")[0]) {
-    size = sfmlVecToBoxVec(s, true);
+BlobComponent::BlobComponent(Entity* p, const Vector2f& s) : PhysicsComponent(p, true, s), 
+    player(parent->scene->ents.find("player")[0]),
+    sound(parent->scene->ents.find("gameSounds")[0]),
+    size(sfmlVecToBoxVec(s, true)) {
 
     // Load textures
     groundTexture = Resources::get<Texture>("BlobGround.png");
     airTexture = Resources::get<Texture>("BlobAir.png");
     parent->getComponents<SpriteComponent>()[0]->getSprite().setOrigin(Vector2f(25.f, 0.f));
-
     maxVelocity = Vector2f(100.f, 300.f);
     timeOnGround = 0.f;
     groundspeed = 30.f;

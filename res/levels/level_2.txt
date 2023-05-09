@@ -7,7 +7,7 @@ aa         ah                 aa
 aa         ah  d            c aa
 aa b       ah           aaaaaaaa
 aaaaaaaaaa ah                iaa
-aah     ja ah         e    d iaa
+aah  j   a ah         e    d iaa
 aah      a ah       aaaaaa   iaa
 aah      a             gg    iaa
 aah      a                   iaa

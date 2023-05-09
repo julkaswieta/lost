@@ -1,8 +1,11 @@
-#include "cmp_player_physics.h"
 #include "system_physics.h"
+#include "../controls.h"
+
 #include <LevelSystem.h>
 #include <SFML/Window/Keyboard.hpp>
-#include "../controls.h"
+
+#include "cmp_player_physics.h"
+#include "cmp_game_sounds.h"
 
 using namespace std;
 using namespace sf;
@@ -23,6 +26,8 @@ bool PlayerPhysicsComponent::isGrounded() const {
             onTop &= (manifold.points[j].y < pos.y - halfPlrHeigt);
         }
         if (onTop) {
+            if (!grounded)
+                sound->getComponents<GameSoundsComponent>()[0]->playPlayerHitSound();
             return true;
         }
     }
@@ -110,9 +115,10 @@ void PlayerPhysicsComponent::Update(double dt) {
     PhysicsComponent::Update(dt);
 }
 
-PlayerPhysicsComponent::PlayerPhysicsComponent(Entity* p, const Vector2f& s)
-    : PhysicsComponent(p, true, s) {
-    size = sfmlVecToBoxVec(s, true);
+PlayerPhysicsComponent::PlayerPhysicsComponent(Entity* p, const Vector2f& s) : PhysicsComponent(p, true, s),
+    sound(parent->scene->ents.find("gameSounds")[0]),
+    size(sfmlVecToBoxVec(s, true)) {
+
     maxVelocity = Vector2f(200.f, 400.f);
     groundspeed = 30.f;
     timeInAir = 0.f;
@@ -122,6 +128,5 @@ PlayerPhysicsComponent::PlayerPhysicsComponent(Entity* p, const Vector2f& s)
     jumpButtonReleased = true;
     body->SetSleepingAllowed(false);
     body->SetFixedRotation(true);
-    //Bullet items have higher-res collision detection
     body->SetBullet(true);
 }

@@ -74,6 +74,10 @@ add_custom_command(TARGET ${MyTarget} POST_BUILD			# Adds a post-build event to 
     COMMAND ${CMAKE_COMMAND} -E copy_directory				# Which executes "cmake - E copy_if_different..."
         "${CMAKE_BINARY_DIR}/lib/sfml/bin/$<CONFIGURATION>"	# <--this is in-file
         $<TARGET_FILE_DIR:${MyTarget}>)                 	# <--this is out-file path
+add_custom_command(TARGET ${MyTarget} POST_BUILD
+	COMMAND ${CMAKE_COMMAND} -E copy_directory  			
+        "${CMAKE_SOURCE_DIR}/lib/sfml/extlibs/bin/x64"      
+        $<TARGET_FILE_DIR:${MyTarget}>)
 endfunction()
 
 ## Lost

@@ -1,10 +1,18 @@
 /**
-* scene_level_1.cpp: implementation for Level2Scene class
+* scene_level_2.cpp: implementation for Level2Scene class
 *
 * Author: Dillon Aitken
 * Pause Menu: Julia Swietochowska
-* Last modified: 04/05/2023
+* Last modified: 09/05/2023
 */
+#include "scene_level_2.h"
+
+#include <thread>
+#include <iostream>
+#include <system_resources.h>
+#include <Box2D/Dynamics/b2Fixture.h>
+#include <LevelSystem.h>
+
 #include "../game.h"
 #include "../controls.h"
 #include "../save_system.h"
@@ -14,15 +22,8 @@
 #include "../components/cmp_spike_ball.h"
 #include "../components/cmp_collectible.h"
 #include "../components/cmp_hurt_player.h"
+#include "../components/cmp_game_sounds.h"
 #include "../components/cmp_player_physics.h"
-
-#include <thread>
-#include <iostream>
-#include <system_resources.h>
-#include <Box2D/Dynamics/b2Fixture.h>
-#include <LevelSystem.h>
-
-#include "scene_level_2.h"
 
 using namespace std;
 using namespace sf;
@@ -37,6 +38,13 @@ void Level2Scene::Load() {
 
     auto ho = Engine::getWindowSize().y - (ls::getHeight() * 60.f);
     ls::setOffset(Vector2f(0, ho));
+
+    // Load sounds
+    {
+        auto gameSounds = makeEntity();
+        gameSounds->addTag("gameSounds");
+        gameSounds->addComponent<GameSoundsComponent>();
+    }
 
     // Create player
     {

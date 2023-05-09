@@ -4,6 +4,7 @@
 
 class CollectibleComponent : public Component {
 protected:
+	std::shared_ptr<Entity> sound;
 	std::weak_ptr<Entity> player;
 	float size;
 

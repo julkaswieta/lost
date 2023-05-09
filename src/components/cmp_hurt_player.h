@@ -1,9 +1,10 @@
 #pragma once
 #include "cmp_physics.h"
-#include <ecm.h>
+#include "ecm.h"
 
 class HurtComponent : public Component {
 protected:
+	std::shared_ptr<Entity> sound;
 	std::weak_ptr<Entity> player;
 	float size;
 
