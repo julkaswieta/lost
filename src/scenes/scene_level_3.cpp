@@ -311,32 +311,39 @@ void Level3Scene::Load() {
 
     loadPauseMenu();
 
-    //Simulate long loading times to check loading screen works
-    //this_thread::sleep_for(chrono::milliseconds(3000));
-    std::cout << "Level 3 Load Done" << endl;
-
     // Set loaded flag to true
     setLoaded(true);
     // Make sure the engine is not paused
     Engine::paused = false;
 }
 
+// This function adds the given tag to the list of collected stars
 void Level3Scene::AddCollected(string tag) {
     collected.push_back(tag);
 }
 
+// This function takes in a float s (in seconds) and returns a string in the format of "MM:SS:MS"
+// where MM is minutes, SS is seconds, and MS is milliseconds
 string Level3Scene::timeToString(float s) {
     string minutes = to_string((int)s / 60);
+    // Add a leading zero if minutes is only one digit
     if (minutes.length() == 1) minutes = "0" + minutes;
     string seconds = to_string((int)s % 60);
+    // Add a leading zero if seconds is only one digit
     if (seconds.length() == 1) seconds = "0" + seconds;
     string milliseconds = to_string((int)(s * 100) % 100);
+    // Add a leading zero if milliseconds is only one digit
     if (milliseconds.length() == 1) milliseconds = "0" + milliseconds;
 
+    // Return the time string in "MM:SS:MS" format
     return minutes + ":" + seconds + ":" + milliseconds;
 }
 
+// This function creates a pause menu with a black rectangle background, 
+// and menu options for resuming, restarting the level, and returning to the main menu
+// It also sets the initial values for the pause menu's entities and clears the menu options vector
 void Level3Scene::loadPauseMenu() {
+    // Create a black rectangle background for the pause menu
     auto background = makeEntity();
     auto shapeCmp = background->addComponent<ShapeComponent>();
     shapeCmp->setShape<sf::RectangleShape>(Vector2f(500.f, 500.f));
@@ -349,6 +356,7 @@ void Level3Scene::loadPauseMenu() {
     background->addTag("background");
     background->setVisible(false);
 
+    // Create the menu options for resuming, restarting, and exiting to the main menu
     string optionsText[4] = { "Game Paused", "Resume", "Restart Level", "Exit to Main Menu" };
     for (int i = 0; i < 4; ++i) {
         auto menuOption = makeEntity();
@@ -361,12 +369,17 @@ void Level3Scene::loadPauseMenu() {
         if (i > 0)
             menuOptions.push_back(menuOption);
     }
+
+    // Set the selected option index to -1, and unpause the game
     selectedOptionIndex = -1;
     Engine::paused = false;
 }
 
+// This function clears the menu options vector, unloads the player, 
+// blob, and level, and calls the parent Scene's unload function
 void Level3Scene::Unload() {
     menuOptions.clear();
+    std::cout << "Level 1 Unload" << endl;
     player.reset();
     blob.reset();
     ls::Unload();
@@ -374,76 +387,97 @@ void Level3Scene::Unload() {
 }
 
 void Level3Scene::Update(const double& dt) {
+    // Only execute the following code if the game is not paused
     if (!Engine::paused) {
+        // Update the UI for the number of collected stars
         ents.find("starTracker")[0]->getComponents<TextComponent>()[0]->
             SetText(to_string(collected.size()) + "/3");
 
+        // Update the UI for the number of player deaths
         ents.find("deathTracker")[0]->getComponents<TextComponent>()[0]->
-			SetText("Deaths: " + to_string(SaveSystem::getDeathCount()));
+            SetText("Deaths: " + to_string(SaveSystem::getDeathCount()));
 
+        // Update the timer for the level
         timer += dt;
         ents.find("timeTracker")[0]->getComponents<TextComponent>()[0]->
             SetText("Best: " + bestTimeString + " | Current: " + timeToString(timer));
 
+        // Check if the player has reached the end of the level
         if (ls::getTileAt(player->getPosition()) == ls::END) {
+            // Save the number of collected stars
             SaveSystem::addCollected(collected);
 
+            // If the player's time is the best or there is no best time, save it
             if (bestTime <= 0.f || timer < bestTime) {
-				bestTime = timer;
-				bestTimeString = timeToString(bestTime);
+                bestTime = timer;
+                bestTimeString = timeToString(bestTime);
                 SaveSystem::addNewLevelTime(3, timer);
-			}
+            }
 
+            // Mark the level as completed and save the game
             SaveSystem::setLastLevelCompleted(3);
             SaveSystem::saveGame();
+            // Transition to the end of level screen
             Engine::ChangeScene((Scene*)&endLevel);
         }
+        // Check if the player is dead
         else if (!player->isAlive()) {
+            // Increment the player's death counter and save the game
             SaveSystem::setDeathCounter(SaveSystem::getDeathCount() + 1);
             SaveSystem::saveGame();
+            // Restart the current level
             Engine::ChangeScene((Scene*)&level3);
         }
 
-        if (Keyboard::isKeyPressed(Controls::Exit) || 
+        // Check if the player wants to exit the game
+        if (Keyboard::isKeyPressed(Controls::Exit) ||
             sf::Joystick::isButtonPressed(0, 7)) {
+            // Pause the game and display the menu
             Engine::paused = true;
             displayMenu();
         }
     }
     // pause menu update
     else {
-        if (Keyboard::isKeyPressed(Controls::MenuDown) || 
+        if (Keyboard::isKeyPressed(Controls::MenuDown) ||
             sf::Joystick::getAxisPosition(0, sf::Joystick::PovY) <= -20) {
             moveDown();
         }
-        if (Keyboard::isKeyPressed(Controls::MenuUp) || 
+        if (Keyboard::isKeyPressed(Controls::MenuUp) ||
             sf::Joystick::getAxisPosition(0, sf::Joystick::PovY) >= 20) {
             moveUp();
         }
-        if (Keyboard::isKeyPressed(Controls::MenuSelect) || 
+        if (Keyboard::isKeyPressed(Controls::MenuSelect) ||
             sf::Joystick::isButtonPressed(0, 0)) {
             executeSelectedOption();
         }
     }
+
+    // update scene entities
     Scene::Update(dt);
 }
 
 void Level3Scene::Render() {
+    // render level tiles
     ls::Render(Engine::getWindow());
+    // render scene entities
     Scene::Render();
 }
 
 void Level3Scene::displayMenu() {
+    // set menu state
     ents.find("background")[0]->setVisible(true);
     auto menu = ents.find("menu");
     for (auto menuoption : menu) {
         menuoption->setVisible(true);
         menuoption->setAlive(true);
     }
+    // set player state
     ents.find("player")[0]->setAlive(false);
 }
 
 void Level3Scene::hideMenu() {
+    // reset menu state
     Engine::paused = false;
     ents.find("background")[0]->setVisible(false);
     auto menu = ents.find("menu");
@@ -451,10 +485,12 @@ void Level3Scene::hideMenu() {
         menuoption->setVisible(false);
         menuoption->setAlive(false);
     }
+    // reset player state
     ents.find("player")[0]->setAlive(true);
 }
 
 void Level3Scene::moveUp() {
+    // handle initial state when nothing is selected
     if (selectedOptionIndex - 1 >= 0) {
         menuOptions[selectedOptionIndex]->getComponents<TextComponent>()[0]->SetColor(Color::White);
         selectedOptionIndex--;
@@ -470,6 +506,7 @@ void Level3Scene::moveDown() {
         menuOptions[selectedOptionIndex]->getComponents<TextComponent>()[0]->SetColor(Color::Red);
         this_thread::sleep_for(chrono::milliseconds(150)); // these are here so the cursor does not move too fast
     }
+    // handle when the last option is selected
     else if (selectedOptionIndex + 1 < menuOptions.size()) {
         menuOptions[selectedOptionIndex]->getComponents<TextComponent>()[0]->SetColor(Color::White);
         selectedOptionIndex++;
@@ -483,13 +520,16 @@ void Level3Scene::executeSelectedOption() {
         hideMenu();
         break;
     case 1:
+        // restart level
         Engine::ChangeScene((Scene*)&level3);
         break;
     case 2:
+        // exit to main menu
         Engine::ChangeScene(&levelMenu);
     }
 }
 
 float Level3Scene::getTimer() {
+    // returns the total level time
     return timer;
 }

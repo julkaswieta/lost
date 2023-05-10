@@ -1,4 +1,4 @@
-// this line will need to be here for the final release build in order to diable the console window in the background
+// this line will need to be here for the final release build in order to disable the console window in the background
 #pragma comment(linker, "/SUBSYSTEM:windows /ENTRY:mainCRTStartup") 
 /**
 * main.cpp: game starting point
@@ -31,5 +31,6 @@ vector<Scene*> levels = { &level1, &level2, &level3, &endScene };
 
 int main()
 {
+	// Start the game
 	Engine::Start("Lost", &levelMenu);
 }

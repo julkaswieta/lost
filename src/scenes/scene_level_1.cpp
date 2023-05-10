@@ -288,7 +288,7 @@ void Level1Scene::Load() {
         // Set timer to zero
         timer = 0.f;
         // Load the previous best time from the save file
-        bestTime = SaveSystem::getLevelBestTime(3);
+        bestTime = SaveSystem::getLevelBestTime(1);
 
         // Format the best time string
         if (bestTime <= 0.f)
@@ -317,17 +317,13 @@ void Level1Scene::Load() {
 
     loadPauseMenu();
 
-    //Simulate long loading times to check loading screen works
-    //this_thread::sleep_for(chrono::milliseconds(3000));
-    std::cout << " Level 1 Load Done" << endl;
-
     // Set loaded flag to true
     setLoaded(true);
     // Make sure the engine is not paused
     Engine::paused = false;
 }
 
-// This function adds the to the vector "collected"
+// This function adds the given tag to the list of collected stars
 void Level1Scene::AddCollected(string tag) {
     collected.push_back(tag);
 }
@@ -385,7 +381,8 @@ void Level1Scene::loadPauseMenu() {
     Engine::paused = false;
 }
 
-// This function clears the menu options vector, unloads the player, blob, and level, and calls the parent Scene's unload function
+// This function clears the menu options vector, unloads the player, 
+// blob, and level, and calls the parent Scene's unload function
 void Level1Scene::Unload() {
     menuOptions.clear();
     std::cout << "Level 1 Unload" << endl;
@@ -446,7 +443,6 @@ void Level1Scene::Update(const double& dt) {
             displayMenu();
         }
     }
-
     // pause menu update
     else {
         if (Keyboard::isKeyPressed(Controls::MenuDown) || 
@@ -482,6 +478,7 @@ void Level1Scene::displayMenu() {
         menuoption->setVisible(true);
         menuoption->setAlive(true);
     }
+    // set player state
     ents.find("player")[0]->setAlive(false);
 }
 
@@ -494,6 +491,7 @@ void Level1Scene::hideMenu() {
         menuoption->setVisible(false);
         menuoption->setAlive(false);
     }
+    // reset player state
     ents.find("player")[0]->setAlive(true);
 }
 
